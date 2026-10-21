@@ -1,3 +1,4 @@
+import { newId } from "@/lib/id";
 import type { Project } from "@/lib/model";
 import { Field } from "./Primitives";
 export default function ProjectForm({
@@ -16,7 +17,7 @@ export default function ProjectForm({
         e.preventDefault();
         const f = new FormData(e.currentTarget);
         onSave({
-          id: project?.id || crypto.randomUUID(),
+          id: project?.id || newId(),
           name: String(f.get("name")).trim(),
           outcome: String(f.get("outcome")).trim(),
           deadline: String(f.get("deadline")),

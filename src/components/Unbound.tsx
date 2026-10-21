@@ -1,4 +1,15 @@
 "use client";
+import { newId } from "@/lib/id";
+import {
+  Clock,
+  Sparkle,
+  Stack,
+  ChartDonut,
+  GearSix,
+  Sun,
+  Moon,
+  X,
+} from "@phosphor-icons/react";
 import ReflectScreen from "./ReflectScreen";
 import ProjectsScreen from "./ProjectsScreen";
 import MindspaceScreen from "./MindspaceScreen";
@@ -35,7 +46,7 @@ type Recognition = {
 export default function Unbound() {
   const [state, setState] = useState<State | null>(null),
     [tab, setTab] = useState<Tab>("Today"),
-    [theme, setTheme] = useState("light"),
+    [theme, setTheme] = useState("dark"),
     [message, setMessage] = useState(""),
     [settings, setSettings] = useState(false),
     [confirmReset, setConfirmReset] = useState(false);
@@ -67,12 +78,7 @@ export default function Unbound() {
         }
       }
       const savedTheme = localStorage.getItem("unbound.theme");
-      if (
-        savedTheme === "dark" ||
-        (!savedTheme &&
-          window.matchMedia("(prefers-color-scheme: dark)").matches)
-      )
-        setTheme("dark");
+      if (savedTheme === "dark" || savedTheme === "light") setTheme(savedTheme);
     } catch {
       storageBlocked.current = true;
       setMessage(
@@ -106,6 +112,10 @@ export default function Unbound() {
     window.addEventListener("hashchange", sync);
     return () => window.removeEventListener("hashchange", sync);
   }, []);
+  function navigate(next: Tab) {
+    setTab(next);
+    window.scrollTo({top: 0, behavior: "auto"});
+  }
   function update(fn: (s: State) => State) {
     setState((s) => (s ? fn(s) : s));
   }
@@ -132,7 +142,7 @@ export default function Unbound() {
   }
   function saveThought(e: React.FormEvent) {
     e.preventDefault();
-    const item = captureThought(thought, crypto.randomUUID());
+    const item = captureThought(thought, newId());
     if (!item) return;
     update((s) => ({
       ...s,
@@ -219,7 +229,7 @@ export default function Unbound() {
         Skip to content
       </a>
       <aside className="sidebar">
-        <a href="#today" className="brand" onClick={() => setTab("Today")}>
+        <a href="#today" className="brand" onClick={() => navigate("Today")}>
           UNBOUND<span>PERSONAL FREEDOM OS</span>
         </a>
         <nav aria-label="Main navigation">
@@ -228,10 +238,17 @@ export default function Unbound() {
               href={`#${t.toLowerCase()}`}
               key={t}
               aria-current={tab === t ? "page" : undefined}
-              onClick={() => setTab(t)}
+              onClick={() => navigate(t)}
             >
               <span aria-hidden="true" className="navIcon">
-                {["◷", "✧", "▤", "◐"][i]}
+                {
+                  [
+                    <Clock key="today" size={25} />,
+                    <Sparkle key="mind" size={25} />,
+                    <Stack key="projects" size={25} />,
+                    <ChartDonut key="reflect" size={25} />,
+                  ][i]
+                }
               </span>
               {t}
               <span className="navIndex">0{i + 1}</span>
@@ -248,30 +265,37 @@ export default function Unbound() {
             onClick={() => setSettings(!settings)}
             aria-expanded={settings}
           >
-            ↗ Your space & data
+            <GearSix size={20} aria-hidden="true" /> Your space & data
           </button>
           <button onClick={changeTheme}>
-            {theme === "light" ? "◐ Dark theme" : "◑ Light theme"}
+            {theme === "light" ? <Moon size={20} /> : <Sun size={20} />}{" "}
+            {theme === "light" ? "Dark theme" : "Light theme"}
           </button>
           <span className="localNote">LOCAL BY DESIGN · YOURS TO KEEP</span>
         </div>
       </aside>
       <div className="content">
         <header className="topbar">
-          <span>UNBOUND / YOUR LIFE, ON YOUR TERMS</span>
+          <div className="mobileBrand">
+            <Sparkle size={28} weight="duotone" aria-hidden="true" />
+            <span>
+              UNBOUND<small>Your space. Your pace.</small>
+            </span>
+          </div>
           <div className="actions">
             <button
               className="mobileData"
+              aria-label="Your data"
               onClick={() => setSettings(!settings)}
               aria-expanded={settings}
             >
-              Your data
+              <GearSix size={22} aria-hidden="true" />
             </button>
             <button
               onClick={changeTheme}
               aria-label={`Switch to ${theme === "light" ? "dark" : "light"} theme`}
             >
-              {theme === "light" ? "◐" : "◑"}
+              {theme === "light" ? <Moon size={22} /> : <Sun size={22} />}
             </button>
           </div>
         </header>
@@ -343,7 +367,7 @@ export default function Unbound() {
                 aria-label="Dismiss notification"
                 onClick={() => setMessage("")}
               >
-                ×
+                <X size={20} />
               </button>
             </div>
           )}

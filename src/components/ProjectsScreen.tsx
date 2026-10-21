@@ -1,3 +1,4 @@
+import { Plus } from "@phosphor-icons/react";
 import type { Dispatch, SetStateAction } from "react";
 import {
   deadlineState,
@@ -37,7 +38,7 @@ export default function ProjectsScreen({
             setShowProject(!showProject);
           }}
         >
-          ＋ New project
+          <Plus size={18} aria-hidden="true" /> New project
         </button>
       </div>
       {showProject && (

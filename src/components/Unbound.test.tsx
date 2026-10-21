@@ -34,13 +34,11 @@ async function open() {
 describe("UNBOUND working interactions", () => {
   it("adds and completes a task, then reflects it this week", async () => {
     await open();
-    fireEvent.click(screen.getByRole("button", { name: "＋ Add a task" }));
+    fireEvent.click(screen.getByRole("button", { name: "Add a task" }));
     fireEvent.change(screen.getByLabelText("What needs doing?"), {
       target: { value: "A concrete step" },
     });
-    fireEvent.click(
-      screen.getByRole("button", { name: "Add task", }),
-    );
+    fireEvent.click(screen.getByRole("button", { name: "Add task" }));
     fireEvent.click(
       screen.getByRole("button", {
         name: "Complete A concrete step",
@@ -68,21 +66,15 @@ describe("UNBOUND working interactions", () => {
       screen.getByLabelText("What’s passing through your mind?"),
       { target: { value: "A passing thought" } },
     );
-    fireEvent.click(
-      screen.getByRole("button", { name: "Save thought", }),
-    );
+    fireEvent.click(screen.getByRole("button", { name: "Save thought" }));
     expect(screen.getByText("A passing thought")).toBeTruthy();
-    fireEvent.click(
-      screen.getAllByRole("button", { name: "Edit", })[0],
-    );
+    fireEvent.click(screen.getAllByRole("button", { name: "Edit" })[0]);
     fireEvent.change(screen.getByLabelText("Edit your thought"), {
       target: { value: "An edited thought" },
     });
     fireEvent.click(screen.getByRole("button", { name: "Save changes" }));
     expect(screen.getByText("An edited thought")).toBeTruthy();
-    fireEvent.click(
-      screen.getAllByRole("button", { name: "Delete", })[0],
-    );
+    fireEvent.click(screen.getAllByRole("button", { name: "Delete" })[0]);
     expect(screen.queryByText("An edited thought")).toBeNull();
     expect(JSON.parse(localStorage.getItem("unbound.v1")!).tasks).toHaveLength(
       3,
@@ -94,14 +86,12 @@ describe("UNBOUND working interactions", () => {
     fireEvent.change(screen.getByLabelText("Save My Place"), {
       target: { value: "Return to the outline" },
     });
-    fireEvent.click(screen.getByRole("button", { name: "Pause", }));
-    expect(
-      screen.getByRole("button", { name: "Resume", }),
-    ).toBeTruthy();
+    fireEvent.click(screen.getByRole("button", { name: "Pause" }));
+    expect(screen.getByRole("button", { name: "Resume" })).toBeTruthy();
     cleanup();
     window.history.replaceState(null, "", "/#projects");
     render(<Unbound />);
-    await screen.findByRole("button", { name: "Resume", });
+    await screen.findByRole("button", { name: "Resume" });
     expect(
       (screen.getByLabelText("Save My Place") as HTMLTextAreaElement).value,
     ).toBe("Return to the outline");

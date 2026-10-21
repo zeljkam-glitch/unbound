@@ -27,7 +27,7 @@ npm run build
 - **Mindspace:** immediate text capture, timestamps, edit and delete. No automatic conversion to tasks. Optional browser speech recognition with explicit user initiation and a text fallback for unsupported browsers, denied microphone permission and speech errors. Captured speech remains editable before saving.
 - **Projects:** create and edit name, desired outcome, optional deadline and next action; pause/resume/complete/reopen; Save My Place notes autosave and survive status changes.
 - **Reflect:** tasks completed since Monday in the device's local timezone; all outstanding tasks and unfinished projects; optional autonomy, satisfaction and pressure check-ins keyed by week.
-- Functional hash navigation including deep links, refresh and browser back/forward. Mobile bottom navigation and desktop sidebar. Light/dark themes with OS preference on first visit and persisted overrides.
+- Functional hash navigation including deep links, refresh and browser back/forward. Mobile bottom navigation and desktop sidebar. Light/dark themes, a dark default inspired by the supplied reference, and persisted overrides.
 - Versioned, validated localStorage data with demo data on first use; readable error messages; JSON export; confirmed full reset to an empty space. Data controls work on mobile and desktop.
 - Semantic forms, visible keyboard focus, a skip link, labeled fields, pressed/current states, minimum 44px controls, safe-area spacing, responsive layouts and reduced-motion support.
 - Basic unit tests cover completion/reopening, local calendar deadlines, thought capture, pause/resume, suggestion priority, persisted data validation and Monday week boundaries.
@@ -60,8 +60,12 @@ The app does not call a speech API directly. Browser speech recognition can use 
 - A screen-reader audit and real-device Safari/Android checks remain before production. Unit tests are not a substitute for those checks.
 - No service worker or installable/offline PWA shell yet.
 
+## Visual design update
+
+The October 2026 redesign follows the supplied Orchard references: black background, charcoal cards, turquoise pill controls, cyan/yellow/purple accents, sans-serif typography and icon-based bottom navigation. UNBOUND keeps its own four screens and data model. The overview ring uses actual completed/total task counts; the passive week strip shows actual completion days. All/Open/Done filters work locally. No reference photos, avatars, habit categories or streak mechanics were copied.
+
 ## Verification
 
-The production build, TypeScript check and all 14 tests passed (seven domain unit tests and seven component interaction tests). Component tests cover capture/edit/delete, task completion and reflection, pause/reload with Save My Place, malformed storage/reset, quota failures and speech fallback. A browser smoke test was prepared but could not run in this environment because Chromium was unavailable and its download failed. Mobile/desktop visual QA is therefore still unverified.
+The production build, TypeScript check and all 16 tests pass (seven domain tests, seven component tests and two ID compatibility tests). The redesign was also opened in the cloud browser at a real 393 × 852 mobile iframe viewport and desktop size. Task completion, filtering, thought capture, navigation and light/dark switching were exercised. See `design-qa.md` for evidence, design decisions and remaining manual-device test gaps.
 
-No deployment or external service connection has been performed.
+The app is linked to the GitHub repository and Vercel; pushes to main deploy automatically. No accounts, cloud storage of planner data, payment services or third-party speech integration were added.
