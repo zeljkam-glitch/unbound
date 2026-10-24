@@ -1,172 +1,94 @@
+export type TaskKind = "fixed" | "deadline" | "flexible" | "optional";
 export type Task = {
-  id: string;
-  title: string;
-  deadline: string;
-  effort: "light" | "deep";
+  id: string; title: string; date: string; time: string; deadline: string;
+  kind: TaskKind; duration: number; repeat: "none" | "daily" | "weekly";
+  area: "home" | "outside" | "anywhere"; effort: "light" | "deep";
   completedAt: string | null;
 };
 export type Thought = { id: string; text: string; createdAt: string };
-export type Project = {
-  id: string;
-  name: string;
-  outcome: string;
-  deadline: string;
-  nextAction: string;
-  status: "active" | "paused" | "completed";
-  place: string;
-};
+export type Goal = { id: string; name: string; outcome: string; deadline: string; nextAction: string; status: "active" | "paused" | "completed"; place: string; progress: number };
+export type Project = Goal;
+export type LibraryCategory = "shopping" | "feel-good" | "places" | "meals" | "workouts" | "bags";
+export type LibraryItem = { id: string; category: LibraryCategory; title: string; group: string; details: string };
+export type InboxItem = { id: string; text: string; createdAt: string };
+export type Routine = { id: string; title: string; period: "morning" | "evening" };
+export type WeeklyCheckin = { win: string; learned: string; next: string; energy: string };
 export type State = {
-  version: 1;
-  tasks: Task[];
-  thoughts: Thought[];
-  projects: Project[];
-  anchors: Record<string, string>;
-  energies: Record<string, string>;
-  reflections: Record<
-    string,
-    { autonomy: string; satisfaction: string; pressure: string }
-  >;
+  version: 2; tasks: Task[]; thoughts: Thought[]; projects: Goal[]; library: LibraryItem[];
+  inbox: InboxItem[]; routines: Routine[]; routineDone: Record<string, string[]>;
+  anchors: Record<string, string>; energies: Record<string, string>; focus: Record<string, string>;
+  reflections: Record<string, { autonomy: string; satisfaction: string; pressure: string }>;
+  weeklyCheckins: Record<string, WeeklyCheckin>;
 };
-export const localDate = (d = new Date()) =>
-  `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
-export function deadlineState(date: string, today = localDate()) {
-  return !date
-    ? "Flexible"
-    : date < today
-      ? "Overdue"
-      : date === today
-        ? "Today"
-        : "Upcoming";
-}
-export function toggleTask(task: Task, now = new Date().toISOString()): Task {
-  return { ...task, completedAt: task.completedAt ? null : now };
-}
-export function captureThought(
-  text: string,
-  id: string,
-  now = new Date().toISOString(),
-): Thought | null {
-  return text.trim() ? { id, text: text.trim(), createdAt: now } : null;
-}
-export function pauseProject(project: Project): Project {
-  return {
-    ...project,
-    status: project.status === "paused" ? "active" : "paused",
-  };
-}
-export function weekStart(date = new Date()) {
-  const d = new Date(date);
-  d.setHours(0, 0, 0, 0);
-  d.setDate(d.getDate() - ((d.getDay() + 6) % 7));
-  return d;
+
+export const localDate = (d = new Date()) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+export function addDays(date: string, amount: number) { const [y, m, day] = date.split("-").map(Number); const d = new Date(y, m - 1, day); d.setDate(d.getDate() + amount); return localDate(d); }
+export function deadlineState(date: string, today = localDate()) { return !date ? "Flexible" : date < today ? "Overdue" : date === today ? "Today" : "Upcoming"; }
+export function toggleTask(task: Task, now = new Date().toISOString()): Task { return { ...task, completedAt: task.completedAt ? null : now }; }
+export function captureThought(text: string, id: string, now = new Date().toISOString()): Thought | null { return text.trim() ? { id, text: text.trim(), createdAt: now } : null; }
+export function pauseProject(project: Goal): Goal { return { ...project, status: project.status === "paused" ? "active" : "paused" }; }
+export function weekStart(date = new Date()) { const d = new Date(date); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() - ((d.getDay() + 6) % 7)); return d; }
+export function taskOccursOn(task: Task, date: string) {
+  if (task.date === date || (!task.date && task.deadline === date)) return true;
+  if (!task.date || task.date > date || task.repeat === "none") return false;
+  if (task.repeat === "daily") return true;
+  const a = new Date(`${task.date}T12:00:00`), b = new Date(`${date}T12:00:00`);
+  return Math.round((b.getTime() - a.getTime()) / 86400000) % 7 === 0;
 }
 export function suggest(tasks: Task[], energy: string, today = localDate()) {
-  const open = tasks.filter((t) => !t.completedAt);
-  return (
-    [...open].sort((a, b) => {
-      const urgent = (t: Task) => (t.deadline && t.deadline <= today ? 0 : 1);
-      return (
-        urgent(a) - urgent(b) ||
-        (energy === "low"
-          ? Number(a.effort !== "light") - Number(b.effort !== "light")
-          : 0) ||
-        (a.deadline || "9999").localeCompare(b.deadline || "9999")
-      );
-    })[0] || null
-  );
+  const open = tasks.filter((t) => !t.completedAt && (taskOccursOn(t, today) || !t.date));
+  return [...open].sort((a, b) => {
+    const urgent = (t: Task) => t.deadline && t.deadline <= today ? 0 : t.kind === "fixed" ? 1 : 2;
+    return urgent(a) - urgent(b) || (energy === "low" ? Number(a.effort !== "light") - Number(b.effort !== "light") : 0) || (a.time || "99:99").localeCompare(b.time || "99:99") || (a.deadline || "9999").localeCompare(b.deadline || "9999");
+  })[0] || null;
 }
+const task = (id: string, title: string, patch: Partial<Task> = {}): Task => ({ id, title, date: localDate(), time: "", deadline: "", kind: "flexible", duration: 30, repeat: "none", area: "anywhere", effort: "light", completedAt: null, ...patch });
 export function demo(): State {
   const today = localDate();
   return {
-    version: 1,
+    version: 2,
     tasks: [
-      {
-        id: "t1",
-        title: "Shape the first chapter of UNBOUND",
-        deadline: "",
-        effort: "deep",
-        completedAt: null,
-      },
-      {
-        id: "t2",
-        title: "Send the proposal you believe in",
-        deadline: today,
-        effort: "light",
-        completedAt: null,
-      },
-      {
-        id: "t3",
-        title: "Take a walk without your phone",
-        deadline: "",
-        effort: "light",
-        completedAt: null,
-      },
+      task("t1", "Shape the first chapter of UNBOUND", { effort: "deep", duration: 60, area: "home" }),
+      task("t2", "Send the proposal you believe in", { deadline: today, kind: "deadline", duration: 20 }),
+      task("t3", "Take a walk without your phone", { kind: "optional", duration: 30, area: "outside" }),
     ],
-    thoughts: [
-      {
-        id: "m1",
-        text: "What would my week look like if I protected my mornings?",
-        createdAt: new Date().toISOString(),
-      },
+    thoughts: [{ id: "m1", text: "What would my week look like if I protected my mornings?", createdAt: new Date().toISOString() }],
+    projects: [{ id: "p1", name: "A little more freedom", outcome: "Build a working rhythm that leaves room for life.", deadline: "", nextAction: "Choose one commitment to simplify this week.", status: "active", place: "Start with my mornings. Keep the first hour open.", progress: 35 }],
+    library: [
+      { id: "l1", category: "shopping", title: "Oat milk", group: "dm", details: "Usual weekly buy" },
+      { id: "l2", category: "shopping", title: "Fresh vegetables", group: "Market", details: "Choose what looks best" },
+      { id: "l3", category: "feel-good", title: "Walk by the river", group: "10–30 min", details: "No phone needed" },
+      { id: "l4", category: "places", title: "Samobor old town", group: "Local escape", details: "Coffee and a slow walk" },
+      { id: "l5", category: "meals", title: "Vegetable risotto", group: "Dinner", details: "35 min" },
+      { id: "l6", category: "workouts", title: "Gentle full body", group: "Home", details: "Warm-up, 3 rounds, stretch" },
+      { id: "l7", category: "bags", title: "Gym bag", group: "Checklist", details: "Shoes, towel, water, headphones" },
     ],
-    projects: [
-      {
-        id: "p1",
-        name: "A little more freedom",
-        outcome: "Build a working rhythm that leaves room for life.",
-        deadline: "",
-        nextAction: "Choose one commitment to simplify this week.",
-        status: "active",
-        place: "Start with my mornings. Keep the first hour open.",
-      },
+    inbox: [{ id: "i1", text: "Check the faculty schedule for next week", createdAt: new Date().toISOString() }],
+    routines: [
+      { id: "r1", title: "Water + medication", period: "morning" },
+      { id: "r2", title: "Look at today before messages", period: "morning" },
+      { id: "r3", title: "Pack tomorrow’s bag", period: "evening" },
+      { id: "r4", title: "Choose tomorrow’s first gentle step", period: "evening" },
     ],
-    anchors: {},
-    energies: {},
-    reflections: {},
+    routineDone: {}, anchors: {}, energies: {}, focus: {}, reflections: {}, weeklyCheckins: {},
+  };
+}
+function migrateTask(t: Record<string, unknown>): Task { return task(String(t.id || "migrated"), String(t.title || "Untitled"), { deadline: typeof t.deadline === "string" ? t.deadline : "", effort: t.effort === "deep" ? "deep" : "light", completedAt: typeof t.completedAt === "string" ? t.completedAt : null, date: "" }); }
+export function migrateState(value: unknown): State | null {
+  if (!value || typeof value !== "object") return null;
+  const v = value as Record<string, unknown>;
+  if (v.version === 2 && isState(v)) return v;
+  if (v.version !== 1 || !Array.isArray(v.tasks) || !Array.isArray(v.projects)) return null;
+  const fresh = demo();
+  return { ...fresh,
+    tasks: v.tasks.map((t) => migrateTask(t as Record<string, unknown>)),
+    thoughts: Array.isArray(v.thoughts) ? v.thoughts as Thought[] : [],
+    projects: (v.projects as Array<Record<string, unknown>>).map((p) => ({ id: String(p.id), name: String(p.name), outcome: String(p.outcome), deadline: String(p.deadline || ""), nextAction: String(p.nextAction || ""), status: p.status as Goal["status"] || "active", place: String(p.place || ""), progress: 0 })),
+    anchors: v.anchors as Record<string, string> || {}, energies: v.energies as Record<string, string> || {}, reflections: v.reflections as State["reflections"] || {},
   };
 }
 export function isState(value: unknown): value is State {
   if (!value || typeof value !== "object") return false;
   const v = value as State;
-  const string = (x: unknown) => typeof x === "string";
-  const record = (x: unknown) =>
-    !!x && typeof x === "object" && !Array.isArray(x);
-  return (
-    v.version === 1 &&
-    Array.isArray(v.tasks) &&
-    v.tasks.every(
-      (t) =>
-        record(t) &&
-        string(t.id) &&
-        string(t.title) &&
-        string(t.deadline) &&
-        ["light", "deep"].includes(t.effort) &&
-        (t.completedAt === null || string(t.completedAt)),
-    ) &&
-    Array.isArray(v.thoughts) &&
-    v.thoughts.every(
-      (t) => record(t) && string(t.id) && string(t.text) && string(t.createdAt),
-    ) &&
-    Array.isArray(v.projects) &&
-    v.projects.every(
-      (p) =>
-        record(p) &&
-        ["id", "name", "outcome", "deadline", "nextAction", "place"].every(
-          (k) => string(p[k as keyof Project]),
-        ) &&
-        ["active", "paused", "completed"].includes(p.status),
-    ) &&
-    record(v.anchors) &&
-    Object.values(v.anchors).every(string) &&
-    record(v.energies) &&
-    Object.values(v.energies).every(string) &&
-    record(v.reflections) &&
-    Object.values(v.reflections).every(
-      (r) =>
-        record(r) &&
-        string(r.autonomy) &&
-        string(r.satisfaction) &&
-        string(r.pressure),
-    )
-  );
+  return v.version === 2 && Array.isArray(v.tasks) && v.tasks.every((t) => typeof t.id === "string" && typeof t.title === "string" && ["fixed", "deadline", "flexible", "optional"].includes(t.kind)) && Array.isArray(v.thoughts) && Array.isArray(v.projects) && Array.isArray(v.library) && Array.isArray(v.inbox) && Array.isArray(v.routines) && !!v.routineDone && !!v.anchors && !!v.energies && !!v.focus && !!v.reflections && !!v.weeklyCheckins;
 }

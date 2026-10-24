@@ -1,46 +1,39 @@
-# UNBOUND reference redesign QA
+# UNBOUND MVP Design QA
 
-Source visual truth: supplied Orchard reference boards, primarily `/workspace/scratch/53ff47a80a99/upload/original-a0d5ba7f711cffa07ebf744679e026ec.webp` (1824 × 1368 px). This is a visual-language adaptation to the existing UNBOUND product, not a clone of Orchard's habit-tracking feature set.
+- Source visual truth: supplied Planner screenshots from the referenced conversation (1536 × 768 and 2048 × 857).
+- Implementation: local Next.js application.
+- Intended viewports: desktop 1440 × 900 and mobile 393 × 852.
+- State: seeded first-use data in dark mode.
+- Source density: light desktop planner with sidebar and multi-day columns.
+- Implementation direction: preserved the repository’s established dark mobile visual system while carrying over the source’s functional multi-day planner structure.
 
-Implementation evidence (local QA files, intentionally excluded from source repository):
-- Mobile browser screenshot: `/workspace/scratch/unbound-mobile-redesign.jpg`, 393 × 852 px.
-- Desktop browser screenshot: `/workspace/scratch/unbound-desktop-redesign.jpg`, 1348 × 926 px.
-- Combined comparison: `/workspace/scratch/unbound-design-comparison.jpg`, 820 × 890 px.
+## Comparison evidence
 
-Viewport: mobile app rendered in a genuine 393 × 852 CSS-pixel iframe. Content crop taken from browser screenshot at x=485, y=20. Browser pixels equal CSS pixels at the captured scale. Reference app-content crop at x=145,y=260 to x=580,y=1155 was normalized to 393 × 852 for a design-language comparison, not a claim of pixel-perfect geometry. No device bezel or simulated status bar was added to UNBOUND.
+The source screenshots were opened and reviewed. They establish the functional model: persistent navigation, multiple day columns, planned/available context, inline task creation, duration estimates and repeating tasks.
 
-State: dark Today; one of three tasks completed; All filter; local demo data. The ring represents completed task counts rather than fictional timer minutes. UNBOUND names, four screens, optional check-ins and existing persisted data are retained.
+The implementation could not be captured in a browser because no browser surface was available in the build environment. TypeScript validation, 14 interaction/domain tests and the production build pass, but build success is not treated as visual verification.
 
-## Findings and comparison history
+## Findings
 
-1. P2: First mobile rendering placed optional anchor/energy cards before tasks and left no task visible in the first viewport. Fixed by moving these cards below the flexible plan, reducing the mobile overview, removing duplicated supporting copy on mobile and shortening the task section heading. Final combined comparison shows the first task and the start of the second above persistent navigation.
-2. P1: Browser interaction revealed `crypto.randomUUID` unavailable on the HTTP preview origin. Fixed by a shared non-security entity-ID helper with getRandomValues and legacy fallback. Post-fix browser evidence: captured thought appeared inside an article; task completion updated the ring; 16 automated tests pass.
-3. P2: Navigation could preserve an inconvenient scroll position. Fixed tab navigation to reset scroll to top. Post-fix mobile capture includes the header and entire overview.
-4. An immediate capture during theme transition showed the previous light paint. Discarded it, verified the dark data-theme attribute and captured the settled state again. The combined evidence uses the settled dark screenshot.
+- [P2] Browser-rendered desktop comparison unavailable.
+  - Impact: spacing, horizontal planner scrolling and dense seven-column behavior still need direct visual inspection.
+  - Fix: open the deployed URL at 1440 × 900 and compare Today, Planner and My Library with the source direction.
+- [P2] Browser-rendered mobile comparison unavailable.
+  - Impact: five-item bottom navigation, weather wrapping and library card density need a 393 × 852 check.
+  - Fix: test all five tabs and primary add flows at the mobile viewport.
+- [P2] Live weather permission path was not exercised.
+  - Impact: location denial and successful Open-Meteo responses are implemented but require a real browser permission check.
+  - Fix: test allow and deny states on the deployed HTTPS URL.
 
-## Required fidelity surfaces
+## Automated evidence
 
-- Typography: clean system sans-serif replaces the prior editorial serif. Readable 16px controls, 22–28px mobile headings, restrained weights and no thin decorative display type. Source and implementation use comparable sans-serif proportions. Copy differs intentionally to support UNBOUND.
-- Layout: charcoal rounded cards, pill controls, circular day markers, centered progress visualization and persistent four-item bottom navigation match the reference language. Desktop uses the existing sidebar and a responsive wider composition. Mobile uses 20px side padding and 44px interactive controls; day circles are passive information, not undersized buttons.
-- Color: near-black canvas, #202121 cards, turquoise #43c1b5 controls, cyan/yellow/purple semantic accents. Muted text has readable contrast. The light counterpart preserves the same hierarchy.
-- Assets: thin Phosphor library icons and react-circular-progressbar render actual UI icons and data visualization. No reference photography, account avatars, brand wordmark, device frames, fake timer, fake streak or rasterized app screen is used. Those are intentional product differences, not placeholder assets.
-- Copy/content: existing four-screen product and user data preserved. Filters are real. The ring is a completed/total count; empty states remain available. No additional habit categories, notifications or accounts were introduced.
+- TypeScript check: passed.
+- Automated tests: 14 passed.
+- Production build: passed.
+- Core flows covered: Planner task creation/persistence, quick idea capture, add from Library to Today, Inbox to Today, routine persistence, weekly check-in persistence.
 
-Full-view comparison is in the combined evidence. Focused review used readable mobile card typography, segmented filter and bottom navigation; no additional enlargement was needed at 393px density.
+## Final result
 
-## Interaction and console checks
+final result: blocked
 
-- Mobile task completion changes the displayed count to 1/3 and accessible progress to 33%.
-- Done filter exposes the completed task; All restores the plan.
-- Mindspace text capture succeeds after the HTTP ID fix and remains a thought.
-- Project Save My Place field and Reflect weekly check-in render through mobile navigation.
-- Light/dark toggles update the rendered theme; dark restored for final capture.
-- Desktop page renders and preserves local data.
-- Fresh final desktop console has no application errors; the sole observed error comes from the browser's own extension metadata channel. The earlier application ID error was fixed and retested.
-- Build, typecheck and 16 unit/component tests pass.
-
-## Follow-up polish / limits
-
-P3: The source's multicolor time-allocation ring is intentionally represented by a single turquoise completion arc because UNBOUND has no time allocations. Cyan/yellow/purple accents remain on task cards and icons. Native iOS/Android browser, microphone permissions and screen-reader testing remain manual follow-ups. These are not claimed as completed.
-
-final result: passed
+Blocker: browser-rendered screenshots and interaction verification are unavailable in this environment. No known P0 or P1 defects remain from static and automated checks.

@@ -1,152 +1,63 @@
 // @vitest-environment jsdom
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import {
-  cleanup,
-  fireEvent,
-  render,
-  screen,
-  waitFor,
-} from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import Unbound from "./Unbound";
-import { demo } from "@/lib/model";
-const preventNavigation = (event: MouseEvent) => {
-  if ((event.target as Element).closest("a")) event.preventDefault();
-};
+
+const preventNavigation = (event: MouseEvent) => { if ((event.target as Element).closest("a")) event.preventDefault(); };
 beforeEach(() => {
   document.addEventListener("click", preventNavigation);
   localStorage.clear();
   window.history.replaceState(null, "", "/");
-  Object.defineProperty(window, "matchMedia", {
-    writable: true,
-    value: vi.fn(() => ({ matches: false })),
-  });
   Object.defineProperty(window, "scrollTo", { writable: true, value: vi.fn() });
 });
-afterEach(() => {
-  cleanup();
-  document.removeEventListener("click", preventNavigation);
-  vi.restoreAllMocks();
-});
-async function open() {
-  render(<Unbound />);
-  await screen.findByRole("heading", { name: "Make room for what matters." });
-}
-describe("UNBOUND working interactions", () => {
-  it("adds and completes a task, then reflects it this week", async () => {
-    await open();
-    fireEvent.click(screen.getByRole("button", { name: "Add a task" }));
-    fireEvent.change(screen.getByLabelText("What needs doing?"), {
-      target: { value: "A concrete step" },
-    });
+afterEach(() => { cleanup(); document.removeEventListener("click", preventNavigation); vi.restoreAllMocks(); });
+async function open() { render(<Unbound />); await screen.findByRole("heading", { name: "Make room for what matters." }); }
+const go = (name: RegExp) => fireEvent.click(screen.getAllByRole("link", { name })[0]);
+
+describe("UNBOUND Life OS interactions", () => {
+  it("adds a typed, timed task in Planner and persists it", async () => {
+    await open(); go(/Planner/);
+    fireEvent.click(screen.getByRole("button", { name: "New task" }));
+    fireEvent.change(screen.getByLabelText("What needs doing?"), { target: { value: "Doctor appointment" } });
+    fireEvent.change(screen.getByLabelText("Type"), { target: { value: "fixed" } });
+    fireEvent.change(screen.getByLabelText("Time (for fixed tasks)"), { target: { value: "10:30" } });
     fireEvent.click(screen.getByRole("button", { name: "Add task" }));
-    fireEvent.click(
-      screen.getByRole("button", {
-        name: "Complete A concrete step",
-      }),
-    );
-    expect(
-      screen.getByRole("button", {
-        name: "Reopen A concrete step",
-      }),
-    ).toBeTruthy();
-    fireEvent.click(screen.getByRole("link", { name: /Reflect/ }));
-    expect(screen.getByText("✓ A concrete step")).toBeTruthy();
-    await waitFor(() =>
-      expect(
-        JSON.parse(localStorage.getItem("unbound.v1")!).tasks.find(
-          (t: { title: string }) => t.title === "A concrete step",
-        ).completedAt,
-      ).toBeTruthy(),
-    );
+    expect(screen.getByText("Doctor appointment")).toBeTruthy();
+    await waitFor(() => expect(JSON.parse(localStorage.getItem("unbound.v1")!).tasks.some((t: { title: string }) => t.title === "Doctor appointment")).toBe(true));
   });
-  it("captures, edits and deletes a thought without adding tasks", async () => {
+  it("captures a quick idea without turning it into a task", async () => {
     await open();
-    fireEvent.click(screen.getByRole("link", { name: /Mindspace/ }));
-    fireEvent.change(
-      screen.getByLabelText("What’s passing through your mind?"),
-      { target: { value: "A passing thought" } },
-    );
-    fireEvent.click(screen.getByRole("button", { name: "Save thought" }));
-    expect(screen.getByText("A passing thought")).toBeTruthy();
-    fireEvent.click(screen.getAllByRole("button", { name: "Edit" })[0]);
-    fireEvent.change(screen.getByLabelText("Edit your thought"), {
-      target: { value: "An edited thought" },
+    fireEvent.change(screen.getByLabelText("Quick idea"), { target: { value: "A bright new direction" } });
+    fireEvent.click(screen.getByRole("button", { name: "Save" }));
+    await waitFor(() => {
+      const saved = JSON.parse(localStorage.getItem("unbound.v1")!);
+      expect(saved.thoughts[0].text).toBe("A bright new direction");
+      expect(saved.tasks.some((t: { title: string }) => t.title === "A bright new direction")).toBe(false);
     });
-    fireEvent.click(screen.getByRole("button", { name: "Save changes" }));
-    expect(screen.getByText("An edited thought")).toBeTruthy();
-    fireEvent.click(screen.getAllByRole("button", { name: "Delete" })[0]);
-    expect(screen.queryByText("An edited thought")).toBeNull();
-    expect(JSON.parse(localStorage.getItem("unbound.v1")!).tasks).toHaveLength(
-      3,
-    );
   });
-  it("preserves Save My Place when pausing and reloading", async () => {
+  it("adds a reusable library item to today", async () => {
     await open();
-    fireEvent.click(screen.getByRole("link", { name: /Projects/ }));
-    fireEvent.change(screen.getByLabelText("Save My Place"), {
-      target: { value: "Return to the outline" },
+    fireEvent.change(screen.getByLabelText("Choose from My Library"), { target: { value: "l1" } });
+    fireEvent.click(screen.getByRole("button", { name: "Add to today" }));
+    expect(screen.getByText("Oat milk")).toBeTruthy();
+  });
+  it("captures an inbox item and plans it for today", async () => {
+    await open(); go(/Inbox/);
+    fireEvent.change(screen.getByLabelText("Inbox item"), { target: { value: "Reply to faculty" } });
+    fireEvent.click(screen.getByRole("button", { name: "Capture" }));
+    fireEvent.click(screen.getAllByRole("button", { name: /Plan for today/ })[0]);
+    go(/^Today/);
+    expect(screen.getByText("Reply to faculty")).toBeTruthy();
+  });
+  it("stores routine and weekly check-in state", async () => {
+    await open();
+    fireEvent.click(screen.getByLabelText("Water + medication"));
+    go(/Goals/);
+    fireEvent.change(screen.getByLabelText("What moved forward?"), { target: { value: "Protected one morning" } });
+    await waitFor(() => {
+      const saved = JSON.parse(localStorage.getItem("unbound.v1")!);
+      expect(Object.values(saved.routineDone).flat()).toContain("r1");
+      expect(Object.values(saved.weeklyCheckins)[0]).toMatchObject({ win: "Protected one morning" });
     });
-    fireEvent.click(screen.getByRole("button", { name: "Pause" }));
-    expect(screen.getByRole("button", { name: "Resume" })).toBeTruthy();
-    cleanup();
-    window.history.replaceState(null, "", "/#projects");
-    render(<Unbound />);
-    await screen.findByRole("button", { name: "Resume" });
-    expect(
-      (screen.getByLabelText("Save My Place") as HTMLTextAreaElement).value,
-    ).toBe("Return to the outline");
-  });
-  it("preserves malformed storage and offers an explicit reset", async () => {
-    localStorage.setItem("unbound.v1", "broken JSON");
-    await open();
-    expect(localStorage.getItem("unbound.v1")).toBe("broken JSON");
-    fireEvent.click(
-      screen.getAllByRole("button", { name: /Your space & data/ })[0],
-    );
-    fireEvent.click(screen.getByRole("button", { name: "Reset all data" }));
-    fireEvent.click(screen.getByRole("button", { name: "Delete everything" }));
-    expect(
-      screen.getByText("No commitments yet. Add only what you want to carry."),
-    ).toBeTruthy();
-    expect(JSON.parse(localStorage.getItem("unbound.v1")!).tasks).toHaveLength(
-      0,
-    );
-  });
-  it("handles unavailable storage without crashing", async () => {
-    vi.spyOn(Storage.prototype, "setItem").mockImplementation(() => {
-      throw new DOMException("Quota", "QuotaExceededError");
-    });
-    await open();
-    expect(screen.getByText(/Your changes could not be saved/)).toBeTruthy();
-    fireEvent.change(screen.getByLabelText("Today's anchor"), {
-      target: { value: "Still works" },
-    });
-    expect(
-      (screen.getByLabelText("Today's anchor") as HTMLInputElement).value,
-    ).toBe("Still works");
-  });
-  it("provides text fallback when speech is unavailable", async () => {
-    await open();
-    fireEvent.click(screen.getByRole("link", { name: /Mindspace/ }));
-    fireEvent.click(screen.getByRole("button", { name: "Use voice" }));
-    expect(screen.getByText(/Voice capture is not supported/)).toBeTruthy();
-    expect(
-      screen.getByLabelText("What’s passing through your mind?"),
-    ).toBeTruthy();
-  });
-  it("loads valid previously saved state", async () => {
-    const s = demo();
-    s.anchors[
-      new Date().getFullYear() +
-        "-" +
-        String(new Date().getMonth() + 1).padStart(2, "0") +
-        "-" +
-        String(new Date().getDate()).padStart(2, "0")
-    ] = "My saved anchor";
-    localStorage.setItem("unbound.v1", JSON.stringify(s));
-    await open();
-    expect(
-      (screen.getByLabelText("Today's anchor") as HTMLInputElement).value,
-    ).toBe("My saved anchor");
   });
 });

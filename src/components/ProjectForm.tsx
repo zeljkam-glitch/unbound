@@ -24,6 +24,7 @@ export default function ProjectForm({
           nextAction: String(f.get("nextAction")).trim(),
           status: project?.status || "active",
           place: project?.place || "",
+          progress: project?.progress || 0,
         });
       }}
     >

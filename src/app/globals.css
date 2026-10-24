@@ -1028,3 +1028,95 @@ footer em {
   }
 }
 @media(max-width:700px){.topbar{height:76px}h1{font-size:28px}.intro{display:none}.planOverview{margin-top:26px}.overviewBody{padding:0}.planRing{width:192px;height:192px}.weekStrip{margin-bottom:22px}.tasksSection .sectionHead h2{font-size:22px}.tasksSection .sectionHead>div{min-width:155px}.tasksSection .sectionHead{margin-bottom:12px}.tasksSection .sectionHead .sectionLabel{display:none}.tasksSection .sectionHead h2{margin:7px 0}}
+
+/* Life OS MVP */
+.bottomNav { display: none; }
+.weatherCard { display: flex; align-items: center; gap: 20px; border-bottom: 3px solid var(--cyan); }
+.weatherCard > div:nth-child(2) { flex: 1; }
+.weatherCard h2, .weatherCard p { margin: 5px 0 0; }
+.weatherCard p, .temperature span { display: flex; align-items: center; gap: 6px; color: var(--muted); font-size: 13px; }
+.weatherIcon { display: grid; place-items: center; width: 58px; height: 58px; border-radius: 50%; background: var(--raised); color: var(--cyan); flex: 0 0 auto; }
+.weatherCard > button { margin-left: auto; }
+.temperature { text-align: right; display: grid; }
+.temperature strong { font-size: 45px; font-weight: 400; letter-spacing: -2px; }
+.temperature span { justify-content: flex-end; }
+.spin { animation: spin .9s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.checkinBand { display: flex; align-items: center; gap: 7px; margin: 16px 0 24px; overflow-x: auto; padding-bottom: 4px; }
+.checkinBand > div { margin-right: auto; min-width: 225px; display: grid; }
+.checkinBand > div strong { font-weight: 400; margin-top: 4px; }
+.checkinBand button { white-space: nowrap; padding: 8px 12px; font-size: 12px; min-height: 38px; }
+.routineCard:first-child { border-bottom: 3px solid var(--yellow); }
+.routineCard:last-child { border-bottom: 3px solid var(--purple); }
+.routineRow { display: flex; gap: 12px; align-items: center; min-height: 48px; border-top: 1px solid var(--line); cursor: pointer; }
+.routineRow input { width: 20px; min-height: 20px; accent-color: var(--teal); }
+.ideaCapture { display: grid; grid-template-columns: auto minmax(180px, 1fr) minmax(220px, 1.2fr) auto; align-items: center; gap: 16px; margin-top: 18px; border-bottom: 3px solid var(--purple); }
+.ideaCapture > svg { color: var(--purple); }
+.ideaCapture h2 { font-size: 19px; margin: 4px 0 0; }
+.libraryQuick { display: flex; gap: 10px; margin-bottom: 14px; }
+.libraryQuick select { flex: 1; }
+.plannerForm, .libraryForm, .goalForm { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0 16px; margin-bottom: 18px; }
+.plannerForm .primary, .goalForm .primary { align-self: end; margin-bottom: 17px; }
+.plannerToolbar { display: flex; gap: 8px; margin: 16px 0; }
+.weekColumns { display: grid; grid-template-columns: repeat(7, minmax(210px, 1fr)); overflow-x: auto; border: 1px solid var(--line); border-radius: 20px; background: var(--surface); }
+.dayColumn { min-height: 440px; border-right: 1px solid var(--line); padding: 17px 10px; }
+.dayColumn:last-child { border-right: 0; }
+.dayColumn.isToday { background: var(--sage); }
+.dayColumn > header { display: grid; text-align: center; gap: 2px; padding-bottom: 14px; }
+.dayColumn > header strong { color: var(--teal); text-transform: uppercase; font-size: 12px; }
+.dayColumn > header span { font-size: 17px; }
+.dayColumn > header small { color: var(--muted); }
+.plannerTask { display: grid; grid-template-columns: 30px 1fr; gap: 4px 8px; padding: 10px; border-radius: 12px; margin-bottom: 8px; background: var(--raised); border-left: 3px solid var(--cyan); }
+.plannerTask.fixed { border-color: var(--yellow); }
+.plannerTask.deadline { border-color: var(--clay); }
+.plannerTask.optional { border-color: var(--purple); }
+.plannerTask > button { grid-row: 1 / 4; min-width: 30px; min-height: 30px; width: 30px; height: 30px; padding: 0; }
+.plannerTask strong { font-size: 13px; font-weight: 500; }
+.plannerTask span, .plannerTask small { font-size: 11px; color: var(--muted); display: flex; align-items: center; gap: 3px; }
+.plannerTask.done strong { text-decoration: line-through; opacity: .6; }
+.libraryTabs { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; overflow-x: auto; }
+.libraryTabs button { min-width: 125px; flex-direction: column; border-radius: 15px; font-size: 12px; padding: 12px 8px; }
+.libraryGrid, .goalGrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.libraryItem { border-bottom: 3px solid var(--teal); }
+.libraryGroup { color: var(--teal); font-size: 12px; text-transform: uppercase; letter-spacing: .5px; }
+.libraryItem h3 { margin-bottom: 4px; }
+.integrationNote { color: var(--muted); font-size: 13px; border: 1px dashed var(--line); padding: 13px 16px; border-radius: 12px; }
+.inboxCapture { display: grid; grid-template-columns: auto minmax(200px, 1fr) minmax(220px, 1fr) auto; align-items: center; gap: 18px; border-bottom: 3px solid var(--cyan); }
+.inboxCapture > svg { color: var(--cyan); }
+.inboxCapture h2, .inboxCapture p { margin: 4px 0; }
+.inboxList { display: grid; gap: 10px; }
+.inboxItem { display: flex; justify-content: space-between; align-items: center; gap: 16px; }
+.inboxItem h3 { margin: 0; }
+.inboxItem time { color: var(--muted); font-size: 12px; }
+.goalCard { border-bottom: 3px solid var(--yellow); }
+.goalTop, .progressMeta { display: flex; justify-content: space-between; align-items: center; }
+.goalTop > svg { color: var(--yellow); }
+.progressMeta { color: var(--muted); font-size: 12px; margin: 20px 0 5px; }
+.progressRange { padding: 0; accent-color: var(--teal); }
+.goalCard .next { border-top: 1px solid var(--line); margin-top: 20px; padding-top: 15px; }
+.weeklyCheckin { margin-top: 18px; border-bottom: 3px solid var(--purple); }
+.checkinGrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 16px; }
+
+@media (max-width: 900px) {
+  .ideaCapture, .inboxCapture { grid-template-columns: auto 1fr; }
+  .ideaCapture input, .inboxCapture input { grid-column: 1 / -1; }
+  .ideaCapture button, .inboxCapture button { grid-column: 2; justify-self: end; }
+  .plannerForm, .libraryForm, .goalForm { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .libraryTabs { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 700px) {
+  .sidebar nav { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+  .sidebar nav a { font-size: 10px; }
+  .weatherCard { align-items: flex-start; flex-wrap: wrap; }
+  .weatherCard > div:nth-child(2) { min-width: calc(100% - 80px); }
+  .weatherCard > button { margin-left: 78px; }
+  .temperature { margin-left: auto; }
+  .checkinBand > div { min-width: 190px; }
+  .libraryQuick { flex-direction: column; }
+  .plannerForm, .libraryForm, .goalForm, .libraryGrid, .goalGrid, .checkinGrid { grid-template-columns: 1fr; }
+  .libraryTabs { display: flex; }
+  .inboxItem { align-items: flex-start; flex-direction: column; }
+  .ideaCapture, .inboxCapture { grid-template-columns: auto 1fr; }
+  .ideaCapture button, .inboxCapture button { grid-column: 1 / -1; width: 100%; }
+  .weekColumns { margin-left: -20px; margin-right: -20px; border-radius: 0; border-left: 0; border-right: 0; }
+}
