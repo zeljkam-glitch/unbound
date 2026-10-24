@@ -1246,6 +1246,7 @@ body:has(.livingShell) { background:#171a1b; }
 .livingShell .seasonalIdeas button { justify-content:flex-start; width:max-content; max-width:100%; margin-top:auto; padding:8px 0; border:0; color:var(--muted); font-size:10px; }
 .livingShell .seasonalIdeas button:disabled { opacity:.55; }
 .livingShell .plannerSeason { max-width:430px; margin:18px 0 0; color:rgba(255,255,255,.7); font-size:12px; line-height:1.45; }
+.livingShell .todayGrid.hasWeekly { grid-template-columns:repeat(3,minmax(0,1fr)); }
 .livingDayDetails .tasksSection { margin-bottom:40px; }
 
 .livingShell:not(.tab-today) #main > :not(.pageIntro):not(.notice):not(.settings):not(footer) { margin-left:clamp(28px,4vw,64px); margin-right:clamp(28px,4vw,64px); }
@@ -1308,6 +1309,7 @@ body:has(.livingShell) { background:#171a1b; }
   .livingShell .seasonalIdeas article { min-height:190px; padding:26px 0; border-right:0; border-bottom:1px solid var(--line); }
   .livingShell .seasonalIdeas article:last-child { border-bottom:0; }
   .livingShell .seasonalIdeas p { margin:26px 0 20px; }
+  .livingShell .todayGrid.hasWeekly { grid-template-columns:1fr; }
   .livingShell:not(.tab-today) #main > :not(.pageIntro):not(.notice):not(.settings):not(footer) { margin-left:18px; margin-right:18px; }
   .livingShell .plannerHero { min-height:420px; margin-left:0!important; margin-right:0!important; padding:28px 18px; }
   .livingShell .libraryMood { min-height:430px; }
@@ -1388,7 +1390,7 @@ body:has(.livingShell) { background:#171a1b; }
 .composerActions { display: flex; justify-content: flex-end; gap: 6px; }
 .composerActions button { min-height: 36px; padding: 7px 10px; font-size: 11px; }
 .srOnly { position: absolute !important; width: 1px !important; height: 1px !important; padding: 0 !important; margin: -1px !important; overflow: hidden !important; clip: rect(0,0,0,0) !important; white-space: nowrap !important; border: 0 !important; }
-.libraryTabs { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; overflow-x: auto; }
+.libraryTabs { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; overflow-x: auto; }
 .libraryTabs button { min-width: 125px; flex-direction: column; border-radius: 15px; font-size: 12px; padding: 12px 8px; }
 .libraryGrid, .goalGrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
 .libraryItem { border-bottom: 3px solid var(--teal); }

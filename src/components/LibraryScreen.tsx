@@ -1,6 +1,6 @@
 import { newId } from "@/lib/id";
 import { localDate, type LibraryCategory, type LibraryItem, type State } from "@/lib/model";
-import { ArrowSquareOut, Bag, Basket, Check, ForkKnife, Heart, MapTrifold, PersonSimpleRun, Plus, Trash } from "@phosphor-icons/react";
+import { ArrowSquareOut, Bag, Basket, Check, ForkKnife, Heart, ListChecks, MapTrifold, PersonSimpleRun, Plus, Trash } from "@phosphor-icons/react";
 import Image from "next/image";
 import { useState } from "react";
 import type { Update } from "@/lib/ui-types";
@@ -15,8 +15,9 @@ const categories: Array<{ id: LibraryCategory; label: string; note: string }> = 
   { id: "meals", label: "Meals", note: "Things you actually like to cook" },
   { id: "workouts", label: "Workouts", note: "Gym, home, running and stretching" },
   { id: "bags", label: "Bag checklists", note: "Gym, faculty, travel and repeat trips" },
+  { id: "lists", label: "Lists", note: "Wishes, home, money and things to return to" },
 ];
-const icons = { shopping: Basket, "feel-good": Heart, places: MapTrifold, meals: ForkKnife, workouts: PersonSimpleRun, bags: Bag };
+const icons = { shopping: Basket, "feel-good": Heart, places: MapTrifold, meals: ForkKnife, workouts: PersonSimpleRun, bags: Bag, lists: ListChecks };
 const workoutLinks = [
   { title: "Yoga with Adriene · 20 min", noteHr: "Početnička joga bez opreme", noteEn: "Beginner yoga with no equipment", url: "https://www.youtube.com/watch?v=v7AYKMP6rOE" },
   { title: "Move With Nicole", noteHr: "Pilates i lagani treninzi kod kuće", noteEn: "Pilates and gentle home workouts", url: "https://www.youtube.com/@MoveWithNicole/playlists" },
@@ -35,6 +36,7 @@ export default function LibraryScreen({ state, update }: { state: State; update:
     { id: "meals" as const, label: "Jela", note: "Ono što doista voliš kuhati" },
     { id: "workouts" as const, label: "Vježbanje", note: "Teretana, dom, trčanje i istezanje" },
     { id: "bags" as const, label: "Popisi za torbe", note: "Faks, teretana i putovanja koja se ponavljaju" },
+    { id: "lists" as const, label: "Popisi", note: "Želje, dom, novac i stvari kojima se želiš vratiti" },
   ] : categories;
   const [category, setCategory] = useState<LibraryCategory>("shopping");
   const [editing, setEditing] = useState<LibraryItem | null>(null);
@@ -71,14 +73,14 @@ export default function LibraryScreen({ state, update }: { state: State; update:
     }}>
       <Field label={hr ? "Naziv" : "Name"}><input name="title" required defaultValue={editing?.title} autoFocus /></Field>
       <Field label={category === "shopping" ? (hr ? "Trgovina" : "Store") : (hr ? "Skupina ili kontekst" : "Group or context")}><input name="group" required defaultValue={editing?.group} placeholder={category === "shopping" ? "dm, Lidl, plac…" : (hr ? "Doma, brzo, vikend…" : "Home, quick, weekend…")} /></Field>
-      <Field label={category === "meals" ? (hr ? "Sastojci, odvojeni zarezom" : "Ingredients, separated by commas") : (category === "shopping" || category === "bags" ? (hr ? "Stavke, odvojene zarezom" : "Items, separated by commas") : (hr ? "Detalji ili opis" : "Details or description"))}><textarea name="details" rows={3} defaultValue={editing?.details} /></Field>
+      <Field label={category === "meals" ? (hr ? "Sastojci, odvojeni zarezom" : "Ingredients, separated by commas") : (category === "shopping" || category === "bags" || category === "lists" ? (hr ? "Stavke, odvojene zarezom" : "Items, separated by commas") : (hr ? "Detalji ili opis" : "Details or description"))}><textarea name="details" rows={3} defaultValue={editing?.details} /></Field>
       {category === "workouts" && <Field label={hr ? "YouTube poveznica" : "YouTube link"}><input type="url" name="url" defaultValue={editing?.url} placeholder="https://youtube.com/…" /></Field>}
       <div className="actions"><button className="primary">{hr ? "Spremi" : "Save item"}</button><button type="button" onClick={() => setOpen(false)}>{hr ? "Odustani" : "Cancel"}</button></div>
     </form>}
     {category === "workouts" && <section className="workoutLinks" aria-label={hr ? "YouTube treninzi" : "YouTube workouts"}><div className="sectionLabel">YOUTUBE</div>{workoutLinks.map((link) => <a key={link.url} href={link.url} target="_blank" rel="noreferrer"><span><strong>{link.title}</strong><small>{hr ? link.noteHr : link.noteEn}</small></span><ArrowSquareOut /></a>)}</section>}
     {!items.length && <Empty>{hr ? "Ova će lista postati tvoja s vremenom. Za početak dodaj jednu stvar koju bi stvarno odabrala." : "This list will become yours over time. Begin with one thing you would genuinely choose."}</Empty>}
     <div className="libraryGrid">{items.map((item) => {
-      const checklist = category === "shopping" || category === "bags" ? checklistParts(item.details) : [];
+      const checklist = category === "shopping" || category === "bags" || category === "lists" ? checklistParts(item.details) : [];
       const checked = state.libraryChecked?.[item.id] || [];
       return <article className="card libraryItem" key={item.id}><span className="libraryGroup">{item.group}</span><h3>{item.title}</h3>{checklist.length ? <div className="libraryChecklist">{checklist.map((entry) => <label key={entry}><input type="checkbox" checked={checked.includes(entry)} onChange={() => toggleChecklist(item.id, entry)} /><span>{entry}</span></label>)}</div> : <p>{item.details || (hr ? "Nema dodatnih bilješki." : "No extra notes.")}</p>}{item.url && <a className="libraryUrl" href={item.url} target="_blank" rel="noreferrer">{hr ? "Otvori video" : "Open video"} <ArrowSquareOut /></a>}<div className="actions"><button className="primary" onClick={() => addToday(item)}>{addedId === item.id ? <Check /> : <Plus />} {addedId === item.id ? (hr ? "Dodano za danas" : "Added for today") : (hr ? "Dodaj danas" : "Add today")}</button>{addedId === item.id && <a className="buttonLink" href="#today">{hr ? "Otvori Danas" : "Open Today"}</a>}<button onClick={() => { setEditing(item); setOpen(true); window.scrollTo({ top: 0 }); }}>{hr ? "Uredi" : "Edit"}</button><button aria-label={(hr ? "Obriši " : "Delete ") + item.title} onClick={() => update((current) => ({ ...current, library: current.library.filter((existing) => existing.id !== item.id) }))}><Trash /></button></div></article>;
     })}</div>

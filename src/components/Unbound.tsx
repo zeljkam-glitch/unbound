@@ -2,7 +2,7 @@
 import { Books, CalendarDots, Clock, GearSix, Target, Tray, X } from "@phosphor-icons/react";
 import { useEffect, useRef, useState } from "react";
 import type { Tab } from "@/lib/ui-types";
-import { demo, localDate, migrateState, type State } from "@/lib/model";
+import { demo, localDate, mergePrivateLists, migrateState, type State } from "@/lib/model";
 import TodayScreen from "./TodayScreen";
 import PlannerScreen from "./PlannerScreen";
 import LibraryScreen from "./LibraryScreen";
@@ -74,6 +74,18 @@ export default function Unbound() {
   const exportData = () => {
     if (!state) return; const url = URL.createObjectURL(new Blob([JSON.stringify(state, null, 2)], { type: "application/json" })); const a = document.createElement("a"); a.href = url; a.download = "unbound-" + today + ".json"; a.click(); URL.revokeObjectURL(url); setMessage(locale === "hr" ? "Tvoja je kopija preuzeta." : "Your copy has been downloaded.");
   };
+  const importPrivateLists = async (file?: File) => {
+    if (!file || !state) return;
+    try {
+      const merged = mergePrivateLists(state, JSON.parse(await file.text()));
+      if (!merged) throw new Error("Invalid private list file");
+      setState(merged);
+      setMessage(locale === "hr" ? "Privatne rutine i popisi su uvezeni. Ostaju samo u ovom pregledniku." : "Private routines and lists were imported. They stay in this browser only.");
+      setSettings(false);
+    } catch {
+      setMessage(locale === "hr" ? "Ovu datoteku nismo mogli uvesti." : "We could not import this file.");
+    }
+  };
   if (!state) return <main className="loading">Otvaram tvoj prostor…</main>;
   const Icon = icons[tab];
   const hr = locale === "hr";
@@ -84,7 +96,7 @@ export default function Unbound() {
       <main id="main">
         <div className="pageIntro"><div className="eyebrow">{String(tabs.indexOf(tab) + 1).padStart(2, "0")} / {labels[locale][tab].toUpperCase()}</div><h1>{intros[locale][tab][0]}</h1><p className="intro">{intros[locale][tab][1]}</p></div>
         {message && <div className="notice" role="status">{message}<button aria-label={hr ? "Zatvori poruku" : "Dismiss"} onClick={() => setMessage("")}><X /></button></div>}
-        {settings && <section className="card settings"><h2>{hr ? "Tvoj prostor i podaci" : "Your space and data"}</h2><p>{hr ? "Sve ostaje u ovom pregledniku. Kopiju možeš preuzeti kad god poželiš." : "Everything stays in this browser. You can download a copy whenever you like."}</p><div className="actions"><button className="primary" onClick={exportData}>{hr ? "Preuzmi kopiju" : "Download a copy"}</button><button onClick={() => setConfirmReset(true)}>{hr ? "Obriši sve podatke" : "Reset all data"}</button><button onClick={() => setSettings(false)}>{hr ? "Zatvori" : "Close"}</button></div>{confirmReset && <div role="alert"><p>{hr ? "Obrisati sve planove, liste, ciljeve i osvrte? Ovo se ne može vratiti." : "Delete every plan, list, goal and check-in? This cannot be undone."}</p><button className="danger" onClick={() => { storageBlocked.current = false; setState({ ...demo(locale), tasks: [], thoughts: [], projects: [], library: [], inbox: [], routineDone: {}, anchors: {}, energies: {}, focus: {}, reflections: {}, weeklyCheckins: {} }); setConfirmReset(false); setMessage(hr ? "Tvoj je prostor očišćen." : "Your space has been cleared."); }}>{hr ? "Da, obriši sve" : "Delete everything"}</button><button onClick={() => setConfirmReset(false)}>{hr ? "Zadrži moje podatke" : "Keep my data"}</button></div>}</section>}
+        {settings && <section className="card settings"><h2>{hr ? "Tvoj prostor i podaci" : "Your space and data"}</h2><p>{hr ? "Sve ostaje u ovom pregledniku. Kopiju možeš preuzeti kad god poželiš." : "Everything stays in this browser. You can download a copy whenever you like."}</p><div className="actions"><button className="primary" onClick={exportData}>{hr ? "Preuzmi kopiju" : "Download a copy"}</button><label className="buttonLink">{hr ? "Uvezi privatne popise" : "Import private lists"}<input className="srOnly" aria-label={hr ? "Datoteka privatnih popisa" : "Private lists file"} type="file" accept="application/json,.json" onChange={(event) => importPrivateLists(event.target.files?.[0])} /></label><button onClick={() => setConfirmReset(true)}>{hr ? "Obriši sve podatke" : "Reset all data"}</button><button onClick={() => setSettings(false)}>{hr ? "Zatvori" : "Close"}</button></div>{confirmReset && <div role="alert"><p>{hr ? "Obrisati sve planove, liste, ciljeve i osvrte? Ovo se ne može vratiti." : "Delete every plan, list, goal and check-in? This cannot be undone."}</p><button className="danger" onClick={() => { storageBlocked.current = false; setState({ ...demo(locale), tasks: [], thoughts: [], projects: [], library: [], inbox: [], routines: [], routineDone: {}, anchors: {}, energies: {}, focus: {}, reflections: {}, weeklyCheckins: {} }); setConfirmReset(false); setMessage(hr ? "Tvoj je prostor očišćen." : "Your space has been cleared."); }}>{hr ? "Da, obriši sve" : "Delete everything"}</button><button onClick={() => setConfirmReset(false)}>{hr ? "Zadrži moje podatke" : "Keep my data"}</button></div>}</section>}
         {tab === "Today" && <TodayScreen state={state} today={today} update={update} />}
         {tab === "Planner" && <PlannerScreen state={state} update={update} />}
         {tab === "Library" && <LibraryScreen state={state} update={update} />}

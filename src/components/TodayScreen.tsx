@@ -47,10 +47,10 @@ export default function TodayScreen({ state, today, update }: { state: State; to
       {(["low", "steady", "high"] as const).map((v) => <button key={v} aria-pressed={state.energies[today] === v} onClick={() => update((s) => ({ ...s, energies: { ...s.energies, [today]: s.energies[today] === v ? "" : v } }))}>{hr ? "Energija" : "Energy"} · {hr ? ({ low: "niska", steady: "stabilna", high: "visoka" } as const)[v] : v}</button>)}
       {(["scattered", "present", "focused"] as const).map((v) => <button key={v} aria-pressed={state.focus[today] === v} onClick={() => update((s) => ({ ...s, focus: { ...s.focus, [today]: s.focus[today] === v ? "" : v } }))}>{hr ? "Fokus" : "Focus"} · {hr ? ({ scattered: "raspršen", present: "prisutan", focused: "dubok" } as const)[v] : v}</button>)}
     </div>
-    <div className="todayGrid">
-      {(["morning", "evening"] as const).map((period) => <section className="card routineCard" key={period}>
-        <div className="sectionLabel">{period === "morning" ? (hr ? "JUTARNJI RITUAL" : "MORNING ROUTINE") : (hr ? "VEČERNJI RITUAL" : "EVENING ROUTINE")}</div>
-        <h2>{period === "morning" ? (hr ? "Počni polako." : "Begin gently.") : (hr ? "Olakšaj si sutra." : "Make tomorrow lighter.")}</h2>
+    <div className={`todayGrid ${todayDate.getDay() === 0 ? "hasWeekly" : ""}`}>
+      {(["morning", "evening", ...(todayDate.getDay() === 0 ? ["weekly" as const] : [])] as const).map((period) => <section className="card routineCard" key={period}>
+        <div className="sectionLabel">{period === "morning" ? (hr ? "JUTARNJA RUTINA" : "MORNING ROUTINE") : period === "evening" ? (hr ? "VEČERNJA RUTINA" : "EVENING ROUTINE") : (hr ? "NEDJELJNA RUTINA" : "SUNDAY ROUTINE")}</div>
+        <h2>{period === "morning" ? (hr ? "Počni polako." : "Begin gently.") : period === "evening" ? (hr ? "Olakšaj si sutra." : "Make tomorrow lighter.") : (hr ? "Vrati tjedan na njegovo mjesto." : "Set the week gently back in place.")}</h2>
         {state.routines.filter((r) => r.period === period).map((r) => <label className="routineRow" key={r.id}><input type="checkbox" checked={done.includes(r.id)} onChange={() => toggleRoutine(r.id)} /><span>{r.title}</span></label>)}
       </section>)}
     </div>

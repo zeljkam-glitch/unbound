@@ -115,4 +115,17 @@ describe("UNBOUND Life OS interactions", () => {
     expect(screen.getByRole("heading", { name: "The wider view of your quarter." })).toBeTruthy();
     expect(screen.getByRole("button", { name: "Year" })).toBeTruthy();
   });
+  it("imports private routines, bag checklists, and grouped lists", async () => {
+    await open();
+    fireEvent.click(screen.getByRole("button", { name: "Your space and data" }));
+    const file = new File([JSON.stringify({ routines: [{ id: "private-morning", title: "Private morning step", period: "morning" }], library: [{ id: "private-bag", category: "bags", title: "My private bag", group: "Travel", details: "One, Two" }, { id: "private-list", category: "lists", title: "My private list", group: "Later", details: "Three, Four" }] })], "private-lists.json", { type: "application/json" });
+    fireEvent.change(screen.getByLabelText("Private lists file"), { target: { files: [file] } });
+    expect(await screen.findByText("Private routines and lists were imported. They stay in this browser only.")).toBeTruthy();
+    expect(screen.getByLabelText("Private morning step")).toBeTruthy();
+    go(/My Library/);
+    fireEvent.click(screen.getByRole("button", { name: "Bag checklists" }));
+    expect(screen.getByRole("heading", { name: "My private bag" })).toBeTruthy();
+    fireEvent.click(screen.getByRole("button", { name: "Lists" }));
+    expect(screen.getByRole("heading", { name: "My private list" })).toBeTruthy();
+  });
 });

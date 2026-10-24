@@ -8,14 +8,14 @@ export type Task = {
 export type Thought = { id: string; text: string; createdAt: string };
 export type Goal = { id: string; name: string; outcome: string; deadline: string; nextAction: string; status: "active" | "paused" | "completed"; place: string; progress: number };
 export type Project = Goal;
-export type LibraryCategory = "shopping" | "feel-good" | "places" | "meals" | "workouts" | "bags";
+export type LibraryCategory = "shopping" | "feel-good" | "places" | "meals" | "workouts" | "bags" | "lists";
 export type LibraryItem = { id: string; category: LibraryCategory; title: string; group: string; details: string; url?: string };
 export type InboxItem = { id: string; text: string; createdAt: string };
-export type Routine = { id: string; title: string; period: "morning" | "evening" };
+export type Routine = { id: string; title: string; period: "morning" | "evening" | "weekly" };
 export type WeeklyCheckin = { win: string; learned: string; next: string; energy: string };
 export type TwelveWeekPlan = { startDate: string; outcome: string; why: string; leadAction: string; weeklyTarget: number; weeks: Record<string, { focus: string; reviewed: boolean }> };
 export type State = {
-  version: 2; tasks: Task[]; thoughts: Thought[]; projects: Goal[]; library: LibraryItem[];
+  version: 3; tasks: Task[]; thoughts: Thought[]; projects: Goal[]; library: LibraryItem[];
   inbox: InboxItem[]; routines: Routine[]; routineDone: Record<string, string[]>;
   anchors: Record<string, string>; energies: Record<string, string>; focus: Record<string, string>;
   reflections: Record<string, { autonomy: string; satisfaction: string; pressure: string }>;
@@ -26,6 +26,19 @@ export type State = {
 
 export const localDate = (d = new Date()) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 export function addDays(date: string, amount: number) { const [y, m, day] = date.split("-").map(Number); const d = new Date(y, m - 1, day); d.setDate(d.getDate() + amount); return localDate(d); }
+export function mergePrivateLists(state: State, value: unknown): State | null {
+  if (!value || typeof value !== "object") return null;
+  const bundle = value as { routines?: unknown; library?: unknown };
+  if (!Array.isArray(bundle.routines) || !Array.isArray(bundle.library)) return null;
+  const routines = bundle.routines.filter((item): item is Routine => !!item && typeof item === "object" && typeof item.id === "string" && typeof item.title === "string" && ["morning", "evening", "weekly"].includes(item.period));
+  const library = bundle.library.filter((item): item is LibraryItem => !!item && typeof item === "object" && typeof item.id === "string" && typeof item.title === "string" && typeof item.group === "string" && typeof item.details === "string" && ["shopping", "feel-good", "places", "meals", "workouts", "bags", "lists"].includes(item.category));
+  if (routines.length !== bundle.routines.length || library.length !== bundle.library.length) return null;
+  return {
+    ...state,
+    routines: [...state.routines.filter((item) => !routines.some((incoming) => incoming.id === item.id)), ...routines],
+    library: [...state.library.filter((item) => !library.some((incoming) => incoming.id === item.id)), ...library],
+  };
+}
 export function deadlineState(date: string, today = localDate()) { return !date ? "Flexible" : date < today ? "Overdue" : date === today ? "Today" : "Upcoming"; }
 export function deadlineAwareness(deadline: string, today = localDate(), locale: "hr" | "en" = "en") {
   if (!deadline) return null;
@@ -65,12 +78,13 @@ export function suggest(tasks: Task[], energy: string, today = localDate()) {
     return urgent(a) - urgent(b) || (energy === "low" ? Number(a.effort !== "light") - Number(b.effort !== "light") : 0) || (a.time || "99:99").localeCompare(b.time || "99:99") || (a.deadline || "9999").localeCompare(b.deadline || "9999");
   })[0] || null;
 }
+
 const task = (id: string, title: string, patch: Partial<Task> = {}): Task => ({ id, title, date: localDate(), time: "", deadline: "", kind: "flexible", duration: 30, repeat: "none", area: "anywhere", effort: "light", completedAt: null, notes: "", tags: [], projectId: "", ...patch });
 export function demo(locale: "hr" | "en" = "en"): State {
   const today = localDate();
   const hr = locale === "hr";
   return {
-    version: 2,
+    version: 3,
     tasks: [
       task("t1", hr ? "Oblikuj prvo poglavlje UNBOUND-a" : "Shape the first chapter of UNBOUND", { effort: "deep", duration: 60, area: "home" }),
       task("t2", hr ? "Pošalji prijedlog u koji vjeruješ" : "Send the proposal you believe in", { deadline: today, kind: "deadline", duration: 20 }),
@@ -102,7 +116,8 @@ function migrateTask(t: Record<string, unknown>): Task { return task(String(t.id
 export function migrateState(value: unknown): State | null {
   if (!value || typeof value !== "object") return null;
   const v = value as Record<string, unknown>;
-  if (v.version === 2 && isState(v)) return v;
+  if (v.version === 3 && isState(v)) return v;
+  if (v.version === 2 && Array.isArray(v.tasks) && Array.isArray(v.projects) && Array.isArray(v.library) && Array.isArray(v.routines)) return { ...(v as unknown as State), version: 3 };
   if (v.version !== 1 || !Array.isArray(v.tasks) || !Array.isArray(v.projects)) return null;
   const fresh = demo();
   return { ...fresh,
@@ -115,5 +130,5 @@ export function migrateState(value: unknown): State | null {
 export function isState(value: unknown): value is State {
   if (!value || typeof value !== "object") return false;
   const v = value as State;
-  return v.version === 2 && Array.isArray(v.tasks) && v.tasks.every((t) => typeof t.id === "string" && typeof t.title === "string" && ["fixed", "deadline", "flexible", "optional"].includes(t.kind)) && Array.isArray(v.thoughts) && Array.isArray(v.projects) && Array.isArray(v.library) && Array.isArray(v.inbox) && Array.isArray(v.routines) && !!v.routineDone && !!v.anchors && !!v.energies && !!v.focus && !!v.reflections && !!v.weeklyCheckins;
+  return v.version === 3 && Array.isArray(v.tasks) && v.tasks.every((t) => typeof t.id === "string" && typeof t.title === "string" && ["fixed", "deadline", "flexible", "optional"].includes(t.kind)) && Array.isArray(v.thoughts) && Array.isArray(v.projects) && Array.isArray(v.library) && Array.isArray(v.inbox) && Array.isArray(v.routines) && !!v.routineDone && !!v.anchors && !!v.energies && !!v.focus && !!v.reflections && !!v.weeklyCheckins;
 }
