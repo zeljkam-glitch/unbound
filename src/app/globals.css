@@ -1698,3 +1698,188 @@ body:has(.livingShell) { background:#171a1b; }
   .livingShell .reportMetric { min-height:150px; }
   .livingShell .reportInsight { padding:24px 20px; }
 }
+
+/* Cohesive editorial refinement: weekly rhythm, library, inbox and quiet details. */
+.livingShell .sectionLabel {
+  justify-content:flex-start;
+  align-items:center;
+  gap:9px;
+}
+
+/* The week reads as seven calm rows, not seven compressed dashboard columns. */
+.quietShell.livingShell .weekColumns {
+  display:block;
+  overflow:visible;
+  border-width:1px 0 0;
+  background:transparent;
+}
+.quietShell.livingShell .dayColumn {
+  display:grid;
+  grid-template-columns:minmax(150px,190px) minmax(0,1fr);
+  min-height:190px;
+  padding:0;
+  border-right:0;
+  border-bottom:1px solid #bcb9b1;
+  background:transparent;
+}
+.quietShell.livingShell .dayColumn.isToday {
+  background:linear-gradient(90deg,#e1ddd4 0,#e1ddd4 190px,rgba(225,221,212,.35) 190px,rgba(225,221,212,.35) 100%);
+}
+.quietShell.livingShell .dayColumn > header {
+  align-content:start;
+  justify-items:start;
+  gap:7px;
+  padding:30px 24px;
+  text-align:left;
+  border-right:1px solid #cbc8c0;
+}
+.quietShell.livingShell .dayColumn > header strong { color:#71242f; font-size:11px; letter-spacing:.18em; }
+.quietShell.livingShell .dayColumn > header span { font-size:25px; font-weight:300; }
+.quietShell.livingShell .dayColumn > header small { max-width:15ch; color:#676d6b; font-size:11px; line-height:1.5; }
+.quietShell.livingShell .dayColumn > div {
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  align-content:start;
+  gap:14px;
+  padding:24px;
+}
+.quietShell.livingShell .dayColumn > div > .quiet { grid-column:1/-1; margin:8px 0; }
+.quietShell.livingShell .plannerTask {
+  align-content:start;
+  min-height:184px;
+  margin:0;
+  padding:18px;
+  background:#f5f3ee;
+  border:1px solid #c6c3bb;
+  border-left:2px solid #8a7145;
+  cursor:grab;
+}
+.quietShell.livingShell .plannerTask.fixed { background:#e3e6e5; border-left-color:#52666e; }
+.quietShell.livingShell .plannerTask.flexible { background:#e8e6e0; border-left-color:#8a7145; }
+.quietShell.livingShell .plannerTask.optional { background:rgba(245,243,238,.45); border-left-color:#8b8275; }
+.quietShell.livingShell .plannerTask.deadline {
+  background:#ede3e2;
+  border-color:#c9b5b7;
+  border-left:2px solid #71242f;
+  color:#24211e;
+}
+.quietShell.livingShell .plannerTask .deadline {
+  grid-column:2;
+  width:100%;
+  padding:8px 0 0;
+  border-top:1px solid #c7c0b9;
+  background:transparent;
+}
+.quietShell.livingShell .plannerTask .moveTaskButton { align-self:end; }
+.quietShell.livingShell .addDayTask,
+.quietShell.livingShell .inlineTaskComposer {
+  grid-column:2;
+  width:auto;
+  margin:0 24px 24px;
+}
+.quietShell.livingShell .addDayTask { justify-self:start; padding-left:0; padding-right:0; border:0; border-bottom:1px solid #a8a49b; }
+
+/* Library tabs and headings share one intentional alignment. */
+.quietShell.livingShell .libraryTabs {
+  grid-template-columns:repeat(9,minmax(116px,1fr));
+  gap:0;
+  padding:0;
+  border-top:1px solid var(--ink);
+  border-bottom:1px solid var(--ink);
+  scrollbar-width:thin;
+}
+.quietShell.livingShell .libraryTabs button {
+  min-width:116px;
+  min-height:112px;
+  gap:12px;
+  padding:18px 12px;
+  border-right:1px solid var(--line);
+  color:#555d5b;
+  line-height:1.3;
+}
+.quietShell.livingShell .libraryTabs button svg { color:#6f665a; }
+.quietShell.livingShell .libraryTabs button[aria-pressed="true"] { background:#e2ddd3; color:#201f1c; }
+.quietShell.livingShell .libraryTabs button[aria-pressed="true"] svg { color:#71242f; }
+.quietShell.livingShell.tab-library .sectionHead {
+  align-items:flex-end;
+  margin:0;
+  padding:48px 0 28px;
+  border-bottom:1px solid var(--line);
+}
+.quietShell.livingShell.tab-library .sectionHead > div { min-width:0; max-width:760px; }
+.quietShell.livingShell.tab-library .sectionHead h2 {
+  max-width:100%;
+  margin:14px 0 8px;
+  font-size:clamp(40px,5vw,68px);
+  font-weight:300;
+  line-height:1.02;
+  letter-spacing:-.045em;
+  overflow-wrap:anywhere;
+}
+.quietShell.livingShell.tab-library .sectionHead p { margin:0; font-size:14px; }
+.quietShell.livingShell .quoteItem h3 { max-width:19ch; font-size:clamp(24px,2.6vw,38px); font-weight:300; line-height:1.12; }
+
+/* Inbox capture is an open writing line instead of a framed widget. */
+.quietShell.livingShell .inboxCapture {
+  display:grid;
+  grid-template-columns:44px minmax(240px,.85fr) minmax(260px,1fr) auto;
+  align-items:center;
+  gap:24px;
+  margin-top:36px;
+  padding:34px 0;
+  border:0;
+  border-top:1px solid var(--ink);
+  border-bottom:1px solid var(--ink);
+  background:transparent;
+}
+.quietShell.livingShell .inboxCapture > svg { color:#71242f; }
+.quietShell.livingShell .inboxCapture h2 { margin:8px 0 5px; font-size:28px; font-weight:300; }
+.quietShell.livingShell .inboxCapture p { max-width:34ch; margin:0; color:#606664; font-size:13px; }
+.quietShell.livingShell .inboxCapture input { min-height:54px; padding:12px 0; border:0; border-bottom:1px solid #aaa79f; background:transparent; }
+.quietShell.livingShell .inboxCapture .primary { min-height:54px; padding-left:22px; padding-right:22px; }
+.quietShell.livingShell.tab-inbox .pageIntro h1 { max-width:12ch; line-height:.94; }
+
+/* Today: controls stay compact; quote and footer remain readable. */
+.quietShell.livingShell .libraryQuick {
+  align-self:start;
+  align-items:center;
+  min-height:96px;
+  padding:20px 28px;
+}
+.quietShell.livingShell .libraryQuick select { height:54px; min-height:54px; padding:0 16px; background:transparent; }
+.quietShell.livingShell .libraryQuick button { min-height:54px; }
+.quietShell.livingShell .livingAgenda blockquote { font-size:18px; line-height:1.45; }
+.quietShell.livingShell .livingAgenda blockquote cite { color:#555b59; font-size:9px; }
+.quietShell.livingShell footer {
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  min-height:86px;
+  color:#d0d2ce;
+  font-size:13px;
+  letter-spacing:.02em;
+}
+.quietShell.livingShell footer svg { color:#aaa69d; }
+.quietShell.livingShell footer em { color:#c4a574; }
+
+@media(max-width:1050px){
+  .quietShell.livingShell .dayColumn > div { grid-template-columns:1fr; }
+  .quietShell.livingShell .inboxCapture { grid-template-columns:44px 1fr; }
+  .quietShell.livingShell .inboxCapture input { grid-column:1/-1; }
+  .quietShell.livingShell .inboxCapture .primary { grid-column:2; justify-self:end; }
+}
+@media(max-width:760px){
+  .quietShell.livingShell .dayColumn { grid-template-columns:1fr; }
+  .quietShell.livingShell .dayColumn.isToday { background:#e1ddd4; }
+  .quietShell.livingShell .dayColumn > header { border-right:0; border-bottom:1px solid #cbc8c0; }
+  .quietShell.livingShell .dayColumn > header small { max-width:none; }
+  .quietShell.livingShell .dayColumn > div { padding:18px 0; }
+  .quietShell.livingShell .plannerTask { min-height:0; }
+  .quietShell.livingShell .addDayTask,.quietShell.livingShell .inlineTaskComposer { grid-column:1; margin:0 0 22px; }
+  .quietShell.livingShell.tab-library .sectionHead { align-items:flex-start; flex-direction:column; }
+  .quietShell.livingShell.tab-library .sectionHead > button { width:100%; }
+  .quietShell.livingShell .inboxCapture { grid-template-columns:1fr; gap:18px; }
+  .quietShell.livingShell .inboxCapture input,.quietShell.livingShell .inboxCapture .primary { grid-column:1; width:100%; justify-self:stretch; }
+  .quietShell.livingShell footer { align-items:flex-start; flex-direction:column; }
+}

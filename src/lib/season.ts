@@ -37,6 +37,40 @@ const seasonNames: Record<SeasonLocale, Record<Season, string>> = {
   en: { winter: "winter", spring: "spring", summer: "summer", autumn: "autumn" },
 };
 
+const seasonIdeas: Record<SeasonLocale, Record<Season, string[]>> = {
+  hr: {
+    winter: ["Potraži dnevno svjetlo prije podneva", "Pripremi mirnu večer prije nego što se dan ubrza", "Odaberi jedan topao obrok bez kompliciranja", "Provjeri što ti ovaj tjedan stvarno čuva energiju"],
+    spring: ["Prošetaj rutom na kojoj možeš primijetiti što se promijenilo", "Otvori prostor za jednu novu ideju", "Ponesi dio dana van", "Odaberi jednu stvar koju želiš osvježiti"],
+    summer: ["Pomakni jednu obavezu iz najtoplijeg dijela dana", "Sačuvaj vrijeme za vodu, hlad ili večernji zrak", "Ostavi jedan obrok jednostavnim", "Odaberi mali izlazak bez gustog plana"],
+    autumn: ["Ponesi sloj više i ostavi planu rezervu", "Odaberi jedno mjesto koje želiš učiniti toplijim", "Sačuvaj malo dnevnog svjetla za sebe", "Pripremi nešto zbog čega će sutrašnje jutro biti lakše"],
+  },
+  en: {
+    winter: ["Find the daylight before noon", "Prepare a quiet evening before the day speeds up", "Choose one warm meal without overcomplicating it", "Notice what genuinely protects your energy this week"],
+    spring: ["Walk somewhere you can notice what has changed", "Make room for one new idea", "Take part of the day outside", "Choose one thing you want to refresh"],
+    summer: ["Move one commitment away from the hottest part of the day", "Keep some time for water, shade or evening air", "Let one meal stay simple", "Choose a small outing without a packed plan"],
+    autumn: ["Take an extra layer and leave the plan some margin", "Choose one place you want to make warmer", "Keep a little daylight for yourself", "Prepare something that will make tomorrow morning easier"],
+  },
+};
+
+const holidays: Array<{ month: number; day: number; hr: string; en: string }> = [
+  { month: 0, day: 1, hr: "Nova godina je danas — ostavi plan nježnijim nego inače", en: "It is New Year’s Day — let the plan be gentler than usual" },
+  { month: 0, day: 6, hr: "Blagdan je — provjeri što danas može ostati neplanirano", en: "It is a holiday — notice what can remain unplanned today" },
+  { month: 4, day: 1, hr: "Praznik rada je blizu — napravi mjesta za odmor koji ne treba zaslužiti", en: "Labour Day is close — make room for rest you do not have to earn" },
+  { month: 4, day: 30, hr: "Blagdan je blizu — unaprijed zaštiti vrijeme za ljude i mjesta koja voliš", en: "A holiday is close — protect time for people and places you love" },
+  { month: 7, day: 5, hr: "Blagdan je blizu — provjeri promet, radno vrijeme i ostavi više prostora", en: "A holiday is close — check travel and opening hours, then leave more room" },
+  { month: 10, day: 1, hr: "Blagdan je blizu — ostavi vrijeme za sjećanje i sporiji ritam", en: "A holiday is close — leave room for remembrance and a slower pace" },
+  { month: 11, day: 24, hr: "Badnjak je blizu — odaberi ono što donosi toplinu, ne još obaveza", en: "Christmas Eve is close — choose what brings warmth, not more obligations" },
+  { month: 11, day: 25, hr: "Božić je blizu — neka dovoljno zaista bude dovoljno", en: "Christmas is close — let enough genuinely be enough" },
+  { month: 11, day: 31, hr: "Kraj godine je blizu — sačuvaj jednu stvar koju želiš ponijeti dalje", en: "The year is ending — keep one thing you want to carry forward" },
+];
+
+const weatherIdea = (code: number | undefined, locale: SeasonLocale) => {
+  if (code === undefined) return "";
+  if (code >= 51 && code <= 99) return locale === "hr" ? "Vrijeme traži zaklon — odaberi toplu unutarnju verziju dana" : "The weather calls for shelter — choose a warm indoor version of the day";
+  if (code <= 3) return locale === "hr" ? "Dan ima svjetla — sačuvaj barem deset minuta vani" : "There is light today — keep at least ten minutes for outside";
+  return locale === "hr" ? "Vrijeme je promjenjivo — planiraj nježnu rezervnu opciju" : "The weather is changeable — keep a gentle alternative ready";
+};
+
 export function seasonForMonth(month: number): Season {
   if (month === 11 || month <= 1) return "winter";
   if (month <= 4) return "spring";
@@ -44,9 +78,20 @@ export function seasonForMonth(month: number): Season {
   return "autumn";
 }
 
-export function seasonalContext(date = new Date(), locale: SeasonLocale = "en") {
+export function seasonalContext(date = new Date(), locale: SeasonLocale = "en", context: { obligations?: string[]; weatherCode?: number } = {}) {
   const monthIndex = date.getMonth();
-  const [month, theme, ...ideas] = months[locale][monthIndex];
+  const [month, theme, ...monthlyIdeas] = months[locale][monthIndex];
   const season = seasonForMonth(monthIndex);
+  const dayKey = Math.floor(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()) / 86400000);
+  const pool = [...monthlyIdeas, ...seasonIdeas[locale][season]];
+  const rotating = Array.from({ length: 3 }, (_, index) => pool[(dayKey + index * 2) % pool.length]);
+  const upcomingHoliday = holidays.find((holiday) => {
+    const target = new Date(date.getFullYear(), holiday.month, holiday.day);
+    const difference = Math.round((target.getTime() - new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime()) / 86400000);
+    return difference >= 0 && difference <= 3;
+  });
+  const obligation = context.obligations?.[0] ? (locale === "hr" ? `Ostavi malo prostora prije obaveze: ${context.obligations[0]}` : `Leave a little room before: ${context.obligations[0]}`) : "";
+  const specific = [upcomingHoliday ? upcomingHoliday[locale] : "", weatherIdea(context.weatherCode, locale), obligation].filter(Boolean);
+  const ideas = [...specific, ...rotating].filter((idea, index, all) => all.indexOf(idea) === index).slice(0, 3);
   return { month, monthIndex, season, seasonName: seasonNames[locale][season], theme, ideas };
 }

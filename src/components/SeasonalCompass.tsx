@@ -7,10 +7,10 @@ import { seasonalContext } from "@/lib/season";
 import type { Update } from "@/lib/ui-types";
 import { useLanguage } from "./LanguageContext";
 
-export default function SeasonalCompass({ update }: { update: Update }) {
+export default function SeasonalCompass({ update, today, obligations, weatherCode }: { update: Update; today: string; obligations: string[]; weatherCode?: number }) {
   const { locale } = useLanguage();
   const hr = locale === "hr";
-  const seasonal = seasonalContext(new Date(), locale);
+  const seasonal = seasonalContext(new Date(`${today}T12:00:00`), locale, { obligations, weatherCode });
   const [saved, setSaved] = useState<string[]>([]);
   const save = (idea: string) => {
     update((state) => ({ ...state, thoughts: [{ id: newId(), text: idea, createdAt: new Date().toISOString() }, ...state.thoughts] }));

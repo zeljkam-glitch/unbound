@@ -13,10 +13,14 @@ import BeautifulMomentsPanel from "./BeautifulMomentsPanel";
 export default function TodayScreen({ state, today, update }: { state: State; today: string; update: Update }) {
   const [idea, setIdea] = useState("");
   const [libraryId, setLibraryId] = useState("");
+  const [weatherCode, setWeatherCode] = useState<number>();
   const { locale } = useLanguage();
   const hr = locale === "hr";
   const todayTasks = state.tasks.filter((t) => taskOccursOn(t, today));
   const todayDate = new Date(`${today}T12:00:00`);
+  const quotes = state.library.filter((item) => item.category === "quotes");
+  const quoteSeed = [...today].reduce((total, character) => total + character.charCodeAt(0), 0);
+  const dailyQuote = quotes.length ? quotes[quoteSeed % quotes.length] : { title: hr ? "Pažnja je početak odanosti." : "Attention is the beginning of devotion.", group: "Mary Oliver" };
   const done = state.routineDone[today] || [];
   const toggleRoutine = (id: string) => update((s) => ({ ...s, routineDone: { ...s.routineDone, [today]: done.includes(id) ? done.filter((x) => x !== id) : [...done, id] } }));
   const addLibrary = () => {
@@ -37,12 +41,12 @@ export default function TodayScreen({ state, today, update }: { state: State; to
         <div className="livingAgendaHead"><div><span className="sectionLabel">{hr ? `DANAS / ${todayTasks.length} TRENUTKA` : `TODAY / ${todayTasks.length} MOMENTS`}</span><h2>{hr ? "Tvoj dan, u jednom mirnom pogledu." : "Your day, in one quiet view."}</h2></div></div>
         <div className="livingAgendaList">{todayTasks.map((t) => <button className={t.completedAt ? "isDone" : ""} key={t.id} aria-label={(t.completedAt ? (hr ? "Ponovno otvori " : "Reopen ") : (hr ? "Dovrši " : "Complete ")) + t.title} aria-pressed={!!t.completedAt} onClick={() => update((s) => ({ ...s, tasks: s.tasks.map((x) => x.id === t.id ? toggleTask(x) : x) }))}><time>{t.time || "—"}</time><span><strong>{t.title}</strong><small>{t.duration} min · {hr ? ({ home: "doma", outside: "vani", anywhere: "bilo gdje" } as const)[t.area] : t.area}</small></span><i>{t.completedAt ? <Check /> : null}</i></button>)}</div>
         {!todayTasks.length && <p className="livingEmpty">{hr ? "Dan je još otvoren." : "The day is still open."}</p>}
-        <blockquote>{hr ? "Pažnja je početak odanosti." : "Attention is the beginning of devotion."}<cite>Mary Oliver</cite></blockquote>
+        <blockquote>{dailyQuote.title}<cite>{dailyQuote.group}</cite></blockquote>
       </aside>
     </section>
     <div className="livingDayDetails">
-    <WeatherCard />
-    <SeasonalCompass update={update} />
+    <WeatherCard onWeatherChange={setWeatherCode} />
+    <SeasonalCompass update={update} today={today} weatherCode={weatherCode} obligations={todayTasks.filter((task) => !task.completedAt).map((task) => task.title)} />
     <div className="checkinBand">
       <div><span className="sectionLabel">{hr ? "KAKO STIŽEŠ U OVAJ DAN?" : "HOW ARE YOU ARRIVING?"}</span><strong>{hr ? "Neka plan prati tvoj stvarni kapacitet." : "Let the plan reflect your actual capacity."}</strong></div>
       {(["low", "steady", "high"] as const).map((v) => <button key={v} aria-pressed={state.energies[today] === v} onClick={() => update((s) => ({ ...s, energies: { ...s.energies, [today]: s.energies[today] === v ? "" : v } }))}>{hr ? "Energija" : "Energy"} · {hr ? ({ low: "niska", steady: "stabilna", high: "visoka" } as const)[v] : v}</button>)}

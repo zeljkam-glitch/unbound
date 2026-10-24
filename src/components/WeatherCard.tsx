@@ -7,7 +7,7 @@ type ForecastResponse = { current: { temperature_2m: number; weather_code: numbe
 type GeocodingResponse = { results?: Array<{ latitude: number; longitude: number; name: string; country?: string }> };
 const weatherLabel = (code: number, hr: boolean) => code === 0 ? (hr ? "Vedro" : "Clear") : code <= 3 ? (hr ? "Djelomice oblačno" : "Partly cloudy") : code <= 48 ? (hr ? "Magla" : "Foggy") : code <= 67 ? (hr ? "Kiša" : "Rain") : code <= 77 ? (hr ? "Snijeg" : "Snow") : code <= 82 ? (hr ? "Pljuskovi" : "Showers") : code <= 99 ? (hr ? "Nevrijeme" : "Storms") : (hr ? "Vrijeme nije dostupno" : "Conditions unavailable");
 
-export default function WeatherCard() {
+export default function WeatherCard({ onWeatherChange }: { onWeatherChange?: (code: number) => void }) {
   const { locale } = useLanguage();
   const hr = locale === "hr";
   const [weather, setWeather] = useState<Weather | null>(null);
@@ -21,6 +21,7 @@ export default function WeatherCard() {
     if (!response.ok) throw new Error("forecast");
     const data = await response.json() as ForecastResponse;
     setWeather({ temperature: Math.round(data.current.temperature_2m), high: Math.round(data.daily.temperature_2m_max[0]), low: Math.round(data.daily.temperature_2m_min[0]), code: data.current.weather_code, place });
+    onWeatherChange?.(data.current.weather_code);
     setStatus("idle");
   };
 

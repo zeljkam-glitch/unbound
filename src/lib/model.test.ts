@@ -10,6 +10,7 @@ import {
   isState,
   parseTaskInput,
   weekStart,
+  migrateState,
 } from "./model";
 import { matchingBeautifulMoments } from "./beautiful-moments";
 describe("personal freedom model", () => {
@@ -75,5 +76,12 @@ describe("personal freedom model", () => {
     const matches = matchingBeautifulMoments(moments, { feelings: ["inspired"], maxMinutes: 60, maxBudget: 0, energy: "low", setting: "inside", badWeatherOnly: true, condition: "gentle" });
     expect(matches.length).toBeGreaterThan(0);
     expect(matches.every((moment) => moment.duration <= 60 && moment.budget === 0 && moment.energy === "low" && moment.badWeather)).toBe(true);
+  });
+  it("migrates the curated daily-thought collection without losing existing data", () => {
+    const previous = { ...demo("hr"), version: 4, library: demo("hr").library.filter((item) => item.category !== "quotes") };
+    const migrated = migrateState(previous);
+    expect(migrated?.version).toBe(5);
+    expect(migrated?.library.some((item) => item.category === "quotes")).toBe(true);
+    expect(migrated?.tasks).toHaveLength(previous.tasks.length);
   });
 });
