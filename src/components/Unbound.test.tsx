@@ -24,6 +24,13 @@ describe("UNBOUND Life OS interactions", () => {
     fireEvent.click(screen.getByRole("button", { name: "Add task" }));
     expect(screen.getByText("Doctor appointment")).toBeTruthy();
     await waitFor(() => expect(JSON.parse(localStorage.getItem("unbound.v1")!).tasks.find((t: { title: string }) => t.title === "Doctor appointment")).toMatchObject({ time: "10:30", duration: 45, tags: ["health"], notes: "Bring results" }));
+    const originalDate = JSON.parse(localStorage.getItem("unbound.v1")!).tasks.find((t: { title: string }) => t.title === "Doctor appointment").date;
+    fireEvent.click(screen.getByRole("button", { name: "Move Doctor appointment" }));
+    fireEvent.click(screen.getByRole("button", { name: "Move one day later" }));
+    await waitFor(() => expect(JSON.parse(localStorage.getItem("unbound.v1")!).tasks.find((t: { title: string }) => t.title === "Doctor appointment").date).not.toBe(originalDate));
+    fireEvent.click(screen.getByRole("button", { name: "Move Doctor appointment" }));
+    fireEvent.click(screen.getByRole("button", { name: "Remove time" }));
+    await waitFor(() => expect(JSON.parse(localStorage.getItem("unbound.v1")!).tasks.find((t: { title: string }) => t.title === "Doctor appointment")).toMatchObject({ time: "" }));
   });
   it("captures a quick idea without turning it into a task", async () => {
     await open();

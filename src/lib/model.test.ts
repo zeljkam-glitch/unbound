@@ -3,6 +3,7 @@ import {
   demo,
   toggleTask,
   deadlineState,
+  deadlineAwareness,
   captureThought,
   pauseProject,
   suggest,
@@ -23,6 +24,12 @@ describe("personal freedom model", () => {
     expect(deadlineState("2026-10-21", "2026-10-21")).toBe("Today");
     expect(deadlineState("2026-10-22", "2026-10-21")).toBe("Upcoming");
     expect(deadlineState("")).toBe("Flexible");
+  });
+  it("makes an approaching or missed deadline understandable", () => {
+    expect(deadlineAwareness("2026-10-24", "2026-10-24")).toEqual({ tone: "today", label: "Due today" });
+    expect(deadlineAwareness("2026-10-26", "2026-10-24")).toEqual({ tone: "soon", label: "Due in 2 days" });
+    expect(deadlineAwareness("2026-10-23", "2026-10-24")).toEqual({ tone: "overdue", label: "Overdue by 1 day" });
+    expect(deadlineAwareness("", "2026-10-24")).toBeNull();
   });
   it("captures timestamped thoughts and rejects whitespace", () => {
     expect(captureThought("  an idea  ", "id", "now")).toEqual({

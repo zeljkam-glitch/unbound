@@ -1069,14 +1069,26 @@ footer em {
 .dayColumn > header strong { color: var(--teal); text-transform: uppercase; font-size: 12px; }
 .dayColumn > header span { font-size: 17px; }
 .dayColumn > header small { color: var(--muted); font-size: 10px; white-space: nowrap; }
-.plannerTask { display: grid; grid-template-columns: 30px 1fr; gap: 4px 8px; padding: 10px; border-radius: 12px; margin-bottom: 8px; background: var(--raised); border-left: 3px solid var(--cyan); }
+.plannerTask { display: grid; grid-template-columns: 30px 1fr; gap: 4px 8px; padding: 10px; border-radius: 12px; margin-bottom: 8px; background: var(--raised); border-left: 3px solid var(--cyan); cursor: grab; }
+.plannerTask:active { cursor: grabbing; }
 .plannerTask.fixed { border-color: var(--yellow); }
 .plannerTask.deadline { border-color: var(--clay); }
 .plannerTask.optional { border-color: var(--purple); }
-.plannerTask > button { grid-row: 1 / 6; min-width: 30px; min-height: 30px; width: 30px; height: 30px; padding: 0; }
+.plannerTask > button:first-child { grid-row: 1 / 8; min-width: 30px; min-height: 30px; width: 30px; height: 30px; padding: 0; }
 .plannerTask strong { font-size: 13px; font-weight: 500; }
 .plannerTask span, .plannerTask small { font-size: 11px; color: var(--muted); display: flex; align-items: center; gap: 3px; }
 .plannerTask.done strong { text-decoration: line-through; opacity: .6; }
+.plannerTask.afterDeadline { border-color: var(--clay); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--clay) 30%, transparent); }
+.plannerTask .deadline { font-weight: 600; }
+.plannerTask .deadline.future { color: var(--muted); }
+.plannerTask .deadline.soon, .plannerTask .deadline.today { color: var(--yellow); }
+.plannerTask .deadline.overdue { color: var(--clay); }
+.plannerTask .moveTaskButton { grid-column: 2; grid-row: auto; width: fit-content; min-height: 30px; padding: 5px 8px; margin-top: 4px; font-size: 11px; color: var(--muted); }
+.moveTaskPanel { grid-column: 1 / -1; display: grid; gap: 8px; padding-top: 10px; margin-top: 5px; border-top: 1px solid var(--line); cursor: default; }
+.moveTaskPanel label { margin: 0; font-size: 10px; color: var(--muted); }
+.moveTaskPanel input { min-height: 38px; padding: 8px; margin-top: 4px; font-size: 12px; }
+.moveQuick { display: flex; justify-content: space-between; gap: 6px; }
+.moveQuick button { min-height: 34px; padding: 6px 8px; font-size: 10px; }
 .addDayTask { width: 100%; margin-top: 8px; border-color: transparent; color: var(--muted); }
 .addDayTask:hover { border-color: var(--line); color: var(--text); }
 .inlineTaskComposer { display: grid; gap: 8px; padding: 10px; margin-top: 8px; border: 1px solid var(--line); border-radius: 14px; background: var(--raised); box-shadow: 0 14px 34px rgba(0,0,0,.22); }

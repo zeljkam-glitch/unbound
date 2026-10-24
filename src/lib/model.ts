@@ -24,6 +24,14 @@ export type State = {
 export const localDate = (d = new Date()) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 export function addDays(date: string, amount: number) { const [y, m, day] = date.split("-").map(Number); const d = new Date(y, m - 1, day); d.setDate(d.getDate() + amount); return localDate(d); }
 export function deadlineState(date: string, today = localDate()) { return !date ? "Flexible" : date < today ? "Overdue" : date === today ? "Today" : "Upcoming"; }
+export function deadlineAwareness(deadline: string, today = localDate()) {
+  if (!deadline) return null;
+  const from = new Date(`${today}T12:00:00`), to = new Date(`${deadline}T12:00:00`);
+  const days = Math.round((to.getTime() - from.getTime()) / 86400000);
+  if (days < 0) return { tone: "overdue" as const, label: `Overdue by ${Math.abs(days)} ${Math.abs(days) === 1 ? "day" : "days"}` };
+  if (days === 0) return { tone: "today" as const, label: "Due today" };
+  return { tone: days <= 3 ? "soon" as const : "future" as const, label: `Due in ${days} ${days === 1 ? "day" : "days"}` };
+}
 export function toggleTask(task: Task, now = new Date().toISOString()): Task { return { ...task, completedAt: task.completedAt ? null : now }; }
 export function captureThought(text: string, id: string, now = new Date().toISOString()): Thought | null { return text.trim() ? { id, text: text.trim(), createdAt: now } : null; }
 export function parseTaskInput(value: string, fallbackDuration = 30) {

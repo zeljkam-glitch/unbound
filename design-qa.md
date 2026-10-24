@@ -9,7 +9,7 @@
 
 ## Comparison evidence
 
-The source screenshots were opened and reviewed. They establish the functional model: persistent navigation, multiple day columns, planned/available context, per-day inline task creation, duration estimates, notes, repeating tasks, projects and tags.
+The source screenshots were opened and reviewed. They establish the functional model: persistent navigation, multiple day columns, planned/available context, movable task cards, per-day inline task creation, duration estimates, notes, repeating tasks, projects and tags.
 
 The implementation could not be captured in a browser because no browser surface was available in the build environment. TypeScript validation, 14 interaction/domain tests and the production build pass, but build success is not treated as visual verification.
 
@@ -28,9 +28,9 @@ The implementation could not be captured in a browser because no browser surface
 ## Automated evidence
 
 - TypeScript check: passed.
-- Automated tests: 15 passed.
+- Automated tests: 16 passed.
 - Production build: passed.
-- Core flows covered: Planner inline task creation/persistence, quick syntax parsing, time/duration/tag/note capture, quick idea capture, add from Library to Today, Inbox to Today, routine persistence, weekly check-in persistence.
+- Core flows covered: Planner inline task creation/persistence, day reassignment, optional-time removal, deadline labels, quick syntax parsing, time/duration/tag/note capture, quick idea capture, add from Library to Today, Inbox to Today, routine persistence, weekly check-in persistence.
 
 ## Final result
 
