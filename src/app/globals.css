@@ -1467,3 +1467,34 @@ body:has(.livingShell) { background:#171a1b; }
 @media(max-width:760px){
   .quietShell.livingShell .plannerHero { min-height:420px; margin-left:0!important; margin-right:0!important; padding:28px 18px; }
 }
+
+/* Annotation refinements: breathing type and useful integrations. */
+.livingShell .cycleIntro h2 { line-height:1.04; letter-spacing:-.045em; }
+.livingShell .cycleScore strong { letter-spacing:.035em; }
+.livingShell .cycleScore strong span { margin-left:.08em; letter-spacing:.08em; }
+.livingShell .weatherActions { display:grid; min-width:min(410px,100%); gap:9px; }
+.livingShell .weatherActions > button { justify-self:end; }
+.livingShell .weatherActions form { display:grid; grid-template-columns:minmax(130px,1fr) auto; gap:8px; }
+.livingShell .weatherActions input { min-height:44px; margin:0; }
+.livingShell .workoutLinks { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); margin:0 0 28px; border-top:1px solid var(--ink); border-left:1px solid var(--line); }
+.livingShell .workoutLinks > .sectionLabel { grid-column:1/-1; padding:16px 18px; border-right:1px solid var(--line); border-bottom:1px solid var(--line); }
+.livingShell .workoutLinks a { display:flex; justify-content:space-between; gap:20px; min-height:116px; padding:20px 18px; color:var(--ink); border-right:1px solid var(--line); border-bottom:1px solid var(--line); }
+.livingShell .workoutLinks strong,.livingShell .workoutLinks small { display:block; }
+.livingShell .workoutLinks strong { margin-bottom:8px; font-weight:400; }
+.livingShell .workoutLinks small { color:var(--muted); line-height:1.4; }
+.livingShell .libraryChecklist { display:grid; gap:0; margin:14px 0 20px; border-top:1px solid var(--line); }
+.livingShell .libraryChecklist label { display:flex; align-items:center; gap:10px; min-height:40px; border-bottom:1px solid var(--line); cursor:pointer; }
+.livingShell .libraryChecklist input { width:17px; min-height:17px; margin:0; accent-color:#71242f; }
+.livingShell .libraryChecklist input:checked + span { color:var(--muted); text-decoration:line-through; }
+.livingShell .libraryUrl { display:inline-flex; align-items:center; gap:7px; margin:0 0 18px; color:#71242f; }
+.livingShell .buttonLink { display:inline-flex; align-items:center; justify-content:center; gap:7px; min-height:44px; padding:10px 15px; color:var(--ink); border:1px solid var(--line); }
+
+@media(max-width:900px){
+  .livingShell .weatherActions { width:100%; min-width:0; }
+  .livingShell .workoutLinks { grid-template-columns:1fr; }
+}
+@media(max-width:700px){
+  .livingShell .cycleIntro h2 { font-size:50px; line-height:1.06; }
+  .livingShell .weatherActions form { grid-template-columns:1fr; }
+  .livingShell .weatherActions > button,.livingShell .weatherActions form button { width:100%; justify-self:stretch; }
+}

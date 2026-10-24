@@ -10,10 +10,11 @@
 
 The source screenshot and both original local prototypes were inspected before implementation. Their assets are used directly: the interior photograph on Today, the stairwell image in My Library and the train-window image in Planner. The functional application remains the source of truth for tasks, durations, deadlines, routines, library items, inbox, goals, weekly check-ins and the optional 12-week view.
 
-The rebuilt application could not be captured in a browser because neither the in-app browser nor Chrome was available in this environment. TypeScript validation, all 18 interaction/domain tests and the production build pass, but build success is not treated as visual verification.
+The rebuilt application could not be captured in a browser because neither the in-app browser nor Chrome was available in this environment. TypeScript validation, all 21 interaction/domain tests and the production build pass, but build success is not treated as visual verification.
 
 ## Findings
 
+- Browser annotations resolved in this iteration: 12-week heading line spacing, score kerning, a more emotional Library photograph, visible Library-to-Today success, shopping and bag checklists, meal-to-shopping-list creation, YouTube workout links, Google/Apple Calendar handoff, and a manual-city weather fallback.
 - [P2] Browser-rendered desktop comparison unavailable.
   - Impact: the Today split ratio, photographic crop, sidebar rhythm and seven-column Planner still need direct inspection.
   - Fix: compare Today, Planner and My Library with the Living Frames source at 1440 × 900.
@@ -27,7 +28,7 @@ The rebuilt application could not be captured in a browser because neither the i
 ## Automated evidence
 
 - TypeScript check: passed.
-- Automated tests: 18 passed.
+- Automated tests: 21 passed.
 - Production build: passed.
 - Core flows covered: bilingual switching, Planner task creation and persistence, moving tasks between days, removing a task time, deadline labels, 12-week outcome and review persistence, quick idea capture, Library-to-Today, Inbox-to-Today, routines and weekly check-ins.
 

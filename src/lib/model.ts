@@ -9,7 +9,7 @@ export type Thought = { id: string; text: string; createdAt: string };
 export type Goal = { id: string; name: string; outcome: string; deadline: string; nextAction: string; status: "active" | "paused" | "completed"; place: string; progress: number };
 export type Project = Goal;
 export type LibraryCategory = "shopping" | "feel-good" | "places" | "meals" | "workouts" | "bags";
-export type LibraryItem = { id: string; category: LibraryCategory; title: string; group: string; details: string };
+export type LibraryItem = { id: string; category: LibraryCategory; title: string; group: string; details: string; url?: string };
 export type InboxItem = { id: string; text: string; createdAt: string };
 export type Routine = { id: string; title: string; period: "morning" | "evening" };
 export type WeeklyCheckin = { win: string; learned: string; next: string; energy: string };
@@ -20,6 +20,7 @@ export type State = {
   anchors: Record<string, string>; energies: Record<string, string>; focus: Record<string, string>;
   reflections: Record<string, { autonomy: string; satisfaction: string; pressure: string }>;
   weeklyCheckins: Record<string, WeeklyCheckin>;
+  libraryChecked?: Record<string, string[]>;
   twelveWeek?: TwelveWeekPlan;
 };
 
@@ -83,7 +84,7 @@ export function demo(locale: "hr" | "en" = "en"): State {
       { id: "l3", category: "feel-good", title: hr ? "Šetnja uz rijeku" : "Walk by the river", group: "10–30 min", details: hr ? "Mobitel može ostati u torbi" : "The phone can stay in your bag" },
       { id: "l4", category: "places", title: hr ? "Stari grad Samobor" : "Samobor old town", group: hr ? "Mali bijeg" : "Local escape", details: hr ? "Kava i polagana šetnja" : "Coffee and a slow walk" },
       { id: "l5", category: "meals", title: hr ? "Rižoto s povrćem" : "Vegetable risotto", group: hr ? "Večera" : "Dinner", details: "35 min" },
-      { id: "l6", category: "workouts", title: hr ? "Lagani trening cijelog tijela" : "Gentle full body", group: hr ? "Doma" : "Home", details: hr ? "Zagrijavanje, 3 kruga, istezanje" : "Warm-up, 3 rounds, stretch" },
+      { id: "l6", category: "workouts", title: hr ? "Joga za početnike · 20 min" : "Beginner yoga · 20 min", group: hr ? "Doma · YouTube" : "Home · YouTube", details: hr ? "Miran početak bez opreme" : "A gentle start with no equipment", url: "https://www.youtube.com/watch?v=v7AYKMP6rOE" },
       { id: "l7", category: "bags", title: hr ? "Torba za teretanu" : "Gym bag", group: hr ? "Popis" : "Checklist", details: hr ? "Tenisice, ručnik, voda, slušalice" : "Shoes, towel, water, headphones" },
     ],
     inbox: [{ id: "i1", text: hr ? "Provjeri raspored na faksu za sljedeći tjedan" : "Check the faculty schedule for next week", createdAt: new Date().toISOString() }],
@@ -93,7 +94,7 @@ export function demo(locale: "hr" | "en" = "en"): State {
       { id: "r3", title: hr ? "Spremi torbu za sutra" : "Pack tomorrow’s bag", period: "evening" },
       { id: "r4", title: hr ? "Odaberi prvi mali korak za sutra" : "Choose tomorrow’s first small step", period: "evening" },
     ],
-    routineDone: {}, anchors: {}, energies: {}, focus: {}, reflections: {}, weeklyCheckins: {},
+    routineDone: {}, anchors: {}, energies: {}, focus: {}, reflections: {}, weeklyCheckins: {}, libraryChecked: {},
     twelveWeek: { startDate: today, outcome: "", why: "", leadAction: "", weeklyTarget: 3, weeks: {} },
   };
 }

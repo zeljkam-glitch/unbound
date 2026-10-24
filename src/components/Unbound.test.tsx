@@ -62,6 +62,19 @@ describe("UNBOUND Life OS interactions", () => {
     fireEvent.click(screen.getByRole("button", { name: "Add today" }));
     expect(screen.getByText("Oat milk")).toBeTruthy();
   });
+  it("confirms when a Library item is added to Today", async () => {
+    await open(); go(/My Library/);
+    fireEvent.click(screen.getAllByRole("button", { name: "Add today" })[0]);
+    expect(screen.getByRole("button", { name: "Added for today" })).toBeTruthy();
+    expect(screen.getByRole("link", { name: "Open Today" })).toBeTruthy();
+  });
+  it("offers a city fallback when browser location is unavailable", async () => {
+    await open();
+    Object.defineProperty(navigator, "geolocation", { configurable: true, value: undefined });
+    fireEvent.click(screen.getByRole("button", { name: "Use my location" }));
+    expect(screen.getByRole("heading", { name: "Location unavailable? Enter a city." })).toBeTruthy();
+    expect(screen.getByLabelText("City for weather")).toBeTruthy();
+  });
   it("captures an inbox item and plans it for today", async () => {
     await open(); go(/Inbox/);
     fireEvent.change(screen.getByLabelText("Inbox item"), { target: { value: "Reply to faculty" } });
@@ -69,6 +82,11 @@ describe("UNBOUND Life OS interactions", () => {
     fireEvent.click(screen.getAllByRole("button", { name: /Plan for today/ })[0]);
     go(/^Today/);
     expect(screen.getByText("Reply to faculty")).toBeTruthy();
+  });
+  it("offers one-way Google and Apple calendar handoff from Inbox", async () => {
+    await open(); go(/Inbox/);
+    expect(screen.getByRole("link", { name: /Google/ }).getAttribute("href")).toContain("calendar.google.com");
+    expect(screen.getByRole("button", { name: /Apple/ })).toBeTruthy();
   });
   it("stores routine and weekly check-in state", async () => {
     await open();
