@@ -26,7 +26,7 @@ export default function TodayScreen({ state, today, update }: { state: State; to
     <AtmosphereFrame today={today} />
     <WeatherCard />
     <div className="checkinBand">
-      <div><span className="sectionLabel">{hr ? "KAKO STIŽEŠ U OVAJ DAN?" : "HOW ARE YOU ARRIVING?"}</span><strong>{hr ? "Neka plan prati tvoju stvarnu snagu." : "Let the plan meet your actual capacity."}</strong></div>
+      <div><span className="sectionLabel">{hr ? "KAKO STIŽEŠ U OVAJ DAN?" : "HOW ARE YOU ARRIVING?"}</span><strong>{hr ? "Neka plan prati tvoj stvarni kapacitet." : "Let the plan reflect your actual capacity."}</strong></div>
       {(["low", "steady", "high"] as const).map((v) => <button key={v} aria-pressed={state.energies[today] === v} onClick={() => update((s) => ({ ...s, energies: { ...s.energies, [today]: s.energies[today] === v ? "" : v } }))}>{hr ? "Energija" : "Energy"} · {hr ? ({ low: "niska", steady: "stabilna", high: "visoka" } as const)[v] : v}</button>)}
       {(["scattered", "present", "focused"] as const).map((v) => <button key={v} aria-pressed={state.focus[today] === v} onClick={() => update((s) => ({ ...s, focus: { ...s.focus, [today]: s.focus[today] === v ? "" : v } }))}>{hr ? "Fokus" : "Focus"} · {hr ? ({ scattered: "raspršen", present: "prisutan", focused: "dubok" } as const)[v] : v}</button>)}
     </div>

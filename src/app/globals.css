@@ -1069,6 +1069,7 @@ html[data-theme="quiet"] button { border-radius:0; }
 .quietShell .libraryQuick,.quietShell .taskList,.quietShell .tasksSection > .empty { grid-column:2; margin:0; }
 .quietShell .libraryQuick { padding:22px 30px; border-bottom:1px solid var(--line); }
 .quietShell .task { padding:24px 30px; border-bottom:1px solid var(--line); border-radius:0; background:transparent; }
+.quietShell .task::after { display:none; }
 
 /* Weekly planner: paper grid, restrained cards and optional long-horizon view. */
 .plannerHero { display:grid; grid-template-columns:1fr auto auto; gap:20px; align-items:end; padding:48px 0 34px; }

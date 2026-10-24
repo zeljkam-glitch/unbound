@@ -1,11 +1,11 @@
 import Image from "next/image";
 
 const frames = [
-  "/mood/dusk-in-motion.jpg",
   "/mood/rain-window.jpg",
   "/mood/cafe-focus.jpg",
   "/mood/rainy-street.jpg",
   "/mood/quiet-cafe.jpg",
+  "/mood/studio-light.jpg",
 ];
 
 export default function AtmosphereFrame({ today }: { today: string }) {
