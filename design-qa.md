@@ -25,8 +25,8 @@ The implementation could not be captured in a browser because neither the in-app
   - Impact: location denial and successful Open-Meteo responses are implemented but require a real browser permission check.
   - Fix: test allow and deny states on the deployed HTTPS URL.
 - [P2] Photography and language switching could not be compared in a rendered browser.
-  - Impact: the new Today mood window, Atlas image treatment and longer Croatian labels need direct desktop and mobile inspection.
-  - Fix: check HR and EN at 1440 × 900 and 393 × 852, including all five mood choices.
+  - Impact: the automatic Today atmosphere frame, Atlas image treatment and longer Croatian labels need direct desktop and mobile inspection.
+  - Fix: check HR and EN at 1440 × 900 and 393 × 852. Confirm that photography reads as atmosphere, never as another control.
 
 ## Automated evidence
 

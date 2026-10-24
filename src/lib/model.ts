@@ -21,7 +21,6 @@ export type State = {
   reflections: Record<string, { autonomy: string; satisfaction: string; pressure: string }>;
   weeklyCheckins: Record<string, WeeklyCheckin>;
   twelveWeek?: TwelveWeekPlan;
-  moods?: Record<string, string>;
 };
 
 export const localDate = (d = new Date()) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;

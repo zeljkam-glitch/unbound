@@ -5,7 +5,7 @@ import { useState } from "react";
 import type { Update } from "@/lib/ui-types";
 import WeatherCard from "./WeatherCard";
 import { Empty } from "./Primitives";
-import MoodWindow from "./MoodWindow";
+import AtmosphereFrame from "./AtmosphereFrame";
 import { useLanguage } from "./LanguageContext";
 
 export default function TodayScreen({ state, today, update }: { state: State; today: string; update: Update }) {
@@ -23,7 +23,7 @@ export default function TodayScreen({ state, today, update }: { state: State; to
     setLibraryId("");
   };
   return <>
-    <MoodWindow state={state} today={today} update={update} />
+    <AtmosphereFrame today={today} />
     <WeatherCard />
     <div className="checkinBand">
       <div><span className="sectionLabel">{hr ? "KAKO STIŽEŠ U OVAJ DAN?" : "HOW ARE YOU ARRIVING?"}</span><strong>{hr ? "Neka plan prati tvoju stvarnu snagu." : "Let the plan meet your actual capacity."}</strong></div>
