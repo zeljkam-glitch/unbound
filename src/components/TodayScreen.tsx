@@ -1,6 +1,6 @@
 import { newId } from "@/lib/id";
 import { taskOccursOn, toggleTask, type State } from "@/lib/model";
-import { Check, Lightbulb, Plus, Sparkle } from "@phosphor-icons/react";
+import { ArrowRight, Check, NotePencil, Plus } from "@phosphor-icons/react";
 import { useState } from "react";
 import Image from "next/image";
 import type { Update } from "@/lib/ui-types";
@@ -39,7 +39,7 @@ export default function TodayScreen({ state, today, update }: { state: State; to
       </div>
       <aside className="livingAgenda">
         <div className="livingAgendaHead"><div><span className="sectionLabel">{hr ? `DANAS / ${todayTasks.length} TRENUTKA` : `TODAY / ${todayTasks.length} MOMENTS`}</span><h2>{hr ? "Tvoj dan, u jednom mirnom pogledu." : "Your day, in one quiet view."}</h2></div></div>
-        <div className="livingAgendaList">{todayTasks.map((t) => <button className={t.completedAt ? "isDone" : ""} key={t.id} aria-label={(t.completedAt ? (hr ? "Ponovno otvori " : "Reopen ") : (hr ? "Dovrši " : "Complete ")) + t.title} aria-pressed={!!t.completedAt} onClick={() => update((s) => ({ ...s, tasks: s.tasks.map((x) => x.id === t.id ? toggleTask(x) : x) }))}><time>{t.time || "—"}</time><span><strong>{t.title}</strong><small>{t.duration} min · {hr ? ({ home: "doma", outside: "vani", anywhere: "bilo gdje" } as const)[t.area] : t.area}</small></span><i>{t.completedAt ? <Check /> : null}</i></button>)}</div>
+        <div className="livingAgendaList">{todayTasks.map((t) => <button className={t.completedAt ? "isDone" : ""} key={t.id} aria-label={(t.completedAt ? (hr ? "Ponovno otvori " : "Reopen ") : (hr ? "Dovrši " : "Complete ")) + t.title} aria-pressed={!!t.completedAt} onClick={() => update((s) => ({ ...s, tasks: s.tasks.map((x) => x.id === t.id ? toggleTask(x) : x) }))}><time>{t.time || (hr ? "bez satnice" : "open")}</time><span><strong>{t.title}</strong><small>{t.duration} min · {hr ? ({ home: "doma", outside: "vani", anywhere: "bilo gdje" } as const)[t.area] : t.area}</small></span><i>{t.completedAt ? <Check weight="thin" /> : null}</i></button>)}</div>
         {!todayTasks.length && <p className="livingEmpty">{hr ? "Dan je još otvoren." : "The day is still open."}</p>}
         <blockquote>{dailyQuote.title}<cite>{dailyQuote.group}</cite></blockquote>
       </aside>
@@ -61,13 +61,13 @@ export default function TodayScreen({ state, today, update }: { state: State; to
       </section>)}
     </div>
     <section className="card ideaCapture">
-      <Lightbulb size={26} weight="duotone" />
+      <NotePencil size={28} weight="thin" />
       <div><div className="sectionLabel">{hr ? "BRZA BILJEŠKA" : "QUICK IDEA"}</div><h2>{hr ? "Sačuvaj misao prije nego ode." : "Keep the thought before it moves on."}</h2></div>
       <input aria-label={hr ? "Brza bilješka" : "Quick idea"} placeholder={hr ? "Nešto čemu se želiš vratiti…" : "Something worth returning to…"} value={idea} onChange={(e) => setIdea(e.target.value)} />
-      <button className="primary" disabled={!idea.trim()} onClick={() => { update((s) => ({ ...s, thoughts: [{ id: newId(), text: idea.trim(), createdAt: new Date().toISOString() }, ...s.thoughts] })); setIdea(""); }}><Sparkle /> {hr ? "Spremi" : "Save"}</button>
+      <button className="primary" disabled={!idea.trim()} onClick={() => { update((s) => ({ ...s, thoughts: [{ id: newId(), text: idea.trim(), createdAt: new Date().toISOString() }, ...s.thoughts] })); setIdea(""); }}>{hr ? "Spremi" : "Save"} <ArrowRight weight="thin" /></button>
     </section>
     <section className="tasksSection">
-      <div className="sectionHead"><div><div className="sectionLabel">{hr ? "DANAŠNJI PLAN" : "TODAY’S PLAN"}</div><h2>{hr ? "Dovoljno smjera. Dovoljno prostora." : "Enough direction. Enough room."}</h2></div><span className="quiet">{todayTasks.reduce((n, t) => n + t.duration, 0)} {hr ? "min planirano" : "min planned"}</span></div>
+      <div className="sectionHead"><div><div className="sectionLabel">{hr ? "DANAŠNJI PLAN" : "TODAY’S PLAN"}</div><h2>{hr ? "Dodaj samo ono čemu danas želiš napraviti mjesta." : "Add only what you want to make room for today."}</h2></div><span className="quiet">{todayTasks.reduce((n, t) => n + t.duration, 0)} {hr ? "min u planu" : "min in the plan"}</span></div>
       <div className="libraryQuick"><select aria-label={hr ? "Odaberi iz Moje zbirke" : "Choose from My Library"} value={libraryId} onChange={(e) => setLibraryId(e.target.value)}><option value="">{hr ? "Odaberi iz Moje zbirke…" : "Choose from My Library…"}</option>{state.library.map((item) => <option key={item.id} value={item.id}>{item.title} · {item.group}</option>)}</select><button onClick={addLibrary} disabled={!libraryId}><Plus /> {hr ? "Dodaj danas" : "Add today"}</button></div>
       {!todayTasks.length && <Empty>{hr ? "Dan ti je još otvoren. Dodaj nešto iz svoje zbirke ili ga oblikuj u Planeru." : "Your day is still open. Add something from your library or shape it in Planner."}</Empty>}
     </section>

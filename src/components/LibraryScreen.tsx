@@ -32,7 +32,7 @@ const listGuide = [
   { category: "meals" as const, hr: { title: "Želim lakše odlučiti što kuhati ili kupiti", note: "Počni jednim jelom koje stvarno voliš; sastojci mogu postati popis za kupnju." }, en: { title: "I want choosing meals or groceries to feel easier", note: "Begin with one meal you genuinely like; its ingredients can become a shopping list." } },
   { category: "places" as const, hr: { title: "Želim sačuvati mjesto, ideju ili mali bijeg", note: "Zapiši nešto čemu se želiš vratiti, bez obveze da odmah napraviš plan." }, en: { title: "I want to keep a place, idea, or small escape", note: "Save something you want to return to, without having to plan it now." } },
   { category: "feel-good" as const, hr: { title: "Želim otkriti što mi zapravo čini dobro", note: "Počni stvarnim trenutkom u kojem si osjetila malo više mira, radosti ili sebe." }, en: { title: "I want to discover what genuinely feels good", note: "Begin with a real moment when you felt a little more calm, joy, or yourself." } },
-  { category: "lists" as const, hr: { title: "Nešto mi se stalno vraća u glavu", note: "Daj mu vlastiti popis i naziv koji tebi ima smisla — bez zadane kategorije." }, en: { title: "Something keeps returning to my mind", note: "Give it its own list and a name that makes sense to you — no prescribed category." } },
+  { category: "lists" as const, hr: { title: "Nešto mi se stalno vraća u glavu", note: "Daj mu vlastiti popis i naziv koji tebi ima smisla, bez zadane kategorije." }, en: { title: "Something keeps returning to my mind", note: "Give it its own list and a name that makes sense to you, without a prescribed category." } },
 ];
 
 export default function LibraryScreen({ state, update }: { state: State; update: Update }) {

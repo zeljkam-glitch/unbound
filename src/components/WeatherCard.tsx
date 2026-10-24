@@ -1,4 +1,4 @@
-import { CloudSun, MapPin, SpinnerGap, WarningCircle } from "@phosphor-icons/react";
+import { CloudFog, CloudLightning, CloudRain, CloudSnow, CloudSun, MapPinLine, SpinnerGap, SunDim, WarningCircle } from "@phosphor-icons/react";
 import { FormEvent, useState } from "react";
 import { useLanguage } from "./LanguageContext";
 
@@ -6,6 +6,10 @@ type Weather = { temperature: number; high: number; low: number; code: number; p
 type ForecastResponse = { current: { temperature_2m: number; weather_code: number }; daily: { temperature_2m_max: number[]; temperature_2m_min: number[] } };
 type GeocodingResponse = { results?: Array<{ latitude: number; longitude: number; name: string; country?: string }> };
 const weatherLabel = (code: number, hr: boolean) => code === 0 ? (hr ? "Vedro" : "Clear") : code <= 3 ? (hr ? "Djelomice oblačno" : "Partly cloudy") : code <= 48 ? (hr ? "Magla" : "Foggy") : code <= 67 ? (hr ? "Kiša" : "Rain") : code <= 77 ? (hr ? "Snijeg" : "Snow") : code <= 82 ? (hr ? "Pljuskovi" : "Showers") : code <= 99 ? (hr ? "Nevrijeme" : "Storms") : (hr ? "Vrijeme nije dostupno" : "Conditions unavailable");
+const WeatherGlyph = ({ code }: { code?: number }) => {
+  const Icon = code === 0 ? SunDim : code === undefined || code <= 3 ? CloudSun : code <= 48 ? CloudFog : code <= 67 ? CloudRain : code <= 77 ? CloudSnow : code <= 82 ? CloudRain : CloudLightning;
+  return <Icon size={34} weight="thin" />;
+};
 
 export default function WeatherCard({ onWeatherChange }: { onWeatherChange?: (code: number) => void }) {
   const { locale } = useLanguage();
@@ -53,9 +57,9 @@ export default function WeatherCard({ onWeatherChange }: { onWeatherChange?: (co
 
   return (
     <section className="weatherCard card" aria-live="polite">
-      <div className="weatherIcon"><CloudSun size={32} weight="duotone" /></div>
+      <div className="weatherIcon"><WeatherGlyph code={weather?.code} /></div>
       {weather ? <>
-        <div><div className="sectionLabel">{hr ? "DANAŠNJE VRIJEME · UŽIVO" : "TODAY’S WEATHER · LIVE"}</div><h2>{weatherLabel(weather.code, hr)}</h2><p><MapPin size={15} /> {weather.place}</p></div>
+        <div><div className="sectionLabel">{hr ? "DANAŠNJE VRIJEME · UŽIVO" : "TODAY’S WEATHER · LIVE"}</div><h2>{weatherLabel(weather.code, hr)}</h2><p><MapPinLine size={15} weight="thin" /> {weather.place}</p></div>
         <div className="temperature"><strong>{weather.temperature}°</strong><span>{weather.low}° / {weather.high}°C</span></div>
       </> : <>
         <div><div className="sectionLabel">{hr ? "DANAŠNJE VRIJEME" : "TODAY’S WEATHER"}</div><h2>{status === "error" ? (hr ? "Lokacija nije dostupna? Upiši grad." : "Location unavailable? Enter a city.") : (hr ? "Planiraj sa svojim danom." : "Plan with your day.")}</h2><p>{status === "error" ? <><WarningCircle size={15} /> {hr ? "Dopuštenje za lokaciju možda je isključeno. Vrijeme možeš dohvatiti i bez njega." : "Location permission may be off. You can still get the weather without it."}</> : (hr ? "Dopusti lokaciju ili jednostavno upiši grad." : "Allow location or simply enter a city.")}</p></div>

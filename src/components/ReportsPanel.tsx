@@ -46,15 +46,15 @@ export default function ReportsPanel({ state }: { state: State }) {
   const reviews = Object.entries(state.weeklyCheckins).filter(([date, checkin]) => inRange(date, range.start, range.end) && Object.values(checkin).some(Boolean));
   const dateFormat = new Intl.DateTimeFormat(hr ? "hr-HR" : "en-GB", { day: "numeric", month: "short", year: range.start.slice(0, 4) !== range.end.slice(0, 4) ? "numeric" : undefined });
   const parseDate = (date: string) => new Date(`${date}T12:00:00`);
-  const rangeLabel = `${dateFormat.format(parseDate(range.start))} — ${dateFormat.format(parseDate(range.end))}`;
+  const rangeLabel = `${dateFormat.format(parseDate(range.start))} – ${dateFormat.format(parseDate(range.end))}`;
   const periodName = periods.find((item) => item.id === period)!;
   const title = hr
-    ? ({ week: "Tvoj tjedan, bez žurbe.", month: "Tvoj mjesec, nježno sabran.", quarter: "Šira slika tvog kvartala.", year: "Godina kojoj se možeš vratiti." } as const)[period]
+    ? ({ week: "Tvoj tjedan, bez žurbe.", month: "Tvoj mjesec, sabran na jednom mjestu.", quarter: "Šira slika tvog kvartala.", year: "Godina kojoj se možeš vratiti." } as const)[period]
     : ({ week: "Your week, without the rush.", month: "Your month, gently gathered.", quarter: "The wider view of your quarter.", year: "A year you can return to." } as const)[period];
   const insight = completed.length
     ? hr
-      ? `Završila si ${completed.length} ${completed.length === 1 ? "stvar" : "stvari"}. To nije mjera tvoje vrijednosti — samo trag vremena koje si svjesno usmjerila.`
-      : `You completed ${completed.length} ${completed.length === 1 ? "thing" : "things"}. It is not a measure of your worth—only a trace of the time you chose to direct.`
+      ? `Završila si ${completed.length} ${completed.length === 1 ? "stvar" : "stvari"}. To nije mjera tvoje vrijednosti. To je samo trag vremena koje si svjesno usmjerila.`
+      : `You completed ${completed.length} ${completed.length === 1 ? "thing" : "things"}. It is not a measure of your worth. It is only a trace of the time you chose to direct.`
     : hr
       ? "Ovo je mirnije razdoblje ili podaci tek počinju nastajati. I praznina nešto govori: možda je bilo vrijeme za odmor, prilagodbu ili nešto što se ne bilježi."
       : "This was a quieter period, or the story is only beginning to form. Empty space says something too: perhaps it held rest, adjustment, or work that was never recorded.";

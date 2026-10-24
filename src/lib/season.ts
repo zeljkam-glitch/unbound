@@ -7,7 +7,7 @@ const months = {
     ["Veljača", "Čuvaj energiju prije nego stigne proljeće.", "Pronađi svjetlo usred dana", "Javi se osobi uz koju možeš biti svoja", "Dovrši jednu tihu, važnu stvar"],
     ["Ožujak", "Primijeti što se polako vraća.", "Otvori prozor i prošetaj bez cilja", "Posadi ili unesi nešto zeleno", "Vrati jednu ideju koja je čekala"],
     ["Travanj", "Ostavi mjesta za promjenu vremena i planova.", "Planiraj dan s rezervnim putem", "Potraži boju koja ti je nedostajala", "Provedi dvadeset minuta vani"],
-    ["Svibanj", "Slijedi ono što te nježno izvodi van.", "Dogovori susret na otvorenom", "Ponesi bilježnicu u park", "Odaberi jedno mjesto za mali bijeg"],
+    ["Svibanj", "Slijedi ono zbog čega želiš izaći van.", "Dogovori susret na otvorenom", "Ponesi bilježnicu u park", "Odaberi jedno mjesto za mali bijeg"],
     ["Lipanj", "Neka duži dani ne postanu puniji dani.", "Sačuvaj jednu dugu večer", "Pojedi nešto jednostavno vani", "Završi posao dok još ima svjetla"],
     ["Srpanj", "Uspori dovoljno da osjetiš ljeto.", "Ostavi poslijepodne bez plana", "Potraži hlad, vodu ili tišinu", "Odaberi jednu stvar koju nećeš požurivati"],
     ["Kolovoz", "Čuvaj prostranost prije novog ritma.", "Provedi jutro bez ekrana", "Zapiši što želiš ponijeti u jesen", "Vrati se mjestu na kojem dišeš lakše"],
@@ -53,22 +53,22 @@ const seasonIdeas: Record<SeasonLocale, Record<Season, string[]>> = {
 };
 
 const holidays: Array<{ month: number; day: number; hr: string; en: string }> = [
-  { month: 0, day: 1, hr: "Nova godina je danas — ostavi plan nježnijim nego inače", en: "It is New Year’s Day — let the plan be gentler than usual" },
-  { month: 0, day: 6, hr: "Blagdan je — provjeri što danas može ostati neplanirano", en: "It is a holiday — notice what can remain unplanned today" },
-  { month: 4, day: 1, hr: "Praznik rada je blizu — napravi mjesta za odmor koji ne treba zaslužiti", en: "Labour Day is close — make room for rest you do not have to earn" },
-  { month: 4, day: 30, hr: "Blagdan je blizu — unaprijed zaštiti vrijeme za ljude i mjesta koja voliš", en: "A holiday is close — protect time for people and places you love" },
-  { month: 7, day: 5, hr: "Blagdan je blizu — provjeri promet, radno vrijeme i ostavi više prostora", en: "A holiday is close — check travel and opening hours, then leave more room" },
-  { month: 10, day: 1, hr: "Blagdan je blizu — ostavi vrijeme za sjećanje i sporiji ritam", en: "A holiday is close — leave room for remembrance and a slower pace" },
-  { month: 11, day: 24, hr: "Badnjak je blizu — odaberi ono što donosi toplinu, ne još obaveza", en: "Christmas Eve is close — choose what brings warmth, not more obligations" },
-  { month: 11, day: 25, hr: "Božić je blizu — neka dovoljno zaista bude dovoljno", en: "Christmas is close — let enough genuinely be enough" },
-  { month: 11, day: 31, hr: "Kraj godine je blizu — sačuvaj jednu stvar koju želiš ponijeti dalje", en: "The year is ending — keep one thing you want to carry forward" },
+  { month: 0, day: 1, hr: "Nova godina je danas. Ostavi plan otvorenijim nego inače.", en: "It is New Year’s Day. Leave the plan more open than usual." },
+  { month: 0, day: 6, hr: "Blagdan je. Provjeri što danas može ostati neplanirano.", en: "It is a holiday. Notice what can remain unplanned today." },
+  { month: 4, day: 1, hr: "Praznik rada je blizu. Napravi mjesta za odmor koji ne treba zaslužiti.", en: "Labour Day is close. Make room for rest you do not have to earn." },
+  { month: 4, day: 30, hr: "Blagdan je blizu. Unaprijed zaštiti vrijeme za ljude i mjesta koja voliš.", en: "A holiday is close. Protect time for people and places you love." },
+  { month: 7, day: 5, hr: "Blagdan je blizu. Provjeri promet i radno vrijeme pa ostavi više prostora.", en: "A holiday is close. Check travel and opening hours, then leave more room." },
+  { month: 10, day: 1, hr: "Blagdan je blizu. Ostavi vrijeme za sjećanje i sporiji ritam.", en: "A holiday is close. Leave room for remembrance and a slower pace." },
+  { month: 11, day: 24, hr: "Badnjak je blizu. Odaberi ono što donosi toplinu, ne još obaveza.", en: "Christmas Eve is close. Choose what brings warmth, not more obligations." },
+  { month: 11, day: 25, hr: "Božić je blizu. Neka dovoljno zaista bude dovoljno.", en: "Christmas is close. Let enough genuinely be enough." },
+  { month: 11, day: 31, hr: "Kraj godine je blizu. Sačuvaj jednu stvar koju želiš ponijeti dalje.", en: "The year is ending. Keep one thing you want to carry forward." },
 ];
 
 const weatherIdea = (code: number | undefined, locale: SeasonLocale) => {
   if (code === undefined) return "";
-  if (code >= 51 && code <= 99) return locale === "hr" ? "Vrijeme traži zaklon — odaberi toplu unutarnju verziju dana" : "The weather calls for shelter — choose a warm indoor version of the day";
-  if (code <= 3) return locale === "hr" ? "Dan ima svjetla — sačuvaj barem deset minuta vani" : "There is light today — keep at least ten minutes for outside";
-  return locale === "hr" ? "Vrijeme je promjenjivo — planiraj nježnu rezervnu opciju" : "The weather is changeable — keep a gentle alternative ready";
+  if (code >= 51 && code <= 99) return locale === "hr" ? "Vrijeme traži zaklon. Odaberi toplu unutarnju verziju dana." : "The weather calls for shelter. Choose a warm indoor version of the day.";
+  if (code <= 3) return locale === "hr" ? "Dan ima svjetla. Sačuvaj barem deset minuta vani." : "There is light today. Keep at least ten minutes for outside.";
+  return locale === "hr" ? "Vrijeme je promjenjivo. Sačuvaj jednostavnu rezervnu opciju." : "The weather is changeable. Keep a simple alternative ready.";
 };
 
 export function seasonForMonth(month: number): Season {

@@ -23,14 +23,14 @@ const intros: Record<Locale, Record<Tab, [string, string]>> = {
     Planner: ["Daj tjednu oblik.", "Čvrsto ondje gdje mora biti. Fleksibilno ondje gdje život traži prostora."],
     Library: ["Dobre opcije, nadohvat ruke.", "Tvoje liste za dane kada ti se ne da ponovno odlučivati."],
     Inbox: ["Zapiši sada. Odluči poslije.", "Mjesto za misli koje još ne trebaju postati obaveze."],
-    Goals: ["Kreći se naprijed. Ostani svoja.", "Prati pomak, sačuvaj snagu i vrati se onome što ti je važno."],
+    Goals: ["Cilj vrijedi samo ako stane u tvoj stvarni život.", "Odredi smjer, prati ono što se doista mijenja i prilagodi plan svom kapacitetu."],
   },
   en: {
     Today: ["Make room for what matters.", "Weather, energy and today’s plan. One quiet place to begin."],
     Planner: ["Give the week a shape.", "Fixed where it needs to be. Flexible where life needs room."],
     Library: ["Keep good options close.", "Your own lists for the days when choosing feels like work."],
     Inbox: ["Write it down. Decide later.", "A place for thoughts that do not need to become tasks yet."],
-    Goals: ["Move forward. Stay yourself.", "Notice progress, protect your energy and return to what matters."],
+    Goals: ["A goal only works if it fits your real life.", "Set a direction, notice what is genuinely changing, and fit the plan to your capacity."],
   },
 };
 

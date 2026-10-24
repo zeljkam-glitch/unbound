@@ -1936,3 +1936,278 @@ body:has(.livingShell) { background:#171a1b; }
   .quietShell.livingShell .inboxCapture input,.quietShell.livingShell .inboxCapture .primary { grid-column:1; width:100%; justify-self:stretch; }
   .quietShell.livingShell footer { align-items:flex-start; flex-direction:column; }
 }
+
+/* Final editorial pass: one visual language across the personal workspace. */
+.quietShell.livingShell .pageIntro h1 {
+  max-width:1000px;
+  line-height:1.02;
+  letter-spacing:-.052em;
+}
+.quietShell.livingShell.tab-inbox .pageIntro h1 { max-width:10.5ch; line-height:1.03; }
+.quietShell.livingShell.tab-goals .pageIntro h1 { max-width:12ch; }
+
+/* Weather uses a restrained, condition-aware line icon without a decorative badge. */
+.quietShell.livingShell .weatherCard {
+  display:grid;
+  grid-template-columns:54px minmax(0,1fr) auto;
+  align-items:center;
+  gap:24px;
+  min-height:142px;
+  padding:30px 0;
+  border-bottom:1px solid var(--ink);
+}
+.quietShell.livingShell .weatherIcon {
+  width:42px;
+  height:42px;
+  place-items:start;
+  border-radius:0;
+  background:transparent;
+  color:#6f2b35;
+}
+.quietShell.livingShell .weatherIcon svg { width:34px; height:34px; }
+.quietShell.livingShell .weatherCard h2 { margin-top:8px; font-size:30px; font-weight:300; }
+.quietShell.livingShell .weatherCard p { margin-top:8px; }
+.quietShell.livingShell .weatherActions { display:grid; grid-template-columns:auto minmax(300px,430px); align-items:end; gap:18px; }
+.quietShell.livingShell .weatherActions > button { min-height:48px; padding:10px 0; border:0; border-bottom:1px solid #918c83; }
+.quietShell.livingShell .weatherActions > button:hover { color:#71242f; background:transparent; border-bottom-color:#71242f; }
+.quietShell.livingShell .weatherActions form { display:grid; grid-template-columns:minmax(180px,1fr) auto; gap:10px; }
+.quietShell.livingShell .weatherActions input { min-height:48px; padding:10px 0; }
+.quietShell.livingShell .weatherActions .primary { min-height:48px; }
+
+/* The Atlas is editorial content, not a dark dashboard module. */
+.quietShell.livingShell .beautifulMoments {
+  margin:72px 0;
+  padding:48px 0 42px;
+  color:var(--ink);
+  background:transparent;
+  border-top:1px solid var(--ink);
+  border-bottom:1px solid var(--ink);
+}
+.quietShell.livingShell .beautifulMomentsIntro { display:grid; grid-template-columns:minmax(0,1fr) auto; max-width:none; }
+.quietShell.livingShell .beautifulMomentsIntro > div { display:grid; grid-template-columns:190px minmax(0,1fr); column-gap:34px; width:100%; }
+.quietShell.livingShell .beautifulMomentsIntro .sectionLabel { grid-column:1; grid-row:1/3; align-self:start; padding-top:8px; }
+.quietShell.livingShell .beautifulMomentsIntro h2 { grid-column:2; max-width:850px; margin:0 0 14px; color:var(--ink); font-size:clamp(44px,5.5vw,76px); line-height:.98; }
+.quietShell.livingShell .beautifulMomentsIntro p { grid-column:2; max-width:600px; margin:0; color:var(--muted); }
+.quietShell.livingShell .beautifulMomentsIntro > svg { color:#71242f; }
+.quietShell.livingShell .momentOwnership {
+  grid-template-columns:minmax(0,1fr) auto;
+  margin:36px 0 30px 224px;
+  padding:22px 0;
+  border-color:var(--line);
+}
+.quietShell.livingShell .momentOwnership strong { color:var(--ink); font-weight:400; }
+.quietShell.livingShell .momentOwnership p { color:var(--muted); }
+.quietShell.livingShell .momentOwnership button { color:var(--ink); border:0; border-bottom:1px solid #8f8980; }
+.quietShell.livingShell .momentOwnership button:hover { color:#71242f; background:transparent; border-bottom-color:#71242f; }
+.quietShell.livingShell .feelingChoices { gap:0; margin:34px 0 20px 224px; border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
+.quietShell.livingShell .feelingChoices button { min-height:48px; padding:10px 15px; color:#4e504d; border:0; border-right:1px solid var(--line); }
+.quietShell.livingShell .feelingChoices button:hover { color:#71242f; background:#e4dfd6; }
+.quietShell.livingShell .feelingChoices button[aria-pressed="true"] { color:#f5f2ec; background:#262521; }
+.quietShell.livingShell .quietAction { margin:2px 0 18px 224px; padding:9px 0; color:#30302d; border-bottom:1px solid #918c83; }
+.quietShell.livingShell .quietAction:hover { color:#71242f; background:transparent; border-bottom-color:#71242f; }
+.quietShell.livingShell .momentFootnote { margin-left:224px; color:var(--muted); }
+
+.quietShell.livingShell .momentDiscovery {
+  margin:34px 0 38px;
+  padding:30px 0;
+  color:var(--ink);
+  border:0;
+  border-top:1px solid var(--ink);
+  border-bottom:1px solid var(--ink);
+  background:transparent;
+}
+.quietShell.livingShell .momentDiscoveryHead { display:grid; grid-template-columns:190px minmax(0,1fr); max-width:none; column-gap:34px; }
+.quietShell.livingShell .momentDiscoveryHead .sectionLabel { grid-row:1/3; align-self:start; }
+.quietShell.livingShell .momentDiscoveryHead h3 { margin:0 0 10px; font-size:clamp(34px,4vw,56px); line-height:1.02; }
+.quietShell.livingShell .momentDiscoveryHead p { color:var(--muted); }
+.quietShell.livingShell .discoveryMethods {
+  counter-reset:method;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  margin:32px 0 0 224px;
+  border:0;
+  border-top:1px solid var(--line);
+}
+.quietShell.livingShell .discoveryMethods button {
+  counter-increment:method;
+  display:grid;
+  grid-template-columns:32px minmax(110px,.55fr) minmax(0,1fr);
+  align-items:start;
+  min-height:112px;
+  gap:14px;
+  padding:22px 18px 22px 0;
+  color:var(--ink);
+  border:0;
+  border-right:1px solid var(--line);
+  border-bottom:1px solid var(--line);
+}
+.quietShell.livingShell .discoveryMethods button:nth-child(even) { padding-left:18px; border-right:0; }
+.quietShell.livingShell .discoveryMethods button::before { content:"0" counter(method); color:#71242f; font-size:10px; letter-spacing:.14em; }
+.quietShell.livingShell .discoveryMethods button strong { font-weight:400; }
+.quietShell.livingShell .discoveryMethods button span { color:var(--muted); }
+.quietShell.livingShell .discoveryMethods button:hover { background:#e5e0d7; }
+.quietShell.livingShell .discoveryMethods button[aria-pressed="true"] { color:#f3f0e9; background:#252724; }
+.quietShell.livingShell .discoveryMethods button[aria-pressed="true"]::before { color:#c2a16d; }
+.quietShell.livingShell .discoveryMethods button[aria-pressed="true"] span { color:#c7c8c3; }
+.quietShell.livingShell .discoveryForm { margin-left:224px; border-color:var(--line); }
+.quietShell.livingShell .discoveryForm label { color:#5f625f; }
+.quietShell.livingShell .discoveryForm input,
+.quietShell.livingShell .discoveryForm textarea,
+.quietShell.livingShell .discoveryForm select { color:var(--ink); border-color:#aaa69d; background:transparent; }
+.quietShell.livingShell .discoverySave small { color:var(--muted); }
+.quietShell.livingShell .beautifulMoments .primary { color:#f3f0e9; background:#252724; border-color:#252724; }
+.quietShell.livingShell .beautifulMoments .primary:hover { background:#71242f; border-color:#71242f; }
+.quietShell.livingShell .momentFilters,
+.quietShell.livingShell .momentToolbar,
+.quietShell.livingShell .momentGrid,
+.quietShell.livingShell .momentAddForm,
+.quietShell.livingShell .plannedMoments,
+.quietShell.livingShell .momentEmpty { margin-left:224px; }
+.quietShell.livingShell .momentFilters { border-color:var(--line); }
+.quietShell.livingShell .momentFilters summary { color:var(--ink); }
+.quietShell.livingShell .momentFilters label { color:var(--muted); }
+.quietShell.livingShell .momentFilters select,
+.quietShell.livingShell .momentAddForm input,
+.quietShell.livingShell .momentAddForm select { color:var(--ink); border-color:#aaa69d; background:transparent; }
+.quietShell.livingShell .momentToolbar { color:var(--muted); }
+.quietShell.livingShell .momentToolbar button { color:var(--ink); border-color:#918c83; }
+.quietShell.livingShell .momentGrid { border-color:var(--line); }
+.quietShell.livingShell .momentCard { min-height:280px; border-color:var(--line); }
+.quietShell.livingShell .momentCard p { color:var(--muted); }
+.quietShell.livingShell .momentCard > small,.quietShell.livingShell .momentHeart[aria-pressed="true"] { color:#71242f; }
+.quietShell.livingShell .momentHeart { color:#5f625f; }
+.quietShell.livingShell .momentDone { color:var(--ink); background:transparent; border-color:#777c79; }
+.quietShell.livingShell .plannedMoments,.quietShell.livingShell .plannedMoment { border-color:var(--line); }
+.quietShell.livingShell .plannedMoment small { color:var(--muted); }
+
+/* Quick note and Today plan are open writing surfaces, not framed widgets. */
+.quietShell.livingShell .ideaCapture {
+  grid-template-columns:44px minmax(220px,.75fr) minmax(260px,1fr) auto;
+  gap:24px;
+  margin-top:0;
+  padding:30px 0;
+  border:0;
+  border-top:1px solid var(--ink);
+  border-bottom:1px solid var(--ink);
+}
+.quietShell.livingShell .ideaCapture > svg { color:#71242f; }
+.quietShell.livingShell .ideaCapture h2 { font-size:27px; font-weight:300; }
+.quietShell.livingShell .ideaCapture input { min-height:52px; }
+.quietShell.livingShell .ideaCapture .primary { min-height:52px; padding-inline:22px; }
+.quietShell.livingShell .tasksSection {
+  display:block;
+  margin:58px 0 48px;
+  border-top:1px solid var(--ink);
+}
+.quietShell.livingShell .tasksSection .sectionHead {
+  display:flex;
+  align-items:end;
+  justify-content:space-between;
+  gap:30px;
+  margin:0;
+  padding:34px 0 28px;
+  border:0;
+  border-bottom:1px solid var(--line);
+}
+.quietShell.livingShell .tasksSection .sectionHead h2 { max-width:17ch; margin:12px 0 0; font-size:clamp(36px,4.4vw,62px); line-height:1.02; }
+.quietShell.livingShell .tasksSection .sectionHead > span { margin:0 0 7px; white-space:nowrap; }
+.quietShell.livingShell .libraryQuick { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:16px; min-height:0; padding:20px 0; border-bottom:1px solid var(--ink); }
+.quietShell.livingShell .libraryQuick select { padding:0; border-color:#aaa69d; }
+.quietShell.livingShell .libraryQuick button { padding-inline:24px; }
+
+/* Planner tasks become calm information rows instead of repeated boxes. */
+.quietShell.livingShell .dayColumn { min-height:0; }
+.quietShell.livingShell .dayColumn > div { display:block; padding:10px 28px 22px; }
+.quietShell.livingShell .plannerTask,
+.quietShell.livingShell .plannerTask.fixed,
+.quietShell.livingShell .plannerTask.flexible,
+.quietShell.livingShell .plannerTask.optional,
+.quietShell.livingShell .plannerTask.deadline {
+  grid-template-columns:32px minmax(0,1fr) auto;
+  min-height:0;
+  gap:5px 14px;
+  margin:0;
+  padding:20px 0;
+  color:var(--ink);
+  background:transparent;
+  border:0;
+  border-bottom:1px solid #c4c0b8;
+  cursor:grab;
+}
+.quietShell.livingShell .plannerTask.deadline { border-bottom-color:#9e7276; }
+.quietShell.livingShell .plannerTask > button:first-child {
+  grid-column:1;
+  grid-row:1/8;
+  width:25px;
+  height:25px;
+  min-width:25px;
+  min-height:25px;
+  margin-top:2px;
+  padding:0;
+  border-color:#918d85;
+}
+.quietShell.livingShell .plannerTask strong { grid-column:2; font-size:17px; line-height:1.28; }
+.quietShell.livingShell .plannerTask span,
+.quietShell.livingShell .plannerTask small { grid-column:2; color:#656a68; font-size:12px; }
+.quietShell.livingShell .plannerTask .deadline { grid-column:2; width:auto; padding:2px 0 0; border:0; }
+.quietShell.livingShell .plannerTask .moveTaskButton,
+.quietShell.livingShell .plannerTask.deadline .moveTaskButton {
+  grid-column:3;
+  grid-row:1/4;
+  align-self:start;
+  min-height:36px;
+  margin:0;
+  padding:7px 0 5px 14px;
+  color:#535956;
+  border:0;
+  border-bottom:1px solid #aaa69d;
+  background:transparent;
+}
+.quietShell.livingShell .plannerTask .moveTaskButton:hover { color:#71242f; border-bottom-color:#71242f; }
+.quietShell.livingShell .moveTaskPanel { grid-column:2/-1; }
+.quietShell.livingShell .addDayTask { margin-top:18px; }
+
+/* Calendar explanation is separated from the list and written as help, not a warning. */
+.quietShell.livingShell .calendarNote {
+  display:grid;
+  grid-template-columns:minmax(180px,.42fr) minmax(0,1fr);
+  gap:32px;
+  margin:34px 0 0;
+  padding:24px 0 4px;
+  border-top:1px solid var(--line);
+}
+.quietShell.livingShell .calendarNote strong { font-weight:400; }
+.quietShell.livingShell .calendarNote p { max-width:760px; margin:0; color:var(--muted); font-size:13px; line-height:1.6; }
+
+@media(max-width:1050px){
+  .quietShell.livingShell .weatherCard { grid-template-columns:44px 1fr; }
+  .quietShell.livingShell .weatherActions { grid-column:2; grid-template-columns:1fr; width:100%; }
+  .quietShell.livingShell .beautifulMomentsIntro > div,.quietShell.livingShell .momentDiscoveryHead { grid-template-columns:150px minmax(0,1fr); }
+  .quietShell.livingShell .momentOwnership,.quietShell.livingShell .feelingChoices,.quietShell.livingShell .quietAction,.quietShell.livingShell .momentFootnote,.quietShell.livingShell .discoveryMethods,.quietShell.livingShell .discoveryForm,.quietShell.livingShell .momentFilters,.quietShell.livingShell .momentToolbar,.quietShell.livingShell .momentGrid,.quietShell.livingShell .momentAddForm,.quietShell.livingShell .plannedMoments,.quietShell.livingShell .momentEmpty { margin-left:184px; }
+  .quietShell.livingShell .discoveryMethods button { grid-template-columns:28px 1fr; }
+  .quietShell.livingShell .discoveryMethods button span { grid-column:2; }
+  .quietShell.livingShell .ideaCapture { grid-template-columns:40px 1fr; }
+  .quietShell.livingShell .ideaCapture input { grid-column:1/-1; }
+  .quietShell.livingShell .ideaCapture .primary { grid-column:2; justify-self:end; }
+}
+@media(max-width:760px){
+  .quietShell.livingShell .pageIntro h1,.quietShell.livingShell.tab-inbox .pageIntro h1 { line-height:1.05; }
+  .quietShell.livingShell .weatherCard { grid-template-columns:36px 1fr; gap:14px; }
+  .quietShell.livingShell .weatherActions { grid-column:1/-1; }
+  .quietShell.livingShell .weatherActions form { grid-template-columns:1fr; }
+  .quietShell.livingShell .beautifulMoments { margin:48px -18px; padding:34px 18px; }
+  .quietShell.livingShell .beautifulMomentsIntro > div,.quietShell.livingShell .momentDiscoveryHead { display:block; }
+  .quietShell.livingShell .beautifulMomentsIntro .sectionLabel { display:flex; margin-bottom:18px; }
+  .quietShell.livingShell .beautifulMomentsIntro h2 { font-size:44px; }
+  .quietShell.livingShell .momentOwnership,.quietShell.livingShell .feelingChoices,.quietShell.livingShell .quietAction,.quietShell.livingShell .momentFootnote,.quietShell.livingShell .momentDiscovery,.quietShell.livingShell .discoveryMethods,.quietShell.livingShell .discoveryForm,.quietShell.livingShell .momentFilters,.quietShell.livingShell .momentToolbar,.quietShell.livingShell .momentGrid,.quietShell.livingShell .momentAddForm,.quietShell.livingShell .plannedMoments,.quietShell.livingShell .momentEmpty { margin-left:0; }
+  .quietShell.livingShell .momentOwnership { grid-template-columns:1fr; }
+  .quietShell.livingShell .discoveryMethods { grid-template-columns:1fr; }
+  .quietShell.livingShell .discoveryMethods button,.quietShell.livingShell .discoveryMethods button:nth-child(even) { padding:20px 0; border-right:0; }
+  .quietShell.livingShell .ideaCapture { grid-template-columns:1fr; }
+  .quietShell.livingShell .ideaCapture input,.quietShell.livingShell .ideaCapture .primary { grid-column:1; width:100%; justify-self:stretch; }
+  .quietShell.livingShell .tasksSection .sectionHead { align-items:start; flex-direction:column; }
+  .quietShell.livingShell .libraryQuick { grid-template-columns:1fr; }
+  .quietShell.livingShell .dayColumn > div { padding:6px 0 20px; }
+  .quietShell.livingShell .plannerTask,.quietShell.livingShell .plannerTask.fixed,.quietShell.livingShell .plannerTask.flexible,.quietShell.livingShell .plannerTask.optional,.quietShell.livingShell .plannerTask.deadline { grid-template-columns:30px minmax(0,1fr); }
+  .quietShell.livingShell .plannerTask .moveTaskButton,.quietShell.livingShell .plannerTask.deadline .moveTaskButton { grid-column:2; grid-row:auto; justify-self:start; padding-left:0; }
+  .quietShell.livingShell .calendarNote { grid-template-columns:1fr; gap:10px; }
+}

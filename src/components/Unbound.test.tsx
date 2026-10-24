@@ -72,7 +72,7 @@ describe("UNBOUND Life OS interactions", () => {
   });
   it("helps a person discover and privately save their own beautiful moment", async () => {
     await open();
-    fireEvent.click(screen.getByRole("button", { name: "Help me discover mine" }));
+    fireEvent.click(screen.getByRole("button", { name: "Help me find mine" }));
     fireEvent.click(screen.getByRole("button", { name: /Replay a moment/ }));
     fireEvent.change(screen.getByLabelText("My trace"), { target: { value: "I felt calm when the room became quiet." } });
     fireEvent.change(screen.getByLabelText("Name my beautiful moment"), { target: { value: "A quiet room" } });
