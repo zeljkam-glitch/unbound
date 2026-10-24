@@ -3,7 +3,7 @@
 - Source visual truth: the supplied Quiet Luxury desktop/mobile screenshots and the local `unbound-quiet-luxury` HTML/CSS prototype.
 - Implementation: local Next.js application.
 - Intended viewports: desktop 1440 × 900 and mobile 393 × 852.
-- State: seeded first-use data in dark mode.
+- State: seeded first-use data in Croatian by default, with a persistent Croatian/English switch.
 - Source density: warm paper interface, editorial scale, thin rules, flat weekly columns and restrained brass accents.
 - Implementation direction: replaced the previous dashboard treatment with the selected Quiet Luxury system, reusing its Inter and Inter Tight font assets and core palette.
 
@@ -11,7 +11,7 @@
 
 The source screenshots and prototype source were opened and reviewed. They establish the visual system and the functional model: editorial navigation, multiple day columns, movable task cards, duration estimates, deadlines and a deliberately sparse hierarchy. A complementary optional 12-week view uses the same system.
 
-The implementation could not be captured in a browser because no browser surface was available in the build environment. TypeScript validation, 14 interaction/domain tests and the production build pass, but build success is not treated as visual verification.
+The implementation could not be captured in a browser because neither the in-app browser nor Chrome was available in the build environment. TypeScript validation, 18 interaction/domain tests and the production build pass, but build success is not treated as visual verification.
 
 ## Findings
 
@@ -24,13 +24,16 @@ The implementation could not be captured in a browser because no browser surface
 - [P2] Live weather permission path was not exercised.
   - Impact: location denial and successful Open-Meteo responses are implemented but require a real browser permission check.
   - Fix: test allow and deny states on the deployed HTTPS URL.
+- [P2] Photography and language switching could not be compared in a rendered browser.
+  - Impact: the new Today mood window, Atlas image treatment and longer Croatian labels need direct desktop and mobile inspection.
+  - Fix: check HR and EN at 1440 × 900 and 393 × 852, including all five mood choices.
 
 ## Automated evidence
 
 - TypeScript check: passed.
-- Automated tests: 17 passed.
+- Automated tests: 18 passed.
 - Production build: passed.
-- Core flows covered: Planner inline task creation/persistence, day reassignment, optional-time removal, deadline labels, 12-week outcome and weekly-review persistence, quick syntax parsing, quick idea capture, add from Library to Today, Inbox to Today, routine persistence and weekly check-in persistence.
+- Core flows covered: Planner inline task creation/persistence, day reassignment, optional-time removal, deadline labels, 12-week outcome and weekly-review persistence, quick syntax parsing, quick idea capture, add from Library to Today, Inbox to Today, routine persistence, weekly check-in persistence and Croatian/English switching.
 
 ## Final result
 

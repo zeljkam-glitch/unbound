@@ -21,18 +21,19 @@ export type State = {
   reflections: Record<string, { autonomy: string; satisfaction: string; pressure: string }>;
   weeklyCheckins: Record<string, WeeklyCheckin>;
   twelveWeek?: TwelveWeekPlan;
+  moods?: Record<string, string>;
 };
 
 export const localDate = (d = new Date()) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 export function addDays(date: string, amount: number) { const [y, m, day] = date.split("-").map(Number); const d = new Date(y, m - 1, day); d.setDate(d.getDate() + amount); return localDate(d); }
 export function deadlineState(date: string, today = localDate()) { return !date ? "Flexible" : date < today ? "Overdue" : date === today ? "Today" : "Upcoming"; }
-export function deadlineAwareness(deadline: string, today = localDate()) {
+export function deadlineAwareness(deadline: string, today = localDate(), locale: "hr" | "en" = "en") {
   if (!deadline) return null;
   const from = new Date(`${today}T12:00:00`), to = new Date(`${deadline}T12:00:00`);
   const days = Math.round((to.getTime() - from.getTime()) / 86400000);
-  if (days < 0) return { tone: "overdue" as const, label: `Overdue by ${Math.abs(days)} ${Math.abs(days) === 1 ? "day" : "days"}` };
-  if (days === 0) return { tone: "today" as const, label: "Due today" };
-  return { tone: days <= 3 ? "soon" as const : "future" as const, label: `Due in ${days} ${days === 1 ? "day" : "days"}` };
+  if (days < 0) return { tone: "overdue" as const, label: locale === "hr" ? `Rok je prošao prije ${Math.abs(days)} ${Math.abs(days) === 1 ? "dan" : "dana"}` : `Overdue by ${Math.abs(days)} ${Math.abs(days) === 1 ? "day" : "days"}` };
+  if (days === 0) return { tone: "today" as const, label: locale === "hr" ? "Rok je danas" : "Due today" };
+  return { tone: days <= 3 ? "soon" as const : "future" as const, label: locale === "hr" ? `Još ${days} ${days === 1 ? "dan" : "dana"} do roka` : `Due in ${days} ${days === 1 ? "day" : "days"}` };
 }
 export function toggleTask(task: Task, now = new Date().toISOString()): Task { return { ...task, completedAt: task.completedAt ? null : now }; }
 export function captureThought(text: string, id: string, now = new Date().toISOString()): Thought | null { return text.trim() ? { id, text: text.trim(), createdAt: now } : null; }
@@ -65,32 +66,33 @@ export function suggest(tasks: Task[], energy: string, today = localDate()) {
   })[0] || null;
 }
 const task = (id: string, title: string, patch: Partial<Task> = {}): Task => ({ id, title, date: localDate(), time: "", deadline: "", kind: "flexible", duration: 30, repeat: "none", area: "anywhere", effort: "light", completedAt: null, notes: "", tags: [], projectId: "", ...patch });
-export function demo(): State {
+export function demo(locale: "hr" | "en" = "en"): State {
   const today = localDate();
+  const hr = locale === "hr";
   return {
     version: 2,
     tasks: [
-      task("t1", "Shape the first chapter of UNBOUND", { effort: "deep", duration: 60, area: "home" }),
-      task("t2", "Send the proposal you believe in", { deadline: today, kind: "deadline", duration: 20 }),
-      task("t3", "Take a walk without your phone", { kind: "optional", duration: 30, area: "outside" }),
+      task("t1", hr ? "Oblikuj prvo poglavlje UNBOUND-a" : "Shape the first chapter of UNBOUND", { effort: "deep", duration: 60, area: "home" }),
+      task("t2", hr ? "Pošalji prijedlog u koji vjeruješ" : "Send the proposal you believe in", { deadline: today, kind: "deadline", duration: 20 }),
+      task("t3", hr ? "Prošetaj bez mobitela" : "Take a walk without your phone", { kind: "optional", duration: 30, area: "outside" }),
     ],
-    thoughts: [{ id: "m1", text: "What would my week look like if I protected my mornings?", createdAt: new Date().toISOString() }],
-    projects: [{ id: "p1", name: "A little more freedom", outcome: "Build a working rhythm that leaves room for life.", deadline: "", nextAction: "Choose one commitment to simplify this week.", status: "active", place: "Start with my mornings. Keep the first hour open.", progress: 35 }],
+    thoughts: [{ id: "m1", text: hr ? "Kako bi izgledao moj tjedan kada bih sačuvala svoja jutra?" : "What would my week look like if I protected my mornings?", createdAt: new Date().toISOString() }],
+    projects: [{ id: "p1", name: hr ? "Malo više slobode" : "A little more freedom", outcome: hr ? "Pronaći ritam rada u kojem ostaje mjesta za život." : "Build a working rhythm that leaves room for life.", deadline: "", nextAction: hr ? "Ovaj tjedan pojednostavni jednu obavezu." : "Choose one commitment to simplify this week.", status: "active", place: hr ? "Počni s jutrima. Sačuvaj prvi sat." : "Start with my mornings. Keep the first hour open.", progress: 35 }],
     library: [
-      { id: "l1", category: "shopping", title: "Oat milk", group: "dm", details: "Usual weekly buy" },
-      { id: "l2", category: "shopping", title: "Fresh vegetables", group: "Market", details: "Choose what looks best" },
-      { id: "l3", category: "feel-good", title: "Walk by the river", group: "10–30 min", details: "No phone needed" },
-      { id: "l4", category: "places", title: "Samobor old town", group: "Local escape", details: "Coffee and a slow walk" },
-      { id: "l5", category: "meals", title: "Vegetable risotto", group: "Dinner", details: "35 min" },
-      { id: "l6", category: "workouts", title: "Gentle full body", group: "Home", details: "Warm-up, 3 rounds, stretch" },
-      { id: "l7", category: "bags", title: "Gym bag", group: "Checklist", details: "Shoes, towel, water, headphones" },
+      { id: "l1", category: "shopping", title: hr ? "Zobeno mlijeko" : "Oat milk", group: "dm", details: hr ? "Tjedna kupnja" : "Weekly buy" },
+      { id: "l2", category: "shopping", title: hr ? "Svježe povrće" : "Fresh vegetables", group: hr ? "Plac" : "Market", details: hr ? "Odaberi ono što izgleda najbolje" : "Choose what looks best" },
+      { id: "l3", category: "feel-good", title: hr ? "Šetnja uz rijeku" : "Walk by the river", group: "10–30 min", details: hr ? "Mobitel može ostati u torbi" : "The phone can stay in your bag" },
+      { id: "l4", category: "places", title: hr ? "Stari grad Samobor" : "Samobor old town", group: hr ? "Mali bijeg" : "Local escape", details: hr ? "Kava i polagana šetnja" : "Coffee and a slow walk" },
+      { id: "l5", category: "meals", title: hr ? "Rižoto s povrćem" : "Vegetable risotto", group: hr ? "Večera" : "Dinner", details: "35 min" },
+      { id: "l6", category: "workouts", title: hr ? "Lagani trening cijelog tijela" : "Gentle full body", group: hr ? "Doma" : "Home", details: hr ? "Zagrijavanje, 3 kruga, istezanje" : "Warm-up, 3 rounds, stretch" },
+      { id: "l7", category: "bags", title: hr ? "Torba za teretanu" : "Gym bag", group: hr ? "Popis" : "Checklist", details: hr ? "Tenisice, ručnik, voda, slušalice" : "Shoes, towel, water, headphones" },
     ],
-    inbox: [{ id: "i1", text: "Check the faculty schedule for next week", createdAt: new Date().toISOString() }],
+    inbox: [{ id: "i1", text: hr ? "Provjeri raspored na faksu za sljedeći tjedan" : "Check the faculty schedule for next week", createdAt: new Date().toISOString() }],
     routines: [
-      { id: "r1", title: "Water + medication", period: "morning" },
-      { id: "r2", title: "Look at today before messages", period: "morning" },
-      { id: "r3", title: "Pack tomorrow’s bag", period: "evening" },
-      { id: "r4", title: "Choose tomorrow’s first gentle step", period: "evening" },
+      { id: "r1", title: hr ? "Voda i lijekovi" : "Water and medication", period: "morning" },
+      { id: "r2", title: hr ? "Pogledaj svoj dan prije poruka" : "Look at your day before messages", period: "morning" },
+      { id: "r3", title: hr ? "Spremi torbu za sutra" : "Pack tomorrow’s bag", period: "evening" },
+      { id: "r4", title: hr ? "Odaberi prvi mali korak za sutra" : "Choose tomorrow’s first small step", period: "evening" },
     ],
     routineDone: {}, anchors: {}, energies: {}, focus: {}, reflections: {}, weeklyCheckins: {},
     twelveWeek: { startDate: today, outcome: "", why: "", leadAction: "", weeklyTarget: 3, weeks: {} },

@@ -7,6 +7,7 @@ const preventNavigation = (event: MouseEvent) => { if ((event.target as Element)
 beforeEach(() => {
   document.addEventListener("click", preventNavigation);
   localStorage.clear();
+  localStorage.setItem("unbound.locale", "en");
   window.history.replaceState(null, "", "/");
   Object.defineProperty(window, "scrollTo", { writable: true, value: vi.fn() });
 });
@@ -15,6 +16,12 @@ async function open() { render(<Unbound />); await screen.findByRole("heading", 
 const go = (name: RegExp) => fireEvent.click(screen.getAllByRole("link", { name })[0]);
 
 describe("UNBOUND Life OS interactions", () => {
+  it("switches between English and Croatian without losing the current view", async () => {
+    await open();
+    fireEvent.click(screen.getByRole("button", { name: "HR" }));
+    expect(await screen.findByRole("heading", { name: "Napravi mjesta za ono što ti je važno." })).toBeTruthy();
+    expect(localStorage.getItem("unbound.locale")).toBe("hr");
+  });
   it("adds a typed, timed task in Planner and persists it", async () => {
     await open(); go(/Planner/);
     fireEvent.click(screen.getByRole("button", { name: "New task" }));
@@ -52,7 +59,7 @@ describe("UNBOUND Life OS interactions", () => {
   it("adds a reusable library item to today", async () => {
     await open();
     fireEvent.change(screen.getByLabelText("Choose from My Library"), { target: { value: "l1" } });
-    fireEvent.click(screen.getByRole("button", { name: "Add to today" }));
+    fireEvent.click(screen.getByRole("button", { name: "Add today" }));
     expect(screen.getByText("Oat milk")).toBeTruthy();
   });
   it("captures an inbox item and plans it for today", async () => {
@@ -65,7 +72,7 @@ describe("UNBOUND Life OS interactions", () => {
   });
   it("stores routine and weekly check-in state", async () => {
     await open();
-    fireEvent.click(screen.getByLabelText("Water + medication"));
+    fireEvent.click(screen.getByLabelText("Water and medication"));
     go(/Goals/);
     fireEvent.change(screen.getByLabelText("What moved forward?"), { target: { value: "Protected one morning" } });
     await waitFor(() => {
