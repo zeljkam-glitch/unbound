@@ -8,6 +8,7 @@ import WeatherCard from "./WeatherCard";
 import { Empty } from "./Primitives";
 import { useLanguage } from "./LanguageContext";
 import SeasonalCompass from "./SeasonalCompass";
+import BeautifulMomentsPanel from "./BeautifulMomentsPanel";
 
 export default function TodayScreen({ state, today, update }: { state: State; today: string; update: Update }) {
   const [idea, setIdea] = useState("");
@@ -47,6 +48,7 @@ export default function TodayScreen({ state, today, update }: { state: State; to
       {(["low", "steady", "high"] as const).map((v) => <button key={v} aria-pressed={state.energies[today] === v} onClick={() => update((s) => ({ ...s, energies: { ...s.energies, [today]: s.energies[today] === v ? "" : v } }))}>{hr ? "Energija" : "Energy"} · {hr ? ({ low: "niska", steady: "stabilna", high: "visoka" } as const)[v] : v}</button>)}
       {(["scattered", "present", "focused"] as const).map((v) => <button key={v} aria-pressed={state.focus[today] === v} onClick={() => update((s) => ({ ...s, focus: { ...s.focus, [today]: s.focus[today] === v ? "" : v } }))}>{hr ? "Fokus" : "Focus"} · {hr ? ({ scattered: "raspršen", present: "prisutan", focused: "dubok" } as const)[v] : v}</button>)}
     </div>
+    <BeautifulMomentsPanel state={state} today={today} update={update} />
     <div className={`todayGrid ${todayDate.getDay() === 0 ? "hasWeekly" : ""}`}>
       {(["morning", "evening", ...(todayDate.getDay() === 0 ? ["weekly" as const] : [])] as const).map((period) => <section className="card routineCard" key={period}>
         <div className="sectionLabel">{period === "morning" ? (hr ? "JUTARNJA RUTINA" : "MORNING ROUTINE") : period === "evening" ? (hr ? "VEČERNJA RUTINA" : "EVENING ROUTINE") : (hr ? "NEDJELJNA RUTINA" : "SUNDAY ROUTINE")}</div>

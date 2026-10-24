@@ -57,6 +57,19 @@ describe("UNBOUND Life OS interactions", () => {
     expect(save.textContent).toContain("Saved");
     await waitFor(() => expect(JSON.parse(localStorage.getItem("unbound.v1")!).thoughts.length).toBe(2));
   });
+  it("plans a beautiful moment without turning it into a productivity task", async () => {
+    await open();
+    fireEvent.click(screen.getByRole("button", { name: "inspired" }));
+    fireEvent.change(screen.getByLabelText("Budget for a beautiful moment"), { target: { value: "0" } });
+    const add = screen.getAllByRole("button", { name: "Add as a beautiful moment" })[0];
+    fireEvent.click(add);
+    await waitFor(() => {
+      const saved = JSON.parse(localStorage.getItem("unbound.v1")!);
+      expect(saved.plannedMoments[Object.keys(saved.plannedMoments)[0]].length).toBe(1);
+      expect(saved.tasks).toHaveLength(3);
+    });
+    expect(screen.getByText("Chosen for today")).toBeTruthy();
+  });
   it("stores an optional twelve-week direction and weekly review", async () => {
     await open(); go(/Planner/);
     fireEvent.click(screen.getByRole("button", { name: "12 weeks" }));

@@ -1,3 +1,5 @@
+import { beautifulMomentCatalog } from "./beautiful-moments";
+
 export type TaskKind = "fixed" | "deadline" | "flexible" | "optional";
 export type Task = {
   id: string; title: string; date: string; time: string; deadline: string;
@@ -12,15 +14,20 @@ export type LibraryCategory = "shopping" | "feel-good" | "beauty" | "places" | "
 export type LibraryItem = { id: string; category: LibraryCategory; title: string; group: string; details: string; url?: string };
 export type InboxItem = { id: string; text: string; createdAt: string };
 export type Routine = { id: string; title: string; period: "morning" | "evening" | "weekly" };
+export type BeautifulMoment = { id: string; title: string; description: string; duration: number; budget: number; energy: "low" | "steady" | "high"; feelings: string[]; category: string; setting: "inside" | "outside" | "either"; badWeather: boolean; solo: boolean; social: boolean; favorite: boolean; completedDates: string[] };
+export type MomentPreferences = { feelings: string[]; maxMinutes: number; maxBudget: number; energy: "" | "low" | "steady" | "high"; setting: "" | "inside" | "outside"; badWeatherOnly: boolean; condition: "" | "gentle" | "rest" };
 export type WeeklyCheckin = { win: string; learned: string; next: string; energy: string };
 export type TwelveWeekPlan = { startDate: string; outcome: string; why: string; leadAction: string; weeklyTarget: number; weeks: Record<string, { focus: string; reviewed: boolean }> };
 export type State = {
-  version: 3; tasks: Task[]; thoughts: Thought[]; projects: Goal[]; library: LibraryItem[];
+  version: 4; tasks: Task[]; thoughts: Thought[]; projects: Goal[]; library: LibraryItem[];
   inbox: InboxItem[]; routines: Routine[]; routineDone: Record<string, string[]>;
   anchors: Record<string, string>; energies: Record<string, string>; focus: Record<string, string>;
   reflections: Record<string, { autonomy: string; satisfaction: string; pressure: string }>;
   weeklyCheckins: Record<string, WeeklyCheckin>;
   libraryChecked?: Record<string, string[]>;
+  beautifulMoments: BeautifulMoment[];
+  plannedMoments: Record<string, string[]>;
+  momentPreferences: Record<string, MomentPreferences>;
   twelveWeek?: TwelveWeekPlan;
 };
 
@@ -28,15 +35,18 @@ export const localDate = (d = new Date()) => `${d.getFullYear()}-${String(d.getM
 export function addDays(date: string, amount: number) { const [y, m, day] = date.split("-").map(Number); const d = new Date(y, m - 1, day); d.setDate(d.getDate() + amount); return localDate(d); }
 export function mergePrivateLists(state: State, value: unknown): State | null {
   if (!value || typeof value !== "object") return null;
-  const bundle = value as { routines?: unknown; library?: unknown };
+  const bundle = value as { routines?: unknown; library?: unknown; beautifulMoments?: unknown };
   if (!Array.isArray(bundle.routines) || !Array.isArray(bundle.library)) return null;
   const routines = bundle.routines.filter((item): item is Routine => !!item && typeof item === "object" && typeof item.id === "string" && typeof item.title === "string" && ["morning", "evening", "weekly"].includes(item.period));
   const library = bundle.library.filter((item): item is LibraryItem => !!item && typeof item === "object" && typeof item.id === "string" && typeof item.title === "string" && typeof item.group === "string" && typeof item.details === "string" && ["shopping", "feel-good", "beauty", "places", "meals", "workouts", "bags", "lists"].includes(item.category));
-  if (routines.length !== bundle.routines.length || library.length !== bundle.library.length) return null;
+  const incomingMoments = Array.isArray(bundle.beautifulMoments) ? bundle.beautifulMoments : [];
+  const beautifulMoments = incomingMoments.filter((item): item is BeautifulMoment => !!item && typeof item === "object" && typeof item.id === "string" && typeof item.title === "string" && typeof item.description === "string" && typeof item.duration === "number" && typeof item.budget === "number" && ["low", "steady", "high"].includes(item.energy) && Array.isArray(item.feelings) && ["inside", "outside", "either"].includes(item.setting) && typeof item.badWeather === "boolean");
+  if (routines.length !== bundle.routines.length || library.length !== bundle.library.length || beautifulMoments.length !== incomingMoments.length) return null;
   return {
     ...state,
     routines: [...state.routines.filter((item) => !routines.some((incoming) => incoming.id === item.id)), ...routines],
     library: [...state.library.filter((item) => !library.some((incoming) => incoming.id === item.id)), ...library],
+    beautifulMoments: [...state.beautifulMoments.filter((item) => !beautifulMoments.some((incoming) => incoming.id === item.id)), ...beautifulMoments.map((item) => ({ ...item, favorite: !!item.favorite, completedDates: Array.isArray(item.completedDates) ? item.completedDates : [] }))],
   };
 }
 export function deadlineState(date: string, today = localDate()) { return !date ? "Flexible" : date < today ? "Overdue" : date === today ? "Today" : "Upcoming"; }
@@ -84,7 +94,7 @@ export function demo(locale: "hr" | "en" = "en"): State {
   const today = localDate();
   const hr = locale === "hr";
   return {
-    version: 3,
+    version: 4,
     tasks: [
       task("t1", hr ? "Oblikuj prvo poglavlje UNBOUND-a" : "Shape the first chapter of UNBOUND", { effort: "deep", duration: 60, area: "home" }),
       task("t2", hr ? "Pošalji prijedlog u koji vjeruješ" : "Send the proposal you believe in", { deadline: today, kind: "deadline", duration: 20 }),
@@ -109,6 +119,7 @@ export function demo(locale: "hr" | "en" = "en"): State {
       { id: "r4", title: hr ? "Odaberi prvi mali korak za sutra" : "Choose tomorrow’s first small step", period: "evening" },
     ],
     routineDone: {}, anchors: {}, energies: {}, focus: {}, reflections: {}, weeklyCheckins: {}, libraryChecked: {},
+    beautifulMoments: beautifulMomentCatalog(locale), plannedMoments: {}, momentPreferences: {},
     twelveWeek: { startDate: today, outcome: "", why: "", leadAction: "", weeklyTarget: 3, weeks: {} },
   };
 }
@@ -116,8 +127,8 @@ function migrateTask(t: Record<string, unknown>): Task { return task(String(t.id
 export function migrateState(value: unknown): State | null {
   if (!value || typeof value !== "object") return null;
   const v = value as Record<string, unknown>;
-  if (v.version === 3 && isState(v)) return v;
-  if (v.version === 2 && Array.isArray(v.tasks) && Array.isArray(v.projects) && Array.isArray(v.library) && Array.isArray(v.routines)) return { ...(v as unknown as State), version: 3 };
+  if (v.version === 4 && isState(v)) return v;
+  if ((v.version === 2 || v.version === 3) && Array.isArray(v.tasks) && Array.isArray(v.projects) && Array.isArray(v.library) && Array.isArray(v.routines)) return { ...(v as unknown as State), version: 4, beautifulMoments: beautifulMomentCatalog("hr"), plannedMoments: {}, momentPreferences: {} };
   if (v.version !== 1 || !Array.isArray(v.tasks) || !Array.isArray(v.projects)) return null;
   const fresh = demo();
   return { ...fresh,
@@ -130,5 +141,5 @@ export function migrateState(value: unknown): State | null {
 export function isState(value: unknown): value is State {
   if (!value || typeof value !== "object") return false;
   const v = value as State;
-  return v.version === 3 && Array.isArray(v.tasks) && v.tasks.every((t) => typeof t.id === "string" && typeof t.title === "string" && ["fixed", "deadline", "flexible", "optional"].includes(t.kind)) && Array.isArray(v.thoughts) && Array.isArray(v.projects) && Array.isArray(v.library) && Array.isArray(v.inbox) && Array.isArray(v.routines) && !!v.routineDone && !!v.anchors && !!v.energies && !!v.focus && !!v.reflections && !!v.weeklyCheckins;
+  return v.version === 4 && Array.isArray(v.tasks) && v.tasks.every((t) => typeof t.id === "string" && typeof t.title === "string" && ["fixed", "deadline", "flexible", "optional"].includes(t.kind)) && Array.isArray(v.thoughts) && Array.isArray(v.projects) && Array.isArray(v.library) && Array.isArray(v.inbox) && Array.isArray(v.routines) && Array.isArray(v.beautifulMoments) && !!v.plannedMoments && !!v.momentPreferences && !!v.routineDone && !!v.anchors && !!v.energies && !!v.focus && !!v.reflections && !!v.weeklyCheckins;
 }

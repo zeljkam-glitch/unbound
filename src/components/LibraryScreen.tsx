@@ -10,7 +10,7 @@ import { seasonalContext } from "@/lib/season";
 
 const categories: Array<{ id: LibraryCategory; label: string; note: string }> = [
   { id: "shopping", label: "Shopping by store", note: "What to buy, grouped by where you go" },
-  { id: "feel-good", label: "Feel-good atlas", note: "Small things that lift or restore you" },
+  { id: "feel-good", label: "Beautiful moments", note: "Small experiences that make an ordinary day feel more alive" },
   { id: "beauty", label: "Beauty atlas", note: "Care, rituals, references and wishes that feel like you" },
   { id: "places", label: "Places & escapes", note: "Restaurants, events and day trips" },
   { id: "meals", label: "Meals", note: "Things you actually like to cook" },
@@ -32,7 +32,7 @@ export default function LibraryScreen({ state, update }: { state: State; update:
   const seasonal = seasonalContext(new Date(), locale);
   const translated = hr ? [
     { id: "shopping" as const, label: "Kupnja po trgovinama", note: "Što trebaš kupiti, složeno prema mjestu na koje ideš" },
-    { id: "feel-good" as const, label: "Atlas dobrog osjećaja", note: "Male stvari koje ti vraćaju snagu ili mir" },
+    { id: "feel-good" as const, label: "Lijepi trenuci", note: "Mala iskustva zbog kojih običan dan postane življi" },
     { id: "beauty" as const, label: "Atlas ljepote", note: "Njega, rituali, reference i želje u kojima se prepoznaješ" },
     { id: "places" as const, label: "Mjesta i mali bijegovi", note: "Restorani, događanja i jednodnevni izleti" },
     { id: "meals" as const, label: "Jela", note: "Ono što doista voliš kuhati" },

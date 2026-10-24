@@ -11,6 +11,7 @@ import {
   parseTaskInput,
   weekStart,
 } from "./model";
+import { matchingBeautifulMoments } from "./beautiful-moments";
 describe("personal freedom model", () => {
   it("completes and reopens a task", () => {
     const task = demo().tasks[0];
@@ -68,5 +69,11 @@ describe("personal freedom model", () => {
   });
   it("starts the reflection week on Monday", () => {
     expect(weekStart(new Date(2026, 9, 25)).getDate()).toBe(19);
+  });
+  it("matches beautiful moments to real daily resources", () => {
+    const moments = demo("en").beautifulMoments;
+    const matches = matchingBeautifulMoments(moments, { feelings: ["inspired"], maxMinutes: 60, maxBudget: 0, energy: "low", setting: "inside", badWeatherOnly: true, condition: "gentle" });
+    expect(matches.length).toBeGreaterThan(0);
+    expect(matches.every((moment) => moment.duration <= 60 && moment.budget === 0 && moment.energy === "low" && moment.badWeather)).toBe(true);
   });
 });
