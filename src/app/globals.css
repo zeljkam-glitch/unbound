@@ -1498,6 +1498,88 @@ body:has(.livingShell) { background:#171a1b; }
 .livingShell .weatherActions form { display:grid; grid-template-columns:minmax(130px,1fr) auto; gap:8px; }
 .livingShell .weatherActions input { min-height:44px; margin:0; }
 .livingShell .workoutLinks { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); margin:0 0 28px; border-top:1px solid var(--ink); border-left:1px solid var(--line); }
+
+/* Planner legibility: give editorial cards room and keep every status inside its day. */
+.quietShell.livingShell .weekColumns {
+  grid-template-columns:repeat(7,minmax(280px,1fr));
+  scrollbar-color:#8a7145 #dedbd3;
+  scrollbar-width:thin;
+}
+.quietShell.livingShell .dayColumn { padding:24px 18px 30px; }
+.quietShell.livingShell .dayColumn > header { gap:5px; padding-bottom:22px; }
+.quietShell.livingShell .dayColumn > header strong { font-size:13px; }
+.quietShell.livingShell .dayColumn > header span { font-size:22px; line-height:1.25; }
+.quietShell.livingShell .dayColumn > header small {
+  font-size:12px;
+  line-height:1.45;
+  white-space:normal;
+}
+.quietShell.livingShell .plannerTask {
+  grid-template-columns:44px minmax(0,1fr);
+  gap:8px 12px;
+  margin-bottom:14px;
+  padding:18px;
+  background:#f5f3ee;
+  border:1px solid #c8c5bd;
+  border-left:3px solid #8a7145;
+  color:#24211e;
+}
+.quietShell.livingShell .plannerTask.fixed { background:#e4e7e6; border-left-color:#52666e; }
+.quietShell.livingShell .plannerTask.flexible { background:#e8e6e0; border-left-color:#8a7145; }
+.quietShell.livingShell .plannerTask.optional { background:transparent; border-left-color:#8b8275; }
+.quietShell.livingShell .plannerTask.deadline {
+  background:#efe5e4;
+  border-color:#ccb8b9;
+  border-left:3px solid #71242f;
+  color:#24211e;
+}
+.quietShell.livingShell .plannerTask > button:first-child {
+  width:44px;
+  height:44px;
+  min-width:44px;
+  min-height:44px;
+}
+.quietShell.livingShell .plannerTask strong {
+  min-width:0;
+  font-size:17px;
+  font-weight:400;
+  line-height:1.32;
+  overflow-wrap:anywhere;
+}
+.quietShell.livingShell .plannerTask span,
+.quietShell.livingShell .plannerTask small {
+  min-width:0;
+  color:#596160;
+  font-size:13px;
+  line-height:1.4;
+  flex-wrap:wrap;
+  overflow-wrap:anywhere;
+}
+.quietShell.livingShell .plannerTask .deadline {
+  grid-column:2;
+  width:100%;
+  padding:8px 0 0;
+  border-top:1px solid #c8c5bd;
+  border-radius:0;
+  background:transparent;
+  white-space:normal;
+}
+.quietShell.livingShell .plannerTask .deadline.today,
+.quietShell.livingShell .plannerTask .deadline.soon { color:#6b5923; }
+.quietShell.livingShell .plannerTask .deadline.overdue { color:#842f39; }
+.quietShell.livingShell .plannerTask .moveTaskButton {
+  min-height:44px;
+  margin-top:8px;
+  padding:9px 12px;
+  color:#4e5655;
+  font-size:13px;
+}
+.quietShell.livingShell .plannerTask.deadline .moveTaskButton { border-color:#bca7a9; color:#65252e; }
+
+@media(max-width:760px){
+  .quietShell.livingShell .weekColumns { grid-template-columns:repeat(7,minmax(84vw,84vw)); }
+  .quietShell.livingShell .dayColumn { padding:22px 16px 28px; }
+}
 .livingShell .workoutLinks > .sectionLabel { grid-column:1/-1; padding:16px 18px; border-right:1px solid var(--line); border-bottom:1px solid var(--line); }
 .livingShell .workoutLinks a { display:flex; justify-content:space-between; gap:20px; min-height:116px; padding:20px 18px; color:var(--ink); border-right:1px solid var(--line); border-bottom:1px solid var(--line); }
 .livingShell .workoutLinks strong,.livingShell .workoutLinks small { display:block; }
