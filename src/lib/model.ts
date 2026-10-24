@@ -8,7 +8,7 @@ export type Task = {
 export type Thought = { id: string; text: string; createdAt: string };
 export type Goal = { id: string; name: string; outcome: string; deadline: string; nextAction: string; status: "active" | "paused" | "completed"; place: string; progress: number };
 export type Project = Goal;
-export type LibraryCategory = "shopping" | "feel-good" | "places" | "meals" | "workouts" | "bags" | "lists";
+export type LibraryCategory = "shopping" | "feel-good" | "beauty" | "places" | "meals" | "workouts" | "bags" | "lists";
 export type LibraryItem = { id: string; category: LibraryCategory; title: string; group: string; details: string; url?: string };
 export type InboxItem = { id: string; text: string; createdAt: string };
 export type Routine = { id: string; title: string; period: "morning" | "evening" | "weekly" };
@@ -31,7 +31,7 @@ export function mergePrivateLists(state: State, value: unknown): State | null {
   const bundle = value as { routines?: unknown; library?: unknown };
   if (!Array.isArray(bundle.routines) || !Array.isArray(bundle.library)) return null;
   const routines = bundle.routines.filter((item): item is Routine => !!item && typeof item === "object" && typeof item.id === "string" && typeof item.title === "string" && ["morning", "evening", "weekly"].includes(item.period));
-  const library = bundle.library.filter((item): item is LibraryItem => !!item && typeof item === "object" && typeof item.id === "string" && typeof item.title === "string" && typeof item.group === "string" && typeof item.details === "string" && ["shopping", "feel-good", "places", "meals", "workouts", "bags", "lists"].includes(item.category));
+  const library = bundle.library.filter((item): item is LibraryItem => !!item && typeof item === "object" && typeof item.id === "string" && typeof item.title === "string" && typeof item.group === "string" && typeof item.details === "string" && ["shopping", "feel-good", "beauty", "places", "meals", "workouts", "bags", "lists"].includes(item.category));
   if (routines.length !== bundle.routines.length || library.length !== bundle.library.length) return null;
   return {
     ...state,

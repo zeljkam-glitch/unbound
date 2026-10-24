@@ -128,4 +128,15 @@ describe("UNBOUND Life OS interactions", () => {
     fireEvent.click(screen.getByRole("button", { name: "Lists" }));
     expect(screen.getByRole("heading", { name: "My private list" })).toBeTruthy();
   });
+  it("keeps a private beauty atlas as its own library category", async () => {
+    await open();
+    fireEvent.click(screen.getByRole("button", { name: "Your space and data" }));
+    const file = new File([JSON.stringify({ routines: [], library: [{ id: "private-beauty", category: "beauty", title: "Evening care", group: "Ritual", details: "Cleanse, Face cream" }] })], "private-beauty.json", { type: "application/json" });
+    fireEvent.change(screen.getByLabelText("Private lists file"), { target: { files: [file] } });
+    await screen.findByText("Private routines and lists were imported. They stay in this browser only.");
+    go(/My Library/);
+    fireEvent.click(screen.getByRole("button", { name: "Beauty atlas" }));
+    expect(screen.getByRole("heading", { name: "Evening care" })).toBeTruthy();
+    expect(screen.getByLabelText("Cleanse")).toBeTruthy();
+  });
 });
