@@ -1,6 +1,6 @@
 import { newId } from "@/lib/id";
 import { localDate, type LibraryCategory, type LibraryItem, type State } from "@/lib/model";
-import { ArrowSquareOut, Barbell, BowlFood, Check, FlowerLotus, Handbag, ListHeart, MapPinArea, Plus, Quotes, ShoppingBagOpen, SunHorizon, Trash } from "@phosphor-icons/react";
+import { ArrowSquareOut, Barbell, BowlFood, Check, FlowerLotus, Handbag, Lightbulb, ListHeart, MapPinArea, Plus, Quotes, ShoppingBagOpen, SunHorizon, Trash, X } from "@phosphor-icons/react";
 import Image from "next/image";
 import { useState } from "react";
 import type { Update } from "@/lib/ui-types";
@@ -27,6 +27,14 @@ const workoutLinks = [
 ];
 const checklistParts = (value: string) => value.split(/[,;\n•]+/).map((part) => part.trim()).filter(Boolean);
 
+const listGuide = [
+  { category: "bags" as const, hr: { title: "Ne želim svaki put pamtiti što ponijeti", note: "Napravi popis za torbu, put ili situaciju koja se ponavlja." }, en: { title: "I do not want to remember what to pack every time", note: "Make a checklist for a bag, trip, or recurring situation." } },
+  { category: "meals" as const, hr: { title: "Želim lakše odlučiti što kuhati ili kupiti", note: "Počni jednim jelom koje stvarno voliš; sastojci mogu postati popis za kupnju." }, en: { title: "I want choosing meals or groceries to feel easier", note: "Begin with one meal you genuinely like; its ingredients can become a shopping list." } },
+  { category: "places" as const, hr: { title: "Želim sačuvati mjesto, ideju ili mali bijeg", note: "Zapiši nešto čemu se želiš vratiti, bez obveze da odmah napraviš plan." }, en: { title: "I want to keep a place, idea, or small escape", note: "Save something you want to return to, without having to plan it now." } },
+  { category: "feel-good" as const, hr: { title: "Želim otkriti što mi zapravo čini dobro", note: "Počni stvarnim trenutkom u kojem si osjetila malo više mira, radosti ili sebe." }, en: { title: "I want to discover what genuinely feels good", note: "Begin with a real moment when you felt a little more calm, joy, or yourself." } },
+  { category: "lists" as const, hr: { title: "Nešto mi se stalno vraća u glavu", note: "Daj mu vlastiti popis i naziv koji tebi ima smisla — bez zadane kategorije." }, en: { title: "Something keeps returning to my mind", note: "Give it its own list and a name that makes sense to you — no prescribed category." } },
+];
+
 export default function LibraryScreen({ state, update }: { state: State; update: Update }) {
   const { locale } = useLanguage();
   const hr = locale === "hr";
@@ -45,6 +53,7 @@ export default function LibraryScreen({ state, update }: { state: State; update:
   const [category, setCategory] = useState<LibraryCategory>("shopping");
   const [editing, setEditing] = useState<LibraryItem | null>(null);
   const [open, setOpen] = useState(false);
+  const [guideOpen, setGuideOpen] = useState(false);
   const [addedId, setAddedId] = useState("");
   const items = state.library.filter((item) => item.category === category);
   const Icon = icons[category];
@@ -60,6 +69,15 @@ export default function LibraryScreen({ state, update }: { state: State; update:
 
   return <>
     <div className="libraryTabs">{translated.map((item) => { const CategoryIcon = icons[item.id]; return <button key={item.id} aria-pressed={category === item.id} onClick={() => { setCategory(item.id); setAddedId(""); }}><CategoryIcon size={28} weight="thin" /><span>{item.label}</span></button>; })}</div>
+    <section className="libraryOwnership">
+      <div><span className="sectionLabel">{hr ? "TVOJA ZBIRKA, TVOJA PRAVILA" : "YOUR LIBRARY, YOUR RULES"}</span><p>{hr ? "Ove kategorije su početne police, ne gotov odgovor. Dodaj svoje ideje, lokacije i vrste popisa; primjeri su samo pomoć dok ne pronađeš što tebi služi." : "These categories are starting shelves, not a finished answer. Add your own ideas, places, and kinds of lists; examples are only support while you discover what serves you."}</p></div>
+      <button onClick={() => setGuideOpen(!guideOpen)}><Lightbulb /> {hr ? "Ne znam koji popis trebam" : "I do not know which list I need"}</button>
+    </section>
+    {guideOpen && <section className="listGuide" aria-label={hr ? "Vodič za odabir popisa" : "List discovery guide"}>
+      <div className="listGuideHead"><div><span className="sectionLabel">{hr ? "POČNI OD ONOGA ŠTO ŽELIŠ OLAKŠATI" : "BEGIN WITH WHAT YOU WANT TO MAKE EASIER"}</span><h2>{hr ? "Što ti se sada ponavlja?" : "What keeps repeating right now?"}</h2></div><button className="iconButton" aria-label={hr ? "Zatvori vodič" : "Close guide"} onClick={() => setGuideOpen(false)}><X /></button></div>
+      <div className="listGuideChoices">{listGuide.map((choice) => { const copy = choice[hr ? "hr" : "en"]; const GuideIcon = icons[choice.category]; return <button key={choice.category} onClick={() => { setCategory(choice.category); setEditing(null); setOpen(true); setGuideOpen(false); }}><GuideIcon size={26} weight="thin" /><span><strong>{copy.title}</strong><small>{copy.note}</small></span></button>; })}</div>
+      <p>{hr ? "Ako se ništa ne uklapa, odaberi Popisi i nazovi ga svojim riječima. Ne mora nalikovati ničijoj tuđoj zbirci." : "If none of these fit, choose Lists and name it in your own words. It does not need to resemble anybody else's library."}</p>
+    </section>}
     <div className="sectionHead"><div><div className="sectionLabel"><Icon /> {hr ? "MOJA ZBIRKA" : "MY LIBRARY"}</div><h2>{translated.find((item) => item.id === category)?.label}</h2><p className="quiet">{translated.find((item) => item.id === category)?.note}</p></div><button className="primary" onClick={() => { setEditing(null); setOpen(!open); }}><Plus /> {hr ? "Dodaj" : "Add item"}</button></div>
     {category === "feel-good" && <div className="libraryMood"><Image src="/living-frames/library-rain-window.jpg" alt="" fill sizes="100vw" /><div><span>{seasonal.month.toUpperCase()} · {seasonal.seasonName.toUpperCase()}</span><strong>{seasonal.theme}</strong></div></div>}
     {open && <form className="card libraryForm" onSubmit={(event) => {

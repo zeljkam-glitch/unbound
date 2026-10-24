@@ -1630,11 +1630,55 @@ body:has(.livingShell) { background:#171a1b; }
 .iconButton { min-width:36px; padding:8px; border:0; background:transparent; color:#a9aaa5; }
 .momentEmpty { padding:30px; border:1px solid #3a3f3e; color:#b6b7b2; }
 .momentFootnote { margin:24px 0 0; font-size:13px; }
+.momentOwnership { display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:center; gap:28px; margin:28px 0 30px; padding:22px 0; border-top:1px solid #3b403f; border-bottom:1px solid #3b403f; }
+.momentOwnership strong { font-size:18px; font-weight:450; }
+.momentOwnership p { max-width:720px; margin:7px 0 0; color:#a9aaa5; font-size:13px; line-height:1.55; }
+.momentOwnership button { align-self:center; color:#f2f0e9; border-color:#646967; white-space:nowrap; }
+.momentDiscovery { margin:0 0 32px; padding:28px; border:1px solid #555b59; background:#171c1d; }
+.momentDiscoveryHead { max-width:760px; }
+.momentDiscoveryHead h3 { margin:12px 0 8px; font-size:clamp(28px,3.4vw,46px); font-weight:300; line-height:1.04; letter-spacing:-.03em; }
+.momentDiscoveryHead p { margin:0; color:#a9aaa5; }
+.discoveryMethods { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); margin-top:28px; border:1px solid #4b504f; }
+.discoveryMethods button { min-height:130px; align-items:flex-start; justify-content:flex-start; gap:9px; padding:18px; color:#f2f0e9; border:0; border-right:1px solid #4b504f; text-align:left; }
+.discoveryMethods button:last-child { border-right:0; }
+.discoveryMethods button[aria-pressed="true"] { background:#f2f0e9; color:#101415; }
+.discoveryMethods button strong,.discoveryMethods button span { display:block; }
+.discoveryMethods button strong { font-size:16px; font-weight:450; }
+.discoveryMethods button span { color:#a9aaa5; font-size:12px; line-height:1.45; }
+.discoveryMethods button[aria-pressed="true"] span { color:#555b59; }
+.discoveryForm { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:18px; margin-top:24px; padding-top:24px; border-top:1px solid #4b504f; }
+.discoveryForm label { display:grid; align-content:start; gap:9px; color:#c9cac6; font-size:12px; line-height:1.45; }
+.discoveryForm input,.discoveryForm textarea,.discoveryForm select { width:100%; color:#f2f0e9; border-color:#555b59; background:#101415; }
+.discoveryReflection { grid-column:1/-1; }
+.discoverySave { grid-column:1/-1; display:flex; align-items:center; justify-content:space-between; gap:20px; }
+.discoverySave small { max-width:560px; color:#929793; line-height:1.45; }
+
+.libraryOwnership { display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:center; gap:28px; padding:24px 0; border-bottom:1px solid var(--line); }
+.libraryOwnership p { max-width:760px; margin:8px 0 0; color:var(--muted); font-size:13px; line-height:1.55; }
+.libraryOwnership > button { white-space:nowrap; }
+.listGuide { margin:28px 0 10px; padding:28px; border:1px solid var(--ink); background:#e8e4dc; }
+.listGuideHead { display:flex; align-items:flex-start; justify-content:space-between; gap:24px; }
+.listGuideHead h2 { margin:10px 0 0; font-size:clamp(32px,4vw,52px); font-weight:300; letter-spacing:-.04em; }
+.listGuideChoices { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); margin-top:26px; border:1px solid #b8b4ac; }
+.listGuideChoices button { min-height:180px; align-items:flex-start; justify-content:flex-start; gap:14px; padding:20px 16px; border:0; border-right:1px solid #b8b4ac; text-align:left; }
+.listGuideChoices button:last-child { border-right:0; }
+.listGuideChoices button:hover { background:#f2f0e9; }
+.listGuideChoices strong,.listGuideChoices small { display:block; }
+.listGuideChoices strong { font-size:15px; font-weight:450; line-height:1.25; }
+.listGuideChoices small { margin-top:8px; color:var(--muted); font-size:12px; line-height:1.45; }
+.listGuide > p { max-width:760px; margin:20px 0 0; color:var(--muted); font-size:12px; }
 
 @media (max-width:1000px) {
   .momentFilters > div { grid-template-columns:repeat(2,minmax(0,1fr)); }
   .momentGrid { grid-template-columns:repeat(2,minmax(0,1fr)); }
   .momentAddForm { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .discoveryMethods { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .discoveryMethods button:nth-child(2) { border-right:0; }
+  .discoveryMethods button:nth-child(-n+2) { border-bottom:1px solid #4b504f; }
+  .listGuideChoices { grid-template-columns:repeat(2,minmax(0,1fr)); border-bottom:0; }
+  .listGuideChoices button { border-bottom:1px solid #b8b4ac; }
+  .listGuideChoices button:nth-child(2n) { border-right:0; }
+  .listGuideChoices button:last-child { border-right:1px solid #b8b4ac; }
 }
 @media (max-width:700px) {
   .beautifulMoments { margin:36px -17px; padding:28px 20px; }
@@ -1643,6 +1687,15 @@ body:has(.livingShell) { background:#171a1b; }
   .momentToolbar > div { width:100%; flex-wrap:wrap; }
   .momentGrid,.momentFilters > div,.momentAddForm { grid-template-columns:1fr; }
   .momentCard { min-height:260px; }
+  .momentOwnership,.libraryOwnership { grid-template-columns:1fr; }
+  .momentOwnership button,.libraryOwnership > button { width:100%; white-space:normal; }
+  .momentDiscovery,.listGuide { padding:22px 18px; }
+  .discoveryMethods,.listGuideChoices { grid-template-columns:1fr; }
+  .discoveryMethods button,.discoveryMethods button:nth-child(2),.listGuideChoices button,.listGuideChoices button:nth-child(2n),.listGuideChoices button:last-child { min-height:0; border-right:0; border-bottom:1px solid #4b504f; }
+  .listGuideChoices button,.listGuideChoices button:nth-child(2n),.listGuideChoices button:last-child { border-bottom-color:#b8b4ac; }
+  .discoveryForm { grid-template-columns:1fr; }
+  .discoverySave { align-items:stretch; flex-direction:column; }
+  .discoverySave .primary { width:100%; }
 }
 .livingShell .buttonLink { display:inline-flex; align-items:center; justify-content:center; gap:7px; min-height:44px; padding:10px 15px; color:var(--ink); border:1px solid var(--line); }
 

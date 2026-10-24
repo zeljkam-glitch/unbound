@@ -84,4 +84,11 @@ describe("personal freedom model", () => {
     expect(migrated?.library.some((item) => item.category === "quotes")).toBe(true);
     expect(migrated?.tasks).toHaveLength(previous.tasks.length);
   });
+  it("retires a former demo thought from already saved browsers", () => {
+    const current = demo("en");
+    const saved = { ...current, library: [...current.library, { id: "quote-attention", category: "quotes" as const, title: "Former demo thought", group: "Former source", details: "Former note" }] };
+    const migrated = migrateState(saved);
+    expect(migrated?.library.some((item) => item.id === "quote-attention")).toBe(false);
+    expect(migrated?.library.some((item) => item.id === "quote-notice")).toBe(true);
+  });
 });

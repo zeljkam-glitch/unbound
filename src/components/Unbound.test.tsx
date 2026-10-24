@@ -70,6 +70,16 @@ describe("UNBOUND Life OS interactions", () => {
     });
     expect(screen.getByText("Chosen for today")).toBeTruthy();
   });
+  it("helps a person discover and privately save their own beautiful moment", async () => {
+    await open();
+    fireEvent.click(screen.getByRole("button", { name: "Help me discover mine" }));
+    fireEvent.click(screen.getByRole("button", { name: /Replay a moment/ }));
+    fireEvent.change(screen.getByLabelText("My trace"), { target: { value: "I felt calm when the room became quiet." } });
+    fireEvent.change(screen.getByLabelText("Name my beautiful moment"), { target: { value: "A quiet room" } });
+    fireEvent.click(screen.getByRole("button", { name: "Save as my trace" }));
+    expect(await screen.findByRole("heading", { name: "A quiet room" })).toBeTruthy();
+    await waitFor(() => expect(JSON.parse(localStorage.getItem("unbound.v1")!).beautifulMoments[0]).toMatchObject({ title: "A quiet room", category: "personal", favorite: true }));
+  });
   it("stores an optional twelve-week direction and weekly review", async () => {
     await open(); go(/Planner/);
     fireEvent.click(screen.getByRole("button", { name: "12 weeks" }));
@@ -88,6 +98,13 @@ describe("UNBOUND Life OS interactions", () => {
     fireEvent.click(screen.getAllByRole("button", { name: "Add today" })[0]);
     expect(screen.getByRole("button", { name: "Added for today" })).toBeTruthy();
     expect(screen.getByRole("link", { name: "Open Today" })).toBeTruthy();
+  });
+  it("guides a person toward a useful list without prescribing its contents", async () => {
+    await open(); go(/My Library/);
+    fireEvent.click(screen.getByRole("button", { name: "I do not know which list I need" }));
+    fireEvent.click(screen.getByRole("button", { name: /Something keeps returning to my mind/ }));
+    expect(screen.getByRole("heading", { name: "Lists" })).toBeTruthy();
+    expect(screen.getByLabelText("Name")).toBeTruthy();
   });
   it("offers a city fallback when browser location is unavailable", async () => {
     await open();

@@ -91,18 +91,22 @@ export function suggest(tasks: Task[], energy: string, today = localDate()) {
 
 const task = (id: string, title: string, patch: Partial<Task> = {}): Task => ({ id, title, date: localDate(), time: "", deadline: "", kind: "flexible", duration: 30, repeat: "none", area: "anywhere", effort: "light", completedAt: null, notes: "", tags: [], projectId: "", ...patch });
 const quoteLibrary = (locale: "hr" | "en"): LibraryItem[] => locale === "hr" ? [
-  { id: "quote-attention", category: "quotes", title: "Pažnja je početak odanosti.", group: "Mary Oliver", details: "Za dane u kojima se želiš vratiti onome što je pred tobom." },
+  { id: "quote-notice", category: "quotes", title: "Primijeti ono zbog čega se vraćaš sebi.", group: "UNBOUND", details: "Za dane u kojima želiš ponovno čuti vlastiti ritam." },
   { id: "quote-questions", category: "quotes", title: "Živi pitanja.", group: "Rainer Maria Rilke", details: "Ne mora svaki odgovor stići danas." },
   { id: "quote-room", category: "quotes", title: "Ostavi malo mjesta za ono što još ne znaš.", group: "UNBOUND", details: "Podsjetnik da plan ne mora zatvoriti cijeli dan." },
   { id: "quote-rhythm", category: "quotes", title: "Tvoj ritam nije prepreka planu. On je dio plana.", group: "UNBOUND", details: "Za dane kada kapacitet traži drukčiji oblik." },
   { id: "quote-enough", category: "quotes", title: "Dovoljno je ono što te danas ne udaljava od sebe.", group: "UNBOUND", details: "Nježan kriterij za biranje prioriteta." },
 ] : [
-  { id: "quote-attention", category: "quotes", title: "Attention is the beginning of devotion.", group: "Mary Oliver", details: "For days when you want to return to what is in front of you." },
+  { id: "quote-notice", category: "quotes", title: "Notice what brings you back to yourself.", group: "UNBOUND", details: "For days when you want to hear your own rhythm again." },
   { id: "quote-questions", category: "quotes", title: "Live the questions.", group: "Rainer Maria Rilke", details: "Not every answer needs to arrive today." },
   { id: "quote-room", category: "quotes", title: "Leave a little room for what you do not know yet.", group: "UNBOUND", details: "A reminder that the plan does not need to close the whole day." },
   { id: "quote-rhythm", category: "quotes", title: "Your pace is not an obstacle to the plan. It belongs in it.", group: "UNBOUND", details: "For days when capacity asks for a different shape." },
   { id: "quote-enough", category: "quotes", title: "Enough is what does not take you further away from yourself today.", group: "UNBOUND", details: "A gentle measure for choosing priorities." },
 ];
+const retireFormerDemoThought = (library: LibraryItem[]) => {
+  const alreadyReplaced = library.some((item) => item.id === "quote-notice");
+  return library.flatMap((item) => item.id !== "quote-attention" ? [item] : alreadyReplaced ? [] : [{ id: "quote-notice", category: "quotes" as const, title: item.title.startsWith("Pažnja") ? "Primijeti ono zbog čega se vraćaš sebi." : "Notice what brings you back to yourself.", group: "UNBOUND", details: item.title.startsWith("Pažnja") ? "Za dane u kojima želiš ponovno čuti vlastiti ritam." : "For days when you want to hear your own rhythm again." }]);
+};
 export function demo(locale: "hr" | "en" = "en"): State {
   const today = localDate();
   const hr = locale === "hr";
@@ -141,7 +145,7 @@ function migrateTask(t: Record<string, unknown>): Task { return task(String(t.id
 export function migrateState(value: unknown): State | null {
   if (!value || typeof value !== "object") return null;
   const v = value as Record<string, unknown>;
-  if (v.version === 5 && isState(v)) return v;
+  if (v.version === 5 && isState(v)) return { ...v, library: retireFormerDemoThought(v.library) };
   if (v.version === 4 && Array.isArray(v.library)) return { ...(v as unknown as State), version: 5, library: [...(v.library as LibraryItem[]), ...quoteLibrary("hr").filter((quote) => !(v.library as LibraryItem[]).some((item) => item.id === quote.id))] };
   if ((v.version === 2 || v.version === 3) && Array.isArray(v.tasks) && Array.isArray(v.projects) && Array.isArray(v.library) && Array.isArray(v.routines)) return { ...(v as unknown as State), version: 5, library: [...(v.library as LibraryItem[]), ...quoteLibrary("hr")], beautifulMoments: beautifulMomentCatalog("hr"), plannedMoments: {}, momentPreferences: {} };
   if (v.version !== 1 || !Array.isArray(v.tasks) || !Array.isArray(v.projects)) return null;

@@ -20,7 +20,7 @@ export default function TodayScreen({ state, today, update }: { state: State; to
   const todayDate = new Date(`${today}T12:00:00`);
   const quotes = state.library.filter((item) => item.category === "quotes");
   const quoteSeed = [...today].reduce((total, character) => total + character.charCodeAt(0), 0);
-  const dailyQuote = quotes.length ? quotes[quoteSeed % quotes.length] : { title: hr ? "Pažnja je početak odanosti." : "Attention is the beginning of devotion.", group: "Mary Oliver" };
+  const dailyQuote = quotes.length ? quotes[quoteSeed % quotes.length] : { title: hr ? "Primijeti ono zbog čega se vraćaš sebi." : "Notice what brings you back to yourself.", group: "UNBOUND" };
   const done = state.routineDone[today] || [];
   const toggleRoutine = (id: string) => update((s) => ({ ...s, routineDone: { ...s.routineDone, [today]: done.includes(id) ? done.filter((x) => x !== id) : [...done, id] } }));
   const addLibrary = () => {
