@@ -10,7 +10,7 @@
 
 The source screenshot and both original local prototypes were inspected before implementation. Their assets are used directly: the interior photograph on Today, the stairwell image in My Library and the train-window image in Planner. The functional application remains the source of truth for tasks, durations, deadlines, routines, library items, inbox, goals, weekly check-ins and the optional 12-week view.
 
-The rebuilt application could not be captured in a browser because neither the in-app browser nor Chrome was available in this environment. TypeScript validation, all 21 interaction/domain tests and the production build pass, but build success is not treated as visual verification.
+The rebuilt application could not be captured in a browser because neither the in-app browser nor Chrome was available in this environment. TypeScript validation, all 22 interaction/domain tests and the production build pass, but build success is not treated as visual verification.
 
 ## Findings
 
@@ -28,9 +28,9 @@ The rebuilt application could not be captured in a browser because neither the i
 ## Automated evidence
 
 - TypeScript check: passed.
-- Automated tests: 21 passed.
+- Automated tests: 22 passed.
 - Production build: passed.
-- Core flows covered: bilingual switching, Planner task creation and persistence, moving tasks between days, removing a task time, deadline labels, 12-week outcome and review persistence, quick idea capture, Library-to-Today, Inbox-to-Today, routines and weekly check-ins.
+- Core flows covered: bilingual switching, Planner task creation and persistence, moving tasks between days, removing a task time, deadline labels, 12-week outcome and review persistence, quick idea capture, Library-to-Today, Inbox-to-Today, routines, weekly check-ins and weekly/monthly/quarterly/yearly report switching.
 
 ## Final result
 

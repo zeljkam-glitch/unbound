@@ -99,4 +99,12 @@ describe("UNBOUND Life OS interactions", () => {
       expect(Object.values(saved.weeklyCheckins)[0]).toMatchObject({ win: "Protected one morning" });
     });
   });
+  it("offers optional weekly, monthly, quarterly, and yearly reports", async () => {
+    await open(); go(/Goals/);
+    expect(screen.getByRole("heading", { name: "A look back. Without judgment." })).toBeTruthy();
+    expect(screen.getByRole("button", { name: "Download report" })).toBeTruthy();
+    fireEvent.click(screen.getByRole("button", { name: "Quarter" }));
+    expect(screen.getByRole("heading", { name: "The wider view of your quarter." })).toBeTruthy();
+    expect(screen.getByRole("button", { name: "Year" })).toBeTruthy();
+  });
 });
