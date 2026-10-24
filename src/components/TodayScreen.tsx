@@ -7,6 +7,7 @@ import type { Update } from "@/lib/ui-types";
 import WeatherCard from "./WeatherCard";
 import { Empty } from "./Primitives";
 import { useLanguage } from "./LanguageContext";
+import SeasonalCompass from "./SeasonalCompass";
 
 export default function TodayScreen({ state, today, update }: { state: State; today: string; update: Update }) {
   const [idea, setIdea] = useState("");
@@ -40,6 +41,7 @@ export default function TodayScreen({ state, today, update }: { state: State; to
     </section>
     <div className="livingDayDetails">
     <WeatherCard />
+    <SeasonalCompass update={update} />
     <div className="checkinBand">
       <div><span className="sectionLabel">{hr ? "KAKO STIŽEŠ U OVAJ DAN?" : "HOW ARE YOU ARRIVING?"}</span><strong>{hr ? "Neka plan prati tvoj stvarni kapacitet." : "Let the plan reflect your actual capacity."}</strong></div>
       {(["low", "steady", "high"] as const).map((v) => <button key={v} aria-pressed={state.energies[today] === v} onClick={() => update((s) => ({ ...s, energies: { ...s.energies, [today]: s.energies[today] === v ? "" : v } }))}>{hr ? "Energija" : "Energy"} · {hr ? ({ low: "niska", steady: "stabilna", high: "visoka" } as const)[v] : v}</button>)}

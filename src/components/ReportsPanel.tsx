@@ -4,6 +4,7 @@ import { CalendarBlank, CheckCircle, Clock, DownloadSimple, Path } from "@phosph
 import { useMemo, useState } from "react";
 import { addDays, localDate, weekStart, type State } from "@/lib/model";
 import { useLanguage } from "./LanguageContext";
+import { seasonalContext } from "@/lib/season";
 
 type Period = "week" | "month" | "quarter" | "year";
 
@@ -27,6 +28,7 @@ const inRange = (date: string, start: string, end: string) => !!date && date >= 
 export default function ReportsPanel({ state }: { state: State }) {
   const { locale } = useLanguage();
   const hr = locale === "hr";
+  const seasonal = seasonalContext(new Date(), locale);
   const [period, setPeriod] = useState<Period>("week");
   const periods: Array<{ id: Period; hr: string; en: string }> = [
     { id: "week", hr: "Tjedan", en: "Week" },
@@ -61,6 +63,7 @@ export default function ReportsPanel({ state }: { state: State }) {
     const lines = [
       `# UNBOUND · ${hr ? periodName.hr : periodName.en}`,
       rangeLabel,
+      `${seasonal.month} · ${seasonal.seasonName}`,
       "",
       `## ${title}`,
       insight,
@@ -104,7 +107,7 @@ export default function ReportsPanel({ state }: { state: State }) {
       {periods.map((item) => <button key={item.id} aria-pressed={period === item.id} onClick={() => setPeriod(item.id)}>{hr ? item.hr : item.en}</button>)}
     </div>
     <div className="reportStory">
-      <div className="reportStoryIntro"><span>{rangeLabel}</span><h3>{title}</h3></div>
+      <div className="reportStoryIntro"><span>{rangeLabel}<br />{seasonal.month} · {seasonal.seasonName}</span><h3>{title}</h3></div>
       <div className="reportMetrics">{metrics.map(({ icon: Icon, value, label }) => <div className="reportMetric" key={label}><Icon /><strong>{value}</strong><span>{label}</span></div>)}</div>
       <div className="reportInsight"><div className="sectionLabel">{hr ? "ONO ŠTO SE VIDI" : "WHAT COMES INTO VIEW"}</div><p>{insight}</p><small>{hr ? `${planned.length} planirano · ${activeGoals.length} aktivnih ciljeva · ${reviews.length} zapisanih osvrta` : `${planned.length} planned · ${activeGoals.length} active goals · ${reviews.length} reflections written`}</small></div>
     </div>

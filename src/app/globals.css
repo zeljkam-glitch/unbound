@@ -1233,6 +1233,19 @@ body:has(.livingShell) { background:#171a1b; }
 .livingEmpty { margin-top:40px; color:var(--muted); }
 .livingDayDetails { padding:0 clamp(28px,4vw,64px) 64px; }
 .livingDayDetails .weatherCard { padding-top:30px; }
+.livingShell .seasonalCompass { display:grid; grid-template-columns:minmax(220px,.8fr) minmax(0,2fr); margin:0; border-bottom:1px solid var(--ink); }
+.livingShell .seasonalIntro { padding:38px 32px 38px 0; border-right:1px solid var(--line); }
+.livingShell .seasonalIntro > svg { margin-bottom:26px; color:#71242f; }
+.livingShell .seasonalIntro h2 { margin:15px 0 12px; font-size:clamp(34px,4vw,58px); font-weight:300; line-height:.96; }
+.livingShell .seasonalIntro p { max-width:420px; color:var(--muted); line-height:1.5; }
+.livingShell .seasonalIdeas { display:grid; grid-template-columns:repeat(3,1fr); }
+.livingShell .seasonalIdeas article { display:flex; min-width:0; min-height:260px; flex-direction:column; padding:32px 24px; border-right:1px solid var(--line); }
+.livingShell .seasonalIdeas article:last-child { border-right:0; }
+.livingShell .seasonalIdeas article > span { color:var(--muted); font-size:9px; letter-spacing:.16em; }
+.livingShell .seasonalIdeas p { margin:42px 0 28px; font-size:clamp(17px,1.8vw,25px); font-weight:300; line-height:1.18; }
+.livingShell .seasonalIdeas button { justify-content:flex-start; width:max-content; max-width:100%; margin-top:auto; padding:8px 0; border:0; color:var(--muted); font-size:10px; }
+.livingShell .seasonalIdeas button:disabled { opacity:.55; }
+.livingShell .plannerSeason { max-width:430px; margin:18px 0 0; color:rgba(255,255,255,.7); font-size:12px; line-height:1.45; }
 .livingDayDetails .tasksSection { margin-bottom:40px; }
 
 .livingShell:not(.tab-today) #main > :not(.pageIntro):not(.notice):not(.settings):not(footer) { margin-left:clamp(28px,4vw,64px); margin-right:clamp(28px,4vw,64px); }
@@ -1289,6 +1302,12 @@ body:has(.livingShell) { background:#171a1b; }
   .livingAgendaHead h2 { font-size:38px; }
   .livingAgendaList { margin-top:28px; }
   .livingDayDetails { padding:0 18px 42px; }
+  .livingShell .seasonalCompass { grid-template-columns:1fr; }
+  .livingShell .seasonalIntro { padding:32px 0; border-right:0; border-bottom:1px solid var(--line); }
+  .livingShell .seasonalIdeas { grid-template-columns:1fr; }
+  .livingShell .seasonalIdeas article { min-height:190px; padding:26px 0; border-right:0; border-bottom:1px solid var(--line); }
+  .livingShell .seasonalIdeas article:last-child { border-bottom:0; }
+  .livingShell .seasonalIdeas p { margin:26px 0 20px; }
   .livingShell:not(.tab-today) #main > :not(.pageIntro):not(.notice):not(.settings):not(footer) { margin-left:18px; margin-right:18px; }
   .livingShell .plannerHero { min-height:420px; margin-left:0!important; margin-right:0!important; padding:28px 18px; }
   .livingShell .libraryMood { min-height:430px; }

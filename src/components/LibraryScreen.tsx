@@ -6,6 +6,7 @@ import { useState } from "react";
 import type { Update } from "@/lib/ui-types";
 import { Empty, Field } from "./Primitives";
 import { useLanguage } from "./LanguageContext";
+import { seasonalContext } from "@/lib/season";
 
 const categories: Array<{ id: LibraryCategory; label: string; note: string }> = [
   { id: "shopping", label: "Shopping by store", note: "What to buy, grouped by where you go" },
@@ -26,6 +27,7 @@ const checklistParts = (value: string) => value.split(/[,;\n•]+/).map((part) =
 export default function LibraryScreen({ state, update }: { state: State; update: Update }) {
   const { locale } = useLanguage();
   const hr = locale === "hr";
+  const seasonal = seasonalContext(new Date(), locale);
   const translated = hr ? [
     { id: "shopping" as const, label: "Kupnja po trgovinama", note: "Što trebaš kupiti, složeno prema mjestu na koje ideš" },
     { id: "feel-good" as const, label: "Atlas dobrog osjećaja", note: "Male stvari koje ti vraćaju snagu ili mir" },
@@ -53,7 +55,7 @@ export default function LibraryScreen({ state, update }: { state: State; update:
   return <>
     <div className="libraryTabs">{translated.map((item) => { const CategoryIcon = icons[item.id]; return <button key={item.id} aria-pressed={category === item.id} onClick={() => { setCategory(item.id); setAddedId(""); }}><CategoryIcon size={22} /><span>{item.label}</span></button>; })}</div>
     <div className="sectionHead"><div><div className="sectionLabel"><Icon /> {hr ? "MOJA ZBIRKA" : "MY LIBRARY"}</div><h2>{translated.find((item) => item.id === category)?.label}</h2><p className="quiet">{translated.find((item) => item.id === category)?.note}</p></div><button className="primary" onClick={() => { setEditing(null); setOpen(!open); }}><Plus /> {hr ? "Dodaj" : "Add item"}</button></div>
-    {category === "feel-good" && <div className="libraryMood"><Image src="/living-frames/library-rain-window.jpg" alt="" fill sizes="100vw" /><div><span>{hr ? "MALI PODSJETNIK" : "A SMALL REMINDER"}</span><strong>{hr ? "Neke stvari jednostavno ti čine dobro." : "Some things simply make you feel better."}</strong></div></div>}
+    {category === "feel-good" && <div className="libraryMood"><Image src="/living-frames/library-rain-window.jpg" alt="" fill sizes="100vw" /><div><span>{seasonal.month.toUpperCase()} · {seasonal.seasonName.toUpperCase()}</span><strong>{seasonal.theme}</strong></div></div>}
     {open && <form className="card libraryForm" onSubmit={(event) => {
       event.preventDefault();
       const form = new FormData(event.currentTarget);

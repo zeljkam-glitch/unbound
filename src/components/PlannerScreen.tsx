@@ -6,6 +6,7 @@ import type { Update } from "@/lib/ui-types";
 import { Field } from "./Primitives";
 import TwelveWeekView from "./TwelveWeekView";
 import { useLanguage } from "./LanguageContext";
+import { seasonalContext } from "@/lib/season";
 
 const durationOptions = [5, 10, 15, 30, 60, 120, 180, 240, 480];
 const minutesLabel = (minutes: number) => minutes < 60 ? `${minutes}m` : minutes % 60 ? `${Math.floor(minutes / 60)}h ${minutes % 60}m` : `${minutes / 60}h`;
@@ -13,6 +14,7 @@ const minutesLabel = (minutes: number) => minutes < 60 ? `${minutes}m` : minutes
 export default function PlannerScreen({ state, update }: { state: State; update: Update }) {
   const { locale } = useLanguage();
   const hr = locale === "hr";
+  const seasonal = seasonalContext(new Date(), locale);
   const [start, setStart] = useState(localDate());
   const [openDate, setOpenDate] = useState<string | null>(null);
   const [movingTask, setMovingTask] = useState<string | null>(null);
@@ -44,7 +46,7 @@ export default function PlannerScreen({ state, update }: { state: State; update:
     </article>;
   };
   return <>
-    <div className="plannerHero"><div><div className="sectionLabel">03 / {hr ? "PLANER" : "PLANNER"}</div><h2>{hr ? <>Oblikuj tjedan.<br />Ne moraš ga ispuniti.</> : <>Shape the week.<br />You don’t have to fill it.</>}</h2></div><div className="viewSwitch"><button aria-pressed={view === "week"} onClick={() => setView("week")}>{hr ? "Tjedan" : "Week"}</button><button aria-pressed={view === "twelve"} onClick={() => setView("twelve")}>{hr ? "12 tjedana" : "12 weeks"}</button></div>{view === "week" && <button className="primary" onClick={() => setOpenDate(days.includes(localDate()) ? localDate() : start)}><Plus /> {hr ? "Novi zadatak" : "New task"}</button>}</div>
+    <div className="plannerHero"><div><div className="sectionLabel">03 / {hr ? "PLANER" : "PLANNER"} · {seasonal.month.toUpperCase()} · {seasonal.seasonName.toUpperCase()}</div><h2>{hr ? <>Oblikuj tjedan.<br />Ne moraš ga ispuniti.</> : <>Shape the week.<br />You don’t have to fill it.</>}</h2><p className="plannerSeason">{seasonal.theme}</p></div><div className="viewSwitch"><button aria-pressed={view === "week"} onClick={() => setView("week")}>{hr ? "Tjedan" : "Week"}</button><button aria-pressed={view === "twelve"} onClick={() => setView("twelve")}>{hr ? "12 tjedana" : "12 weeks"}</button></div>{view === "week" && <button className="primary" onClick={() => setOpenDate(days.includes(localDate()) ? localDate() : start)}><Plus /> {hr ? "Novi zadatak" : "New task"}</button>}</div>
     {view === "twelve" ? <TwelveWeekView state={state} update={update} /> : <>
     <div className="plannerFilters" aria-label={hr ? "Filtri planera" : "Planner filters"}>
       <Field label={hr ? "Cilj" : "Project"}><select value={projectFilter} onChange={(e) => setProjectFilter(e.target.value)}><option value="">{hr ? "Svi ciljevi" : "All projects"}</option>{state.projects.map((project) => <option key={project.id} value={project.id}>{project.name}</option>)}</select></Field>

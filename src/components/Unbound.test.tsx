@@ -49,6 +49,14 @@ describe("UNBOUND Life OS interactions", () => {
       expect(saved.tasks.some((t: { title: string }) => t.title === "A bright new direction")).toBe(false);
     });
   });
+  it("adapts inspiration to the current month and saves it as an idea", async () => {
+    await open();
+    expect(screen.getByRole("heading", { name: "The season belongs in the plan." })).toBeTruthy();
+    const save = screen.getAllByRole("button", { name: /Save idea:/ })[0];
+    fireEvent.click(save);
+    expect(save.textContent).toContain("Saved");
+    await waitFor(() => expect(JSON.parse(localStorage.getItem("unbound.v1")!).thoughts.length).toBe(2));
+  });
   it("stores an optional twelve-week direction and weekly review", async () => {
     await open(); go(/Planner/);
     fireEvent.click(screen.getByRole("button", { name: "12 weeks" }));
