@@ -1,6 +1,6 @@
 # UNBOUND MVP Design QA
 
-- Source visual truth: supplied Planner screenshots from the referenced conversation (1536 × 768 and 2048 × 857).
+- Source visual truth: supplied Planner screenshots from the referenced conversation plus five additional desktop captures supplied on 24 October 2026.
 - Implementation: local Next.js application.
 - Intended viewports: desktop 1440 × 900 and mobile 393 × 852.
 - State: seeded first-use data in dark mode.
@@ -9,7 +9,7 @@
 
 ## Comparison evidence
 
-The source screenshots were opened and reviewed. They establish the functional model: persistent navigation, multiple day columns, planned/available context, inline task creation, duration estimates and repeating tasks.
+The source screenshots were opened and reviewed. They establish the functional model: persistent navigation, multiple day columns, planned/available context, per-day inline task creation, duration estimates, notes, repeating tasks, projects and tags.
 
 The implementation could not be captured in a browser because no browser surface was available in the build environment. TypeScript validation, 14 interaction/domain tests and the production build pass, but build success is not treated as visual verification.
 
@@ -28,9 +28,9 @@ The implementation could not be captured in a browser because no browser surface
 ## Automated evidence
 
 - TypeScript check: passed.
-- Automated tests: 14 passed.
+- Automated tests: 15 passed.
 - Production build: passed.
-- Core flows covered: Planner task creation/persistence, quick idea capture, add from Library to Today, Inbox to Today, routine persistence, weekly check-in persistence.
+- Core flows covered: Planner inline task creation/persistence, quick syntax parsing, time/duration/tag/note capture, quick idea capture, add from Library to Today, Inbox to Today, routine persistence, weekly check-in persistence.
 
 ## Final result
 

@@ -1,35 +1,46 @@
 import { newId } from "@/lib/id";
-import { addDays, localDate, taskOccursOn, toggleTask, type State, type TaskKind } from "@/lib/model";
-import { Check, Plus, Repeat } from "@phosphor-icons/react";
+import { addDays, localDate, parseTaskInput, taskOccursOn, toggleTask, type State, type TaskKind } from "@/lib/model";
+import { Check, Clock, Note, Plus, Repeat, Tag } from "@phosphor-icons/react";
 import { useState } from "react";
 import type { Update } from "@/lib/ui-types";
 import { Field } from "./Primitives";
 
+const durationOptions = [5, 10, 15, 30, 60, 120, 180, 240, 480];
+const minutesLabel = (minutes: number) => minutes < 60 ? `${minutes}m` : minutes % 60 ? `${Math.floor(minutes / 60)}h ${minutes % 60}m` : `${minutes / 60}h`;
+
 export default function PlannerScreen({ state, update }: { state: State; update: Update }) {
   const [start, setStart] = useState(localDate());
-  const [open, setOpen] = useState(false);
+  const [openDate, setOpenDate] = useState<string | null>(null);
+  const [projectFilter, setProjectFilter] = useState("");
+  const [tagFilter, setTagFilter] = useState("");
   const days = Array.from({ length: 7 }, (_, i) => addDays(start, i));
+  const tags = Array.from(new Set(state.tasks.flatMap((task) => task.tags || []))).sort();
+  const filtered = state.tasks.filter((task) => (!projectFilter || task.projectId === projectFilter) && (!tagFilter || task.tags?.includes(tagFilter)));
   return <>
-    <div className="sectionHead"><div><div className="sectionLabel">MULTI-DAY VIEW</div><h2>Plan the shape, not every minute.</h2></div><button className="primary" onClick={() => setOpen(!open)}><Plus /> New task</button></div>
-    {open && <form className="card plannerForm" onSubmit={(e) => {
-      e.preventDefault(); const f = new FormData(e.currentTarget);
-      update((s) => ({ ...s, tasks: [...s.tasks, { id: newId(), title: String(f.get("title")).trim(), date: String(f.get("date")), time: String(f.get("time")), deadline: String(f.get("deadline")), kind: String(f.get("kind")) as TaskKind, duration: Number(f.get("duration")) || 30, repeat: String(f.get("repeat")) as "none" | "daily" | "weekly", area: String(f.get("area")) as "home" | "outside" | "anywhere", effort: String(f.get("effort")) as "light" | "deep", completedAt: null }] })); e.currentTarget.reset(); setOpen(false);
-    }}>
-      <Field label="What needs doing?"><input name="title" required autoFocus /></Field>
-      <Field label="Plan for"><input name="date" type="date" defaultValue={start} required /></Field>
-      <Field label="Type"><select name="kind"><option value="fixed">Fixed</option><option value="deadline">Deadline</option><option value="flexible">Flexible</option><option value="optional">Optional</option></select></Field>
-      <Field label="Time (for fixed tasks)"><input name="time" type="time" /></Field>
-      <Field label="Deadline"><input name="deadline" type="date" /></Field>
-      <Field label="Duration"><select name="duration" defaultValue="30"><option value="15">15 min</option><option value="30">30 min</option><option value="45">45 min</option><option value="60">1 hour</option><option value="90">90 min</option></select></Field>
-      <Field label="Repeat"><select name="repeat"><option value="none">Doesn’t repeat</option><option value="daily">Daily</option><option value="weekly">Weekly</option></select></Field>
-      <Field label="Where"><select name="area"><option value="anywhere">Anywhere</option><option value="home">At home</option><option value="outside">Out & about</option></select></Field>
-      <Field label="Energy"><select name="effort"><option value="light">Light</option><option value="deep">Deep focus</option></select></Field>
-      <button className="primary">Add task</button>
-    </form>}
+    <div className="sectionHead"><div><div className="sectionLabel">MULTI-DAY VIEW</div><h2>Plan the shape, not every minute.</h2></div><button className="primary" onClick={() => setOpenDate(days.includes(localDate()) ? localDate() : start)}><Plus /> New task</button></div>
+    <div className="plannerFilters" aria-label="Planner filters">
+      <Field label="Project"><select value={projectFilter} onChange={(e) => setProjectFilter(e.target.value)}><option value="">All projects</option>{state.projects.map((project) => <option key={project.id} value={project.id}>{project.name}</option>)}</select></Field>
+      <Field label="Tag"><select value={tagFilter} onChange={(e) => setTagFilter(e.target.value)}><option value="">All tags</option>{tags.map((tag) => <option key={tag} value={tag}>#{tag}</option>)}</select></Field>
+      {(projectFilter || tagFilter) && <button onClick={() => { setProjectFilter(""); setTagFilter(""); }}>Clear filters</button>}
+    </div>
     <div className="plannerToolbar"><button onClick={() => setStart(addDays(start, -7))}>Previous week</button><button onClick={() => setStart(localDate())}>Today</button><button onClick={() => setStart(addDays(start, 7))}>Next week</button></div>
     <div className="weekColumns">{days.map((date) => {
-      const items = state.tasks.filter((t) => taskOccursOn(t, date));
-      return <section className={"dayColumn " + (date === localDate() ? "isToday" : "")} key={date}><header><strong>{new Date(date + "T12:00:00").toLocaleDateString("en-GB", { weekday: "short" })}</strong><span>{new Date(date + "T12:00:00").toLocaleDateString("en-GB", { day: "numeric", month: "short" })}</span><small>{items.reduce((n, t) => n + t.duration, 0)}m planned</small></header><div>{items.length ? items.map((t) => <article className={"plannerTask " + t.kind + " " + (t.completedAt ? "done" : "")} key={date + "-" + t.id}><button aria-label={(t.completedAt ? "Reopen " : "Complete ") + t.title} onClick={() => update((s) => ({ ...s, tasks: s.tasks.map((x) => x.id === t.id ? toggleTask(x) : x) }))}>{t.completedAt ? <Check /> : null}</button><strong>{t.title}</strong><span>{t.time || t.duration + " min"} · {t.kind}</span>{t.repeat !== "none" && <small><Repeat /> {t.repeat}</small>}</article>) : <p className="quiet">No plans yet</p>}</div></section>;
+      const items = filtered.filter((t) => taskOccursOn(t, date));
+      const planned = items.reduce((n, t) => n + t.duration, 0);
+      return <section className={"dayColumn " + (date === localDate() ? "isToday" : "")} key={date}>
+        <header><strong>{new Date(date + "T12:00:00").toLocaleDateString("en-GB", { weekday: "short" })}</strong><span>{new Date(date + "T12:00:00").toLocaleDateString("en-GB", { day: "numeric", month: "short" })}</span><small>Planned: {minutesLabel(planned)} · Available: {minutesLabel(Math.max(0, 480 - planned))}</small></header>
+        <div>{items.length ? items.map((t) => <article className={"plannerTask " + t.kind + " " + (t.completedAt ? "done" : "")} key={date + "-" + t.id}><button aria-label={(t.completedAt ? "Reopen " : "Complete ") + t.title} onClick={() => update((s) => ({ ...s, tasks: s.tasks.map((x) => x.id === t.id ? toggleTask(x) : x) }))}>{t.completedAt ? <Check /> : null}</button><strong>{t.title}</strong><span><Clock /> {t.time || minutesLabel(t.duration)} · {t.kind}</span>{t.repeat !== "none" && <small><Repeat /> {t.repeat}</small>}{t.tags?.length ? <small><Tag /> {t.tags.map((tag) => `#${tag}`).join(" ")}</small> : null}{t.notes && <small><Note /> {t.notes}</small>}</article>) : <p className="quiet">No plans yet</p>}</div>
+        {openDate === date ? <form className="inlineTaskComposer" onSubmit={(e) => {
+          e.preventDefault(); const f = new FormData(e.currentTarget); const parsed = parseTaskInput(String(f.get("title")), Number(f.get("duration")) || 30); if (!parsed.title) return;
+          update((s) => ({ ...s, tasks: [...s.tasks, { id: newId(), title: parsed.title, date, time: parsed.time, deadline: String(f.get("deadline")), kind: String(f.get("kind")) as TaskKind, duration: parsed.duration, repeat: String(f.get("repeat")) as "none" | "daily" | "weekly", area: "anywhere", effort: "light", completedAt: null, notes: String(f.get("notes")).trim(), tags: parsed.tags, projectId: String(f.get("projectId")) }] })); setOpenDate(null);
+        }}>
+          <label className="srOnly" htmlFor={`task-${date}`}>Task title for {date}</label><input id={`task-${date}`} name="title" required autoFocus placeholder="Task #tag @16:00 t25m" />
+          <div className="composerRow"><select aria-label="Duration" name="duration" defaultValue="30">{durationOptions.map((duration) => <option key={duration} value={duration}>{minutesLabel(duration)}</option>)}</select><select aria-label="Type" name="kind" defaultValue="flexible"><option value="fixed">Fixed</option><option value="deadline">Deadline</option><option value="flexible">Flexible</option><option value="optional">Optional</option></select><select aria-label="Repeat" name="repeat" defaultValue="none"><option value="none">No repeat</option><option value="daily">Daily</option><option value="weekly">Weekly</option></select></div>
+          <div className="composerRow"><select aria-label="Project" name="projectId" defaultValue=""><option value="">Inbox / no project</option>{state.projects.map((project) => <option key={project.id} value={project.id}>{project.name}</option>)}</select><input aria-label="Deadline" name="deadline" type="date" /></div>
+          <textarea aria-label="Notes" name="notes" placeholder="Add a note…" />
+          <div className="composerActions"><button type="button" onClick={() => setOpenDate(null)}>Cancel</button><button className="primary">Add task</button></div>
+        </form> : <button className="addDayTask" onClick={() => setOpenDate(date)}><Plus /> Add</button>}
+      </section>;
     })}</div>
   </>;
 }

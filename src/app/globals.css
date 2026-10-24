@@ -1057,6 +1057,9 @@ footer em {
 .libraryQuick select { flex: 1; }
 .plannerForm, .libraryForm, .goalForm { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0 16px; margin-bottom: 18px; }
 .plannerForm .primary, .goalForm .primary { align-self: end; margin-bottom: 17px; }
+.plannerFilters { display: flex; align-items: end; gap: 10px; margin: 14px 0 4px; }
+.plannerFilters label { min-width: 180px; margin: 0; }
+.plannerFilters button { margin-bottom: 1px; }
 .plannerToolbar { display: flex; gap: 8px; margin: 16px 0; }
 .weekColumns { display: grid; grid-template-columns: repeat(7, minmax(210px, 1fr)); overflow-x: auto; border: 1px solid var(--line); border-radius: 20px; background: var(--surface); }
 .dayColumn { min-height: 440px; border-right: 1px solid var(--line); padding: 17px 10px; }
@@ -1065,15 +1068,25 @@ footer em {
 .dayColumn > header { display: grid; text-align: center; gap: 2px; padding-bottom: 14px; }
 .dayColumn > header strong { color: var(--teal); text-transform: uppercase; font-size: 12px; }
 .dayColumn > header span { font-size: 17px; }
-.dayColumn > header small { color: var(--muted); }
+.dayColumn > header small { color: var(--muted); font-size: 10px; white-space: nowrap; }
 .plannerTask { display: grid; grid-template-columns: 30px 1fr; gap: 4px 8px; padding: 10px; border-radius: 12px; margin-bottom: 8px; background: var(--raised); border-left: 3px solid var(--cyan); }
 .plannerTask.fixed { border-color: var(--yellow); }
 .plannerTask.deadline { border-color: var(--clay); }
 .plannerTask.optional { border-color: var(--purple); }
-.plannerTask > button { grid-row: 1 / 4; min-width: 30px; min-height: 30px; width: 30px; height: 30px; padding: 0; }
+.plannerTask > button { grid-row: 1 / 6; min-width: 30px; min-height: 30px; width: 30px; height: 30px; padding: 0; }
 .plannerTask strong { font-size: 13px; font-weight: 500; }
 .plannerTask span, .plannerTask small { font-size: 11px; color: var(--muted); display: flex; align-items: center; gap: 3px; }
 .plannerTask.done strong { text-decoration: line-through; opacity: .6; }
+.addDayTask { width: 100%; margin-top: 8px; border-color: transparent; color: var(--muted); }
+.addDayTask:hover { border-color: var(--line); color: var(--text); }
+.inlineTaskComposer { display: grid; gap: 8px; padding: 10px; margin-top: 8px; border: 1px solid var(--line); border-radius: 14px; background: var(--raised); box-shadow: 0 14px 34px rgba(0,0,0,.22); }
+.inlineTaskComposer input, .inlineTaskComposer select, .inlineTaskComposer textarea { min-height: 38px; padding: 8px 9px; font-size: 12px; }
+.inlineTaskComposer textarea { min-height: 62px; resize: vertical; }
+.composerRow { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+.composerRow:nth-of-type(2) { grid-template-columns: 1fr 1fr; }
+.composerActions { display: flex; justify-content: flex-end; gap: 6px; }
+.composerActions button { min-height: 36px; padding: 7px 10px; font-size: 11px; }
+.srOnly { position: absolute !important; width: 1px !important; height: 1px !important; padding: 0 !important; margin: -1px !important; overflow: hidden !important; clip: rect(0,0,0,0) !important; white-space: nowrap !important; border: 0 !important; }
 .libraryTabs { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; overflow-x: auto; }
 .libraryTabs button { min-width: 125px; flex-direction: column; border-radius: 15px; font-size: 12px; padding: 12px 8px; }
 .libraryGrid, .goalGrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
@@ -1119,4 +1132,6 @@ footer em {
   .ideaCapture, .inboxCapture { grid-template-columns: auto 1fr; }
   .ideaCapture button, .inboxCapture button { grid-column: 1 / -1; width: 100%; }
   .weekColumns { margin-left: -20px; margin-right: -20px; border-radius: 0; border-left: 0; border-right: 0; }
+  .plannerFilters { align-items: stretch; flex-direction: column; }
+  .plannerFilters label { width: 100%; }
 }

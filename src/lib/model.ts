@@ -3,7 +3,7 @@ export type Task = {
   id: string; title: string; date: string; time: string; deadline: string;
   kind: TaskKind; duration: number; repeat: "none" | "daily" | "weekly";
   area: "home" | "outside" | "anywhere"; effort: "light" | "deep";
-  completedAt: string | null;
+  completedAt: string | null; notes?: string; tags?: string[]; projectId?: string;
 };
 export type Thought = { id: string; text: string; createdAt: string };
 export type Goal = { id: string; name: string; outcome: string; deadline: string; nextAction: string; status: "active" | "paused" | "completed"; place: string; progress: number };
@@ -26,6 +26,18 @@ export function addDays(date: string, amount: number) { const [y, m, day] = date
 export function deadlineState(date: string, today = localDate()) { return !date ? "Flexible" : date < today ? "Overdue" : date === today ? "Today" : "Upcoming"; }
 export function toggleTask(task: Task, now = new Date().toISOString()): Task { return { ...task, completedAt: task.completedAt ? null : now }; }
 export function captureThought(text: string, id: string, now = new Date().toISOString()): Thought | null { return text.trim() ? { id, text: text.trim(), createdAt: now } : null; }
+export function parseTaskInput(value: string, fallbackDuration = 30) {
+  const time = value.match(/(?:^|\s)@(\d{1,2}):([0-5]\d)(?=\s|$)/);
+  const duration = value.match(/(?:^|\s)t(\d+)(m|h)(?=\s|$)/i);
+  const tags = Array.from(value.matchAll(/(?:^|\s)#([\p{L}\p{N}_-]+)/gu), (match) => match[1]);
+  const minutes = duration ? Number(duration[1]) * (duration[2].toLowerCase() === "h" ? 60 : 1) : fallbackDuration;
+  const title = value
+    .replace(/(?:^|\s)@\d{1,2}:[0-5]\d(?=\s|$)/g, " ")
+    .replace(/(?:^|\s)t\d+(?:m|h)(?=\s|$)/gi, " ")
+    .replace(/(?:^|\s)#[\p{L}\p{N}_-]+/gu, " ")
+    .replace(/\s+/g, " ").trim();
+  return { title, time: time ? `${time[1].padStart(2, "0")}:${time[2]}` : "", duration: minutes, tags };
+}
 export function pauseProject(project: Goal): Goal { return { ...project, status: project.status === "paused" ? "active" : "paused" }; }
 export function weekStart(date = new Date()) { const d = new Date(date); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() - ((d.getDay() + 6) % 7)); return d; }
 export function taskOccursOn(task: Task, date: string) {
@@ -42,7 +54,7 @@ export function suggest(tasks: Task[], energy: string, today = localDate()) {
     return urgent(a) - urgent(b) || (energy === "low" ? Number(a.effort !== "light") - Number(b.effort !== "light") : 0) || (a.time || "99:99").localeCompare(b.time || "99:99") || (a.deadline || "9999").localeCompare(b.deadline || "9999");
   })[0] || null;
 }
-const task = (id: string, title: string, patch: Partial<Task> = {}): Task => ({ id, title, date: localDate(), time: "", deadline: "", kind: "flexible", duration: 30, repeat: "none", area: "anywhere", effort: "light", completedAt: null, ...patch });
+const task = (id: string, title: string, patch: Partial<Task> = {}): Task => ({ id, title, date: localDate(), time: "", deadline: "", kind: "flexible", duration: 30, repeat: "none", area: "anywhere", effort: "light", completedAt: null, notes: "", tags: [], projectId: "", ...patch });
 export function demo(): State {
   const today = localDate();
   return {

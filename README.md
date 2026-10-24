@@ -13,7 +13,7 @@ Production checks: npm run typecheck, npm test, and npm run build.
 ## MVP features
 
 - **Today:** opt-in real weather from Open-Meteo and browser location, energy and focus check-ins, morning/evening routine checklists, quick idea capture, today’s tasks and one-click add from My Library.
-- **Planner:** a horizontally scrollable seven-day view, task types (fixed, deadline, flexible, optional), date/time, duration, energy level, home/outside context and daily/weekly repeats.
+- **Planner:** a horizontally scrollable seven-day view with planned/available time, per-day quick add, task types (fixed, deadline, flexible, optional), durations from 5 minutes to 8 hours, notes, project/tag filters and daily/weekly repeats. Fast input understands text such as `Call the doctor #health @10:30 t45m`.
 - **My Library:** editable reusable lists for shopping by store, feel-good options, places/restaurants/trips, meals, workouts and bag checklists.
 - **Inbox:** fast manual capture and promotion to today’s plan.
 - **Goals:** progress sliders, remaining-progress visibility, pause/resume, next steps, save my place, and weekly check-ins.
@@ -35,4 +35,4 @@ The UI names these limits instead of showing invented data. All corresponding ma
 
 ## Verification
 
-TypeScript validation, 14 automated tests and the production build pass. Browser-based visual QA was unavailable in the build environment; see design-qa.md for the remaining visual/manual checks.
+TypeScript validation, 15 automated tests and the production build pass. Browser-based visual QA was unavailable in the build environment; see design-qa.md for the remaining visual/manual checks.

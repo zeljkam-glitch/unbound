@@ -18,12 +18,12 @@ describe("UNBOUND Life OS interactions", () => {
   it("adds a typed, timed task in Planner and persists it", async () => {
     await open(); go(/Planner/);
     fireEvent.click(screen.getByRole("button", { name: "New task" }));
-    fireEvent.change(screen.getByLabelText("What needs doing?"), { target: { value: "Doctor appointment" } });
+    fireEvent.change(screen.getByLabelText(/Task title for/), { target: { value: "Doctor appointment #health @10:30 t45m" } });
     fireEvent.change(screen.getByLabelText("Type"), { target: { value: "fixed" } });
-    fireEvent.change(screen.getByLabelText("Time (for fixed tasks)"), { target: { value: "10:30" } });
+    fireEvent.change(screen.getByLabelText("Notes"), { target: { value: "Bring results" } });
     fireEvent.click(screen.getByRole("button", { name: "Add task" }));
     expect(screen.getByText("Doctor appointment")).toBeTruthy();
-    await waitFor(() => expect(JSON.parse(localStorage.getItem("unbound.v1")!).tasks.some((t: { title: string }) => t.title === "Doctor appointment")).toBe(true));
+    await waitFor(() => expect(JSON.parse(localStorage.getItem("unbound.v1")!).tasks.find((t: { title: string }) => t.title === "Doctor appointment")).toMatchObject({ time: "10:30", duration: 45, tags: ["health"], notes: "Bring results" }));
   });
   it("captures a quick idea without turning it into a task", async () => {
     await open();

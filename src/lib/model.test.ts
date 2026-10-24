@@ -7,6 +7,7 @@ import {
   pauseProject,
   suggest,
   isState,
+  parseTaskInput,
   weekStart,
 } from "./model";
 describe("personal freedom model", () => {
@@ -30,6 +31,12 @@ describe("personal freedom model", () => {
       createdAt: "now",
     });
     expect(captureThought("  ", "id")).toBeNull();
+  });
+  it("parses fast planner syntax without keeping control tokens in the title", () => {
+    expect(parseTaskInput("Call faculty #study @16:00 t25m")).toEqual({
+      title: "Call faculty", time: "16:00", duration: 25, tags: ["study"],
+    });
+    expect(parseTaskInput("Slow morning", 60)).toEqual({ title: "Slow morning", time: "", duration: 60, tags: [] });
   });
   it("pauses and resumes without losing my place", () => {
     const p = demo().projects[0];
