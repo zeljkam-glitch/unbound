@@ -42,6 +42,13 @@ describe("UNBOUND Life OS interactions", () => {
       expect(saved.tasks.some((t: { title: string }) => t.title === "A bright new direction")).toBe(false);
     });
   });
+  it("stores an optional twelve-week direction and weekly review", async () => {
+    await open(); go(/Planner/);
+    fireEvent.click(screen.getByRole("button", { name: "12 weeks" }));
+    fireEvent.change(screen.getByLabelText("The outcome that matters"), { target: { value: "Finish the semester calmly" } });
+    fireEvent.click(screen.getByRole("button", { name: "Complete week 1 review" }));
+    await waitFor(() => expect(JSON.parse(localStorage.getItem("unbound.v1")!).twelveWeek).toMatchObject({ outcome: "Finish the semester calmly", weeks: { 1: { reviewed: true } } }));
+  });
   it("adds a reusable library item to today", async () => {
     await open();
     fireEvent.change(screen.getByLabelText("Choose from My Library"), { target: { value: "l1" } });

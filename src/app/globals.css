@@ -1021,6 +1021,126 @@ footer em {
     font-size: 12px;
   }
 }
+
+/* Quiet Luxury — selected UNBOUND direction */
+@font-face { font-family: "Inter Tight"; src: url("/fonts/inter-tight-300.ttf") format("truetype"); font-weight: 300; font-display: swap; }
+@font-face { font-family: "Inter Tight"; src: url("/fonts/inter-tight-400.ttf") format("truetype"); font-weight: 400; font-display: swap; }
+@font-face { font-family: "Inter"; src: url("/fonts/inter-400.ttf") format("truetype"); font-weight: 400; font-display: swap; }
+@font-face { font-family: "Inter"; src: url("/fonts/inter-500.ttf") format("truetype"); font-weight: 500; font-display: swap; }
+html[data-theme="quiet"] { --bg:#eae6dd; --surface:#f6f3ed; --raised:#eeeae2; --ink:#27241f; --muted:#716b62; --line:rgba(39,36,31,.16); --teal:#8a7145; --cyan:#8a7145; --yellow:#967f58; --purple:#80756a; --track:#ded8cd; --sage:#eee9df; --sage-ink:#5f513b; --clay:#8b3339; --side:#f6f3ed; color-scheme:light; }
+html[data-theme="quiet"] body { font-family:"Inter",Arial,sans-serif; background:var(--bg); }
+html[data-theme="quiet"] h1, html[data-theme="quiet"] h2, html[data-theme="quiet"] h3 { font-family:"Inter Tight",Arial,sans-serif; font-weight:300; letter-spacing:-.04em; }
+html[data-theme="quiet"] button { border-radius:0; }
+.quietShell { display:block; min-height:100vh; padding-top:76px; }
+.quietHeader { position:fixed; z-index:40; inset:0 0 auto; height:76px; display:grid; grid-template-columns:1fr auto 1fr; align-items:center; padding:0 34px; background:rgba(246,243,237,.94); border-bottom:1px solid var(--line); backdrop-filter:blur(18px); }
+.quietHeader .brand { padding:0; font:500 17px "Inter Tight"; letter-spacing:.16em; }
+.quietHeader .brand span { display:inline; margin:0; color:var(--teal); font-size:inherit; letter-spacing:0; }
+.quietHeader nav { display:flex; align-self:stretch; gap:34px; }
+.quietHeader nav a { position:relative; display:grid; place-items:center; min-height:76px; color:var(--muted); font-size:10px; text-transform:uppercase; letter-spacing:.14em; }
+.quietHeader nav a[aria-current] { color:var(--ink); }
+.quietHeader nav a[aria-current]::after { content:""; position:absolute; left:0; right:0; bottom:-1px; height:2px; background:var(--ink); }
+.quietHeader > button { justify-self:end; border:0; font-size:11px; color:var(--muted); }
+.quietShell .content { width:100%; margin:0; }
+.quietShell .content > main { width:min(1500px, calc(100% - 64px)); margin:28px auto 80px; padding:0; }
+.pageIntro { display:grid; grid-template-columns:220px minmax(0,1fr); padding:56px 0 42px; border-bottom:1px solid var(--ink); }
+.pageIntro .eyebrow { grid-row:1/3; font-size:10px; letter-spacing:.2em; }
+.pageIntro h1 { max-width:900px; margin:0; font-size:clamp(54px,7vw,108px); line-height:.88; }
+.pageIntro .intro { max-width:580px; margin:24px 0 0; font-size:14px; color:var(--muted); }
+.quietShell .card { background:transparent; border:1px solid var(--line); border-radius:0; box-shadow:none; }
+.quietShell input,.quietShell textarea,.quietShell select { border:0; border-bottom:1px solid var(--line); border-radius:0; background:transparent; }
+.quietShell .primary { background:var(--ink); color:var(--surface); border-color:var(--ink); }
+.quietShell .sectionLabel,.quietShell .eyebrow { color:var(--muted); letter-spacing:.18em; }
+.quietShell .sectionHead { padding:42px 0 20px; }
+.quietShell .sectionHead h2 { font-size:clamp(32px,4vw,58px); }
+.quietShell footer { border-top:1px solid var(--line); color:var(--muted); }
+
+/* Today becomes the editorial three-column composition from the selected reference. */
+.quietShell .weatherCard { margin:0; border:0; border-bottom:1px solid var(--line); border-radius:0; background:transparent; }
+.quietShell .checkinBand { border-bottom:1px solid var(--line); padding:18px 0; }
+.quietShell .checkinBand button { border-color:var(--line); }
+.quietShell .todayGrid { border-top:1px solid var(--ink); gap:0; }
+.quietShell .routineCard { border-width:0 1px 1px 0; padding:28px; }
+.quietShell .routineCard:last-child { border-right:0; }
+.quietShell .ideaCapture { border:1px solid var(--line); border-top:0; border-radius:0; }
+.quietShell .tasksSection { display:grid; grid-template-columns:220px 1fr; margin-top:50px; border-top:1px solid var(--ink); }
+.quietShell .tasksSection .sectionHead { grid-column:1; display:block; padding:36px 30px 0 0; border-right:1px solid var(--line); }
+.quietShell .tasksSection .sectionHead h2 { font-size:42px; line-height:.95; }
+.quietShell .tasksSection .sectionHead > span { display:block; margin-top:28px; }
+.quietShell .libraryQuick,.quietShell .taskList,.quietShell .tasksSection > .empty { grid-column:2; margin:0; }
+.quietShell .libraryQuick { padding:22px 30px; border-bottom:1px solid var(--line); }
+.quietShell .task { padding:24px 30px; border-bottom:1px solid var(--line); border-radius:0; background:transparent; }
+
+/* Weekly planner: paper grid, restrained cards and optional long-horizon view. */
+.plannerHero { display:grid; grid-template-columns:1fr auto auto; gap:20px; align-items:end; padding:48px 0 34px; }
+.plannerHero h2 { margin:14px 0 0; font-size:clamp(50px,6vw,90px); line-height:.9; }
+.viewSwitch { display:flex; border:1px solid var(--ink); }
+.viewSwitch button { min-width:108px; border:0; color:var(--muted); text-transform:uppercase; letter-spacing:.12em; font-size:10px; }
+.viewSwitch button[aria-pressed="true"] { background:var(--ink); color:var(--surface); }
+.plannerFilters { border-top:1px solid var(--ink); padding-top:18px; }
+.plannerToolbar { justify-content:flex-end; }
+.weekColumns { border-color:var(--ink); border-radius:0; background:var(--surface); }
+.dayColumn { min-height:520px; padding:20px 10px; }
+.dayColumn.isToday { background:#eee9df; }
+.dayColumn > header strong { color:var(--ink); letter-spacing:.14em; }
+.plannerTask { border-radius:0; border:1px solid var(--line); border-left:3px solid var(--teal); box-shadow:none; background:transparent; }
+.inlineTaskComposer { border-radius:0; background:var(--surface); box-shadow:0 20px 50px rgba(45,39,29,.14); }
+.twelveLayout { display:grid; grid-template-columns:minmax(260px,.7fr) minmax(0,1.8fr); border-top:1px solid var(--ink); min-height:720px; }
+.cycleIntro { padding:50px 55px 50px 0; border-right:1px solid var(--line); }
+.cycleIntro h2 { margin:22px 0; font-size:clamp(48px,5.6vw,82px); line-height:.9; }
+.cycleIntro p { max-width:360px; color:var(--muted); }
+.cycleScore { margin-top:80px; }
+.cycleScore strong { display:block; font:300 82px/.9 "Inter Tight"; }
+.cycleScore strong span { font-size:28px; color:var(--muted); }
+.cycleScore small { text-transform:uppercase; letter-spacing:.12em; color:var(--muted); }
+.cycleMain { padding:50px 0 50px 55px; }
+.cycleFields { display:grid; grid-template-columns:1fr 1fr; gap:0 34px; padding-bottom:35px; border-bottom:1px solid var(--ink); }
+.cycleFields label:first-child { grid-column:1/-1; }
+.cyclePair { display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+.cycleWeeks { display:grid; grid-template-columns:1fr 1fr; }
+.cycleWeek { display:grid; grid-template-columns:44px 1fr; min-height:105px; padding:18px 18px 18px 0; border-bottom:1px solid var(--line); }
+.cycleWeek:nth-child(odd) { border-right:1px solid var(--line); }
+.cycleWeek:nth-child(even) { padding-left:18px; }
+.cycleWeek > button { width:32px; height:32px; min-height:32px; padding:0; border:0; }
+.cycleWeek span { display:block; color:var(--muted); font-size:9px; letter-spacing:.13em; }
+.cycleWeek input { width:100%; margin-top:9px; padding:4px 0; font-size:15px; }
+.cycleWeek.reviewed { background:rgba(138,113,69,.06); }
+
+/* Remaining tools use the same editorial system rather than dashboard cards. */
+.libraryTabs { padding:30px 0; border-bottom:1px solid var(--ink); }
+.libraryTabs button { border-radius:0; border:0; border-right:1px solid var(--line); }
+.libraryGrid,.goalGrid { gap:0; border-top:1px solid var(--ink); border-left:1px solid var(--line); }
+.libraryItem,.goalCard { border-width:0 1px 1px 0; border-radius:0; min-height:240px; }
+.inboxCapture { margin-top:36px; border-radius:0; border-bottom-color:var(--ink); }
+.inboxList { gap:0; border-top:1px solid var(--ink); }
+.inboxItem { border-width:0 0 1px; border-radius:0; }
+.weeklyCheckin { border-radius:0; }
+
+@media(max-width:900px){
+  .quietHeader { grid-template-columns:1fr auto; padding:0 20px; }
+  .quietHeader nav { display:none; }
+  .quietHeader > button span { display:none; }
+  .quietShell .content > main { width:calc(100% - 34px); margin-top:0; }
+  .pageIntro { grid-template-columns:1fr; padding:34px 0 26px; }
+  .pageIntro .eyebrow { grid-row:auto; margin-bottom:18px; }
+  .pageIntro h1 { font-size:clamp(48px,13vw,76px); }
+  .quietShell .bottomNav { background:rgba(246,243,237,.96); border-top:1px solid var(--line); }
+  .quietShell .bottomNav a[aria-current] { color:var(--ink); }
+  .plannerHero { grid-template-columns:1fr; }
+  .plannerHero h2 { font-size:58px; }
+  .viewSwitch { width:100%; }
+  .viewSwitch button { flex:1; }
+  .twelveLayout { grid-template-columns:1fr; }
+  .cycleIntro { border-right:0; border-bottom:1px solid var(--ink); padding:40px 0; }
+  .cycleScore { margin-top:36px; }
+  .cycleMain { padding:35px 0; }
+  .cycleFields,.cycleWeeks { grid-template-columns:1fr; }
+  .cycleFields label:first-child { grid-column:auto; }
+  .cycleWeek:nth-child(odd) { border-right:0; }
+  .cycleWeek:nth-child(even) { padding-left:0; }
+  .quietShell .tasksSection { grid-template-columns:1fr; }
+  .quietShell .tasksSection .sectionHead,.quietShell .libraryQuick,.quietShell .taskList,.quietShell .tasksSection > .empty { grid-column:1; }
+  .quietShell .tasksSection .sectionHead { border-right:0; }
+}
 @media (prefers-reduced-motion: reduce) {
   * {
     scroll-behavior: auto !important;
@@ -1146,4 +1266,31 @@ footer em {
   .weekColumns { margin-left: -20px; margin-right: -20px; border-radius: 0; border-left: 0; border-right: 0; }
   .plannerFilters { align-items: stretch; flex-direction: column; }
   .plannerFilters label { width: 100%; }
+}
+
+/* Final scoped guard: keep the selected Quiet Luxury system above legacy MVP rules. */
+.quietShell .plannerHero { display:grid; grid-template-columns:1fr auto auto; gap:20px; align-items:end; padding:48px 0 34px; }
+.quietShell .plannerHero h2 { margin:14px 0 0; font-size:clamp(50px,6vw,90px); line-height:.9; }
+.quietShell .viewSwitch { display:flex; border:1px solid var(--ink); }
+.quietShell .viewSwitch button { min-width:108px; border:0; border-radius:0; color:var(--muted); text-transform:uppercase; letter-spacing:.12em; font-size:10px; }
+.quietShell .viewSwitch button[aria-pressed="true"] { background:var(--ink); color:var(--surface); }
+.quietShell .weekColumns { border-color:var(--ink); border-radius:0; background:var(--surface); }
+.quietShell .dayColumn { min-height:520px; padding:20px 10px; }
+.quietShell .dayColumn.isToday { background:#eee9df; }
+.quietShell .plannerTask { border-radius:0; border:1px solid var(--line); border-left:3px solid var(--teal); box-shadow:none; background:transparent; }
+.quietShell .inlineTaskComposer { border-radius:0; background:var(--surface); box-shadow:0 20px 50px rgba(45,39,29,.14); }
+.quietShell .libraryTabs { padding:30px 0; border-bottom:1px solid var(--ink); }
+.quietShell .libraryTabs button { border-radius:0; border:0; border-right:1px solid var(--line); }
+.quietShell .libraryGrid,.quietShell .goalGrid { gap:0; border-top:1px solid var(--ink); border-left:1px solid var(--line); }
+.quietShell .libraryItem,.quietShell .goalCard { border-width:0 1px 1px 0; border-radius:0; min-height:240px; }
+.quietShell .inboxCapture { margin-top:36px; border-radius:0; border-bottom-color:var(--ink); }
+.quietShell .inboxList { gap:0; border-top:1px solid var(--ink); }
+.quietShell .inboxItem { border-width:0 0 1px; border-radius:0; }
+.quietShell .weeklyCheckin { border-radius:0; border-bottom:1px solid var(--ink); }
+@media(max-width:900px){
+  .quietShell .plannerHero{grid-template-columns:1fr}.quietShell .plannerHero h2{font-size:58px}.quietShell .viewSwitch{width:100%}.quietShell .viewSwitch button{flex:1}
+  .quietShell .content { padding-bottom:82px; }
+  .quietShell .bottomNav { position:fixed; z-index:50; left:0; right:0; bottom:0; display:grid; grid-template-columns:repeat(5,1fr); min-height:68px; padding-bottom:env(safe-area-inset-bottom); background:rgba(246,243,237,.96); border-top:1px solid var(--line); backdrop-filter:blur(16px); }
+  .quietShell .bottomNav a { display:flex; min-width:0; flex-direction:column; align-items:center; justify-content:center; gap:3px; color:var(--muted); font-size:9px; }
+  .quietShell .bottomNav a[aria-current] { color:var(--ink); }
 }

@@ -13,12 +13,14 @@ export type LibraryItem = { id: string; category: LibraryCategory; title: string
 export type InboxItem = { id: string; text: string; createdAt: string };
 export type Routine = { id: string; title: string; period: "morning" | "evening" };
 export type WeeklyCheckin = { win: string; learned: string; next: string; energy: string };
+export type TwelveWeekPlan = { startDate: string; outcome: string; why: string; leadAction: string; weeklyTarget: number; weeks: Record<string, { focus: string; reviewed: boolean }> };
 export type State = {
   version: 2; tasks: Task[]; thoughts: Thought[]; projects: Goal[]; library: LibraryItem[];
   inbox: InboxItem[]; routines: Routine[]; routineDone: Record<string, string[]>;
   anchors: Record<string, string>; energies: Record<string, string>; focus: Record<string, string>;
   reflections: Record<string, { autonomy: string; satisfaction: string; pressure: string }>;
   weeklyCheckins: Record<string, WeeklyCheckin>;
+  twelveWeek?: TwelveWeekPlan;
 };
 
 export const localDate = (d = new Date()) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
@@ -91,6 +93,7 @@ export function demo(): State {
       { id: "r4", title: "Choose tomorrow’s first gentle step", period: "evening" },
     ],
     routineDone: {}, anchors: {}, energies: {}, focus: {}, reflections: {}, weeklyCheckins: {},
+    twelveWeek: { startDate: today, outcome: "", why: "", leadAction: "", weeklyTarget: 3, weeks: {} },
   };
 }
 function migrateTask(t: Record<string, unknown>): Task { return task(String(t.id || "migrated"), String(t.title || "Untitled"), { deadline: typeof t.deadline === "string" ? t.deadline : "", effort: t.effort === "deep" ? "deep" : "light", completedAt: typeof t.completedAt === "string" ? t.completedAt : null, date: "" }); }

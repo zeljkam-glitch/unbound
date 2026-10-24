@@ -1,15 +1,15 @@
-# UNBOUND MVP Design QA
+# UNBOUND Quiet Luxury Design QA
 
-- Source visual truth: supplied Planner screenshots from the referenced conversation plus five additional desktop captures supplied on 24 October 2026.
+- Source visual truth: the supplied Quiet Luxury desktop/mobile screenshots and the local `unbound-quiet-luxury` HTML/CSS prototype.
 - Implementation: local Next.js application.
 - Intended viewports: desktop 1440 × 900 and mobile 393 × 852.
 - State: seeded first-use data in dark mode.
-- Source density: light desktop planner with sidebar and multi-day columns.
-- Implementation direction: preserved the repository’s established dark mobile visual system while carrying over the source’s functional multi-day planner structure.
+- Source density: warm paper interface, editorial scale, thin rules, flat weekly columns and restrained brass accents.
+- Implementation direction: replaced the previous dashboard treatment with the selected Quiet Luxury system, reusing its Inter and Inter Tight font assets and core palette.
 
 ## Comparison evidence
 
-The source screenshots were opened and reviewed. They establish the functional model: persistent navigation, multiple day columns, planned/available context, movable task cards, per-day inline task creation, duration estimates, notes, repeating tasks, projects and tags.
+The source screenshots and prototype source were opened and reviewed. They establish the visual system and the functional model: editorial navigation, multiple day columns, movable task cards, duration estimates, deadlines and a deliberately sparse hierarchy. A complementary optional 12-week view uses the same system.
 
 The implementation could not be captured in a browser because no browser surface was available in the build environment. TypeScript validation, 14 interaction/domain tests and the production build pass, but build success is not treated as visual verification.
 
@@ -28,9 +28,9 @@ The implementation could not be captured in a browser because no browser surface
 ## Automated evidence
 
 - TypeScript check: passed.
-- Automated tests: 16 passed.
+- Automated tests: 17 passed.
 - Production build: passed.
-- Core flows covered: Planner inline task creation/persistence, day reassignment, optional-time removal, deadline labels, quick syntax parsing, time/duration/tag/note capture, quick idea capture, add from Library to Today, Inbox to Today, routine persistence, weekly check-in persistence.
+- Core flows covered: Planner inline task creation/persistence, day reassignment, optional-time removal, deadline labels, 12-week outcome and weekly-review persistence, quick syntax parsing, quick idea capture, add from Library to Today, Inbox to Today, routine persistence and weekly check-in persistence.
 
 ## Final result
 

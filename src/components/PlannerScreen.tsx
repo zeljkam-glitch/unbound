@@ -4,6 +4,7 @@ import { ArrowLeft, ArrowRight, CalendarBlank, Check, Clock, Note, Plus, Repeat,
 import { useState } from "react";
 import type { Update } from "@/lib/ui-types";
 import { Field } from "./Primitives";
+import TwelveWeekView from "./TwelveWeekView";
 
 const durationOptions = [5, 10, 15, 30, 60, 120, 180, 240, 480];
 const minutesLabel = (minutes: number) => minutes < 60 ? `${minutes}m` : minutes % 60 ? `${Math.floor(minutes / 60)}h ${minutes % 60}m` : `${minutes / 60}h`;
@@ -14,6 +15,7 @@ export default function PlannerScreen({ state, update }: { state: State; update:
   const [movingTask, setMovingTask] = useState<string | null>(null);
   const [projectFilter, setProjectFilter] = useState("");
   const [tagFilter, setTagFilter] = useState("");
+  const [view, setView] = useState<"week" | "twelve">("week");
   const days = Array.from({ length: 7 }, (_, i) => addDays(start, i));
   const tags = Array.from(new Set(state.tasks.flatMap((task) => task.tags || []))).sort();
   const filtered = state.tasks.filter((task) => (!projectFilter || task.projectId === projectFilter) && (!tagFilter || task.tags?.includes(tagFilter)));
@@ -39,7 +41,8 @@ export default function PlannerScreen({ state, update }: { state: State; update:
     </article>;
   };
   return <>
-    <div className="sectionHead"><div><div className="sectionLabel">MULTI-DAY VIEW</div><h2>Plan the shape, not every minute.</h2></div><button className="primary" onClick={() => setOpenDate(days.includes(localDate()) ? localDate() : start)}><Plus /> New task</button></div>
+    <div className="plannerHero"><div><div className="sectionLabel">03 / PLANNER</div><h2>Shape the week.<br />Don’t fill it.</h2></div><div className="viewSwitch"><button aria-pressed={view === "week"} onClick={() => setView("week")}>Week</button><button aria-pressed={view === "twelve"} onClick={() => setView("twelve")}>12 weeks</button></div>{view === "week" && <button className="primary" onClick={() => setOpenDate(days.includes(localDate()) ? localDate() : start)}><Plus /> New task</button>}</div>
+    {view === "twelve" ? <TwelveWeekView state={state} update={update} /> : <>
     <div className="plannerFilters" aria-label="Planner filters">
       <Field label="Project"><select value={projectFilter} onChange={(e) => setProjectFilter(e.target.value)}><option value="">All projects</option>{state.projects.map((project) => <option key={project.id} value={project.id}>{project.name}</option>)}</select></Field>
       <Field label="Tag"><select value={tagFilter} onChange={(e) => setTagFilter(e.target.value)}><option value="">All tags</option>{tags.map((tag) => <option key={tag} value={tag}>#{tag}</option>)}</select></Field>
@@ -63,6 +66,6 @@ export default function PlannerScreen({ state, update }: { state: State; update:
           <div className="composerActions"><button type="button" onClick={() => setOpenDate(null)}>Cancel</button><button className="primary">Add task</button></div>
         </form> : <button className="addDayTask" onClick={() => setOpenDate(date)}><Plus /> Add</button>}
       </section>;
-    })}</div>
+    })}</div></>}
   </>;
 }
