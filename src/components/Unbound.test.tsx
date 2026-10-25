@@ -89,7 +89,8 @@ describe("UNBOUND Life OS interactions", () => {
   });
   it("adds a reusable library item to today", async () => {
     await open();
-    fireEvent.change(screen.getByLabelText("Choose from My Library"), { target: { value: "l1" } });
+    fireEvent.click(screen.getByRole("button", { name: "Choose from My Library" }));
+    fireEvent.click(screen.getByRole("option", { name: /Oat milk/ }));
     fireEvent.click(screen.getByRole("button", { name: "Add today" }));
     expect(screen.getByText("Oat milk")).toBeTruthy();
   });

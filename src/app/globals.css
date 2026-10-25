@@ -2281,8 +2281,64 @@ body:has(.livingShell) { background:#171a1b; }
 .quietShell.livingShell .tasksSection .sectionHead h2 { max-width:17ch; margin:12px 0 0; font-size:clamp(36px,4.4vw,62px); line-height:1.02; }
 .quietShell.livingShell .tasksSection .sectionHead > span { margin:0 0 7px; white-space:nowrap; }
 .quietShell.livingShell .libraryQuick { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:16px; min-height:0; padding:20px 0; border-bottom:1px solid var(--ink); }
-.quietShell.livingShell .libraryQuick select { padding:0; border-color:#aaa69d; }
 .quietShell.livingShell .libraryQuick button { padding-inline:24px; }
+.quietShell.livingShell .libraryPicker { position:relative; min-width:0; }
+.quietShell.livingShell .libraryPickerTrigger {
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  align-items:center;
+  gap:18px;
+  width:100%;
+  min-height:52px;
+  padding:10px 0;
+  color:var(--ink);
+  border:0;
+  border-bottom:1px solid #aaa69d;
+  background:transparent;
+  text-align:left;
+}
+.quietShell.livingShell .libraryPickerTrigger:hover { color:#71242f; background:transparent; border-bottom-color:#71242f; }
+.quietShell.livingShell .libraryPickerTrigger:focus-visible { outline:0; border-bottom-color:#71242f; box-shadow:0 1px 0 #71242f; }
+.quietShell.livingShell .libraryPickerTrigger svg { width:18px; height:18px; transition:transform .18s ease; }
+.quietShell.livingShell .libraryPickerTrigger[aria-expanded="true"] svg { transform:rotate(180deg); }
+.quietShell.livingShell .libraryPickerPanel {
+  position:absolute;
+  z-index:30;
+  top:calc(100% + 10px);
+  left:0;
+  width:100%;
+  min-width:min(680px,calc(100vw - 80px));
+  padding:24px;
+  color:var(--ink);
+  border:1px solid #7f7c75;
+  background:#efede7;
+  box-shadow:0 18px 44px rgba(25,27,26,.16);
+}
+.quietShell.livingShell .libraryPickerIntro { display:flex; align-items:baseline; justify-content:space-between; gap:20px; padding-bottom:18px; }
+.quietShell.livingShell .libraryPickerIntro span,.quietShell.livingShell .libraryPickerGroup h3 { color:var(--muted); font-size:10px; font-weight:400; letter-spacing:.16em; }
+.quietShell.livingShell .libraryPickerIntro p { margin:0; color:var(--muted); font-size:13px; }
+.quietShell.livingShell .libraryPickerPanel > input { width:100%; min-height:44px; margin:0 0 18px; padding:8px 0; border:0; border-bottom:1px solid #aaa69d; background:transparent; }
+.quietShell.livingShell .libraryPickerPanel > input:focus-visible { outline:0; border-bottom-color:#71242f; box-shadow:0 1px 0 #71242f; }
+.quietShell.livingShell .libraryPickerList { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:26px 34px; max-height:390px; overflow:auto; padding-right:8px; scrollbar-color:#98958e transparent; scrollbar-width:thin; }
+.quietShell.livingShell .libraryPickerGroup h3 { margin:0; padding:8px 0 12px; border-bottom:1px solid var(--ink); }
+.quietShell.livingShell .libraryPickerGroup button {
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  align-items:baseline;
+  gap:16px;
+  width:100%;
+  min-height:48px;
+  padding:11px 0;
+  color:var(--ink);
+  border:0;
+  border-bottom:1px solid var(--line);
+  background:transparent;
+  text-align:left;
+}
+.quietShell.livingShell .libraryPickerGroup button:hover { color:#71242f; background:transparent; border-bottom-color:#8d6d6d; }
+.quietShell.livingShell .libraryPickerGroup button:focus-visible { outline:1px solid #817c73; outline-offset:3px; }
+.quietShell.livingShell .libraryPickerGroup button small { color:var(--muted); font-size:11px; white-space:nowrap; }
+.quietShell.livingShell .libraryPickerEmpty { grid-column:1/-1; margin:0; padding:22px 0; color:var(--muted); }
 
 /* Planner tasks become calm information rows instead of repeated boxes. */
 .quietShell.livingShell .dayColumn { min-height:0; }
@@ -2381,6 +2437,10 @@ body:has(.livingShell) { background:#171a1b; }
   .quietShell.livingShell .ideaCapture input,.quietShell.livingShell .ideaCapture .primary { grid-column:1; width:100%; justify-self:stretch; }
   .quietShell.livingShell .tasksSection .sectionHead { align-items:start; flex-direction:column; }
   .quietShell.livingShell .libraryQuick { grid-template-columns:1fr; }
+  .quietShell.livingShell .libraryPickerPanel { min-width:100%; padding:18px; }
+  .quietShell.livingShell .libraryPickerIntro { display:block; }
+  .quietShell.livingShell .libraryPickerIntro p { margin-top:7px; }
+  .quietShell.livingShell .libraryPickerList { grid-template-columns:1fr; }
   .quietShell.livingShell .dayColumn > div { padding:6px 0 20px; }
   .quietShell.livingShell .plannerTask,.quietShell.livingShell .plannerTask.fixed,.quietShell.livingShell .plannerTask.flexible,.quietShell.livingShell .plannerTask.optional,.quietShell.livingShell .plannerTask.deadline { grid-template-columns:30px minmax(0,1fr); }
   .quietShell.livingShell .plannerTask .moveTaskButton,.quietShell.livingShell .plannerTask.deadline .moveTaskButton { grid-column:2; grid-row:auto; justify-self:start; padding-left:0; }

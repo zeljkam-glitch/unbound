@@ -1,7 +1,7 @@
 import { newId } from "@/lib/id";
 import { taskOccursOn, toggleTask, type State } from "@/lib/model";
-import { ArrowRight, Check, NotePencil, Plus } from "@phosphor-icons/react";
-import { useState } from "react";
+import { ArrowRight, CaretDown, Check, NotePencil, Plus } from "@phosphor-icons/react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import type { Update } from "@/lib/ui-types";
 import WeatherCard from "./WeatherCard";
@@ -14,7 +14,10 @@ import EnergyRecoveryPanel from "./EnergyRecoveryPanel";
 export default function TodayScreen({ state, today, update }: { state: State; today: string; update: Update }) {
   const [idea, setIdea] = useState("");
   const [libraryId, setLibraryId] = useState("");
+  const [libraryOpen, setLibraryOpen] = useState(false);
+  const [libraryQuery, setLibraryQuery] = useState("");
   const [weatherCode, setWeatherCode] = useState<number>();
+  const libraryPickerRef = useRef<HTMLDivElement>(null);
   const { locale } = useLanguage();
   const hr = locale === "hr";
   const todayTasks = state.tasks.filter((t) => taskOccursOn(t, today));
@@ -24,10 +27,52 @@ export default function TodayScreen({ state, today, update }: { state: State; to
   const dailyQuote = quotes.length ? quotes[quoteSeed % quotes.length] : { title: hr ? "Primijeti ono zbog čega se vraćaš sebi." : "Notice what brings you back to yourself.", group: "UNBOUND" };
   const done = state.routineDone[today] || [];
   const toggleRoutine = (id: string) => update((s) => ({ ...s, routineDone: { ...s.routineDone, [today]: done.includes(id) ? done.filter((x) => x !== id) : [...done, id] } }));
+  const displayLibraryItem = (item: State["library"][number]) => {
+    if (!hr) return item;
+    const builtIn: Record<string, { title: string; group: string }> = {
+      l1: { title: "Zobeno mlijeko", group: "dm" },
+      l2: { title: "Svježe povrće", group: "Plac" },
+      l3: { title: "Šetnja uz rijeku", group: "10–30 min" },
+      l4: { title: "Šetnja starim Zagrebom", group: "Mali bijeg" },
+      l5: { title: "Rižoto s povrćem", group: "Večera" },
+      l6: { title: "Joga za početnike · 20 min", group: "Doma" },
+      l7: { title: "Torba za teretanu", group: "Popis" },
+    };
+    return builtIn[item.id] ? { ...item, ...builtIn[item.id] } : item;
+  };
+  const plannableLibrary = state.library.filter((item) => item.category !== "quotes");
+  const selectedLibraryItem = plannableLibrary.find((item) => item.id === libraryId);
+  const normalizedQuery = libraryQuery.trim().toLocaleLowerCase(hr ? "hr-HR" : "en-GB");
+  const visibleLibrary = plannableLibrary.filter((item) => {
+    const display = displayLibraryItem(item);
+    return !normalizedQuery || `${display.title} ${display.group}`.toLocaleLowerCase(hr ? "hr-HR" : "en-GB").includes(normalizedQuery);
+  });
+  const libraryGroups = [
+    { key: "everyday", label: hr ? "SVAKODNEVNO" : "EVERYDAY", categories: ["shopping", "bags", "lists"] },
+    { key: "wellbeing", label: hr ? "KRETANJE I PREDAH" : "MOVEMENT & PAUSE", categories: ["feel-good", "workouts"] },
+    { key: "care", label: hr ? "NJEGA" : "CARE", categories: ["beauty"] },
+    { key: "food", label: hr ? "OBROCI" : "MEALS", categories: ["meals"] },
+    { key: "places", label: hr ? "MJESTA" : "PLACES", categories: ["places"] },
+  ].map((group) => ({ ...group, items: visibleLibrary.filter((item) => group.categories.includes(item.category)) })).filter((group) => group.items.length);
+  useEffect(() => {
+    const closePicker = (event: MouseEvent) => {
+      if (!libraryPickerRef.current?.contains(event.target as Node)) setLibraryOpen(false);
+    };
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setLibraryOpen(false);
+    };
+    document.addEventListener("mousedown", closePicker);
+    document.addEventListener("keydown", closeOnEscape);
+    return () => {
+      document.removeEventListener("mousedown", closePicker);
+      document.removeEventListener("keydown", closeOnEscape);
+    };
+  }, []);
   const addLibrary = () => {
     const item = state.library.find((x) => x.id === libraryId);
     if (!item) return;
-    update((s) => ({ ...s, tasks: [...s.tasks, { id: newId(), title: item.title, date: today, time: "", deadline: "", kind: "optional", duration: 30, repeat: "none", area: item.category === "shopping" || item.category === "places" ? "outside" : "anywhere", effort: "light", completedAt: null }] }));
+    const display = displayLibraryItem(item);
+    update((s) => ({ ...s, tasks: [...s.tasks, { id: newId(), title: display.title, date: today, time: "", deadline: "", kind: "optional", duration: 30, repeat: "none", area: item.category === "shopping" || item.category === "places" ? "outside" : "anywhere", effort: "light", completedAt: null }] }));
     setLibraryId("");
   };
   return <>
@@ -65,7 +110,26 @@ export default function TodayScreen({ state, today, update }: { state: State; to
     </section>
     <section className="tasksSection">
       <div className="sectionHead"><div><div className="sectionLabel">{hr ? "DANAŠNJI PLAN" : "TODAY’S PLAN"}</div><h2>{hr ? "Dodaj samo ono čemu danas želiš napraviti mjesta." : "Add only what you want to make room for today."}</h2></div><span className="quiet">{todayTasks.reduce((n, t) => n + t.duration, 0)} {hr ? "min u planu" : "min in the plan"}</span></div>
-      <div className="libraryQuick"><select aria-label={hr ? "Odaberi iz Moje zbirke" : "Choose from My Library"} value={libraryId} onChange={(e) => setLibraryId(e.target.value)}><option value="">{hr ? "Odaberi iz Moje zbirke…" : "Choose from My Library…"}</option>{state.library.map((item) => <option key={item.id} value={item.id}>{item.title} · {item.group}</option>)}</select><button onClick={addLibrary} disabled={!libraryId}><Plus /> {hr ? "Dodaj danas" : "Add today"}</button></div>
+      <div className="libraryQuick">
+        <div className="libraryPicker" ref={libraryPickerRef}>
+          <button className="libraryPickerTrigger" type="button" aria-haspopup="listbox" aria-expanded={libraryOpen} aria-label={hr ? "Odaberi iz Moje zbirke" : "Choose from My Library"} onClick={() => setLibraryOpen((open) => !open)}>
+            <span>{selectedLibraryItem ? `${displayLibraryItem(selectedLibraryItem).title} · ${displayLibraryItem(selectedLibraryItem).group}` : (hr ? "Odaberi iz Moje zbirke" : "Choose from My Library")}</span>
+            <CaretDown weight="thin" />
+          </button>
+          {libraryOpen && <div className="libraryPickerPanel">
+            <div className="libraryPickerIntro"><span>{hr ? "DODAJ U DANAŠNJI PLAN" : "ADD TO TODAY"}</span><p>{hr ? "Odaberi jednu konkretnu stvar." : "Choose one concrete thing."}</p></div>
+            <input autoFocus aria-label={hr ? "Pretraži Moju zbirku" : "Search My Library"} placeholder={hr ? "Pretraži zbirku…" : "Search the library…"} value={libraryQuery} onChange={(event) => setLibraryQuery(event.target.value)} />
+            <div className="libraryPickerList" role="listbox" aria-label={hr ? "Stvari iz Moje zbirke" : "Items from My Library"}>
+              {libraryGroups.map((group) => <section key={group.key} className="libraryPickerGroup"><h3>{group.label}</h3>{group.items.map((item) => {
+                const display = displayLibraryItem(item);
+                return <button type="button" role="option" aria-selected={libraryId === item.id} key={item.id} onClick={() => { setLibraryId(item.id); setLibraryOpen(false); setLibraryQuery(""); }}><span>{display.title}</span><small>{display.group}</small></button>;
+              })}</section>)}
+              {!libraryGroups.length && <p className="libraryPickerEmpty">{hr ? "Nema rezultata za ovu pretragu." : "No matches for this search."}</p>}
+            </div>
+          </div>}
+        </div>
+        <button onClick={addLibrary} disabled={!libraryId}><Plus /> {hr ? "Dodaj danas" : "Add today"}</button>
+      </div>
       {!todayTasks.length && <Empty>{hr ? "Dan ti je još otvoren. Dodaj nešto iz svoje zbirke ili ga oblikuj u Planeru." : "Your day is still open. Add something from your library or shape it in Planner."}</Empty>}
     </section>
     </div>
