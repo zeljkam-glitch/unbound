@@ -1258,6 +1258,10 @@ body:has(.livingShell) { background:#171a1b; }
 .livingShell .seasonalIdeas p { margin:42px 0 28px; font-size:clamp(17px,1.8vw,25px); font-weight:300; line-height:1.18; }
 .livingShell .seasonalIdeas button { justify-content:flex-start; width:max-content; max-width:100%; margin-top:auto; padding:8px 0; border:0; color:var(--muted); font-size:10px; }
 .livingShell .seasonalIdeas button:disabled { opacity:.55; }
+.livingShell .seasonalContextChoices { grid-column:1/-1; display:flex; flex-wrap:wrap; align-items:center; gap:8px; padding:18px 0; border-top:1px solid var(--line); }
+.livingShell .seasonalContextChoices > span { margin-right:12px; color:var(--muted); font-size:9px; letter-spacing:.15em; }
+.livingShell .seasonalContextChoices button { min-height:36px; padding:7px 12px; border:1px solid var(--line); font-size:12px; }
+.livingShell .seasonalContextChoices button[aria-pressed="true"] { color:#f3f0e9; background:var(--ink); border-color:var(--ink); }
 .livingShell .plannerSeason { max-width:430px; margin:18px 0 0; color:rgba(255,255,255,.7); font-size:12px; line-height:1.45; }
 .livingShell .todayGrid.hasWeekly { grid-template-columns:repeat(3,minmax(0,1fr)); }
 .livingDayDetails .tasksSection { margin-bottom:40px; }
@@ -1295,6 +1299,8 @@ body:has(.livingShell) { background:#171a1b; }
 }
 
 @media(max-width:760px){
+  .quietShell.livingShell .twelveWeekMethod { grid-template-columns:1fr; align-items:start; }
+  .livingShell .seasonalContextChoices { align-items:flex-start; flex-direction:column; }
   body:has(.livingShell) { background:#0c0f10; }
   .livingShell { padding-top:56px; }
   .livingShell .quietHeader { inset:0 0 auto; width:100%; height:56px; flex-direction:row; align-items:center; padding:0 16px; border-bottom:1px solid rgba(255,255,255,.1); }
@@ -2079,6 +2085,15 @@ body:has(.livingShell) { background:#171a1b; }
 .quietShell.livingShell .recoveryNeeds button[aria-pressed="true"]::after { background:#71242f; }
 .quietShell.livingShell .recoveryNeeds button[aria-pressed="true"] small { color:#71242f; }
 .quietShell.livingShell .recoveryNeeds button[aria-pressed="true"] span { color:#5f625f; }
+.quietShell.livingShell .recoveryChoiceRow button[aria-pressed="true"] { color:var(--ink); background:#ddd8cf; box-shadow:inset 0 -1px var(--ink); }
+.quietShell.livingShell .recoveryNeeds button[aria-pressed="true"] { background:#e7e3db; box-shadow:inset 0 0 0 1px #aaa49a; }
+.quietShell.livingShell .recoveryNeeds button[aria-pressed="true"]::after { background:transparent; }
+.quietShell.livingShell .recoveryRecommendation:focus { outline:0; }
+.quietShell.livingShell .deleteListItem { display:inline-flex; align-items:center; gap:6px; }
+.quietShell.livingShell .twelveWeekMethod { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:32px; align-items:end; margin:64px 0 24px; padding:28px 0; border-top:1px solid var(--ink); border-bottom:1px solid var(--line); }
+.quietShell.livingShell .twelveWeekMethod h2 { margin:8px 0; font-size:clamp(28px,3vw,42px); font-weight:300; }
+.quietShell.livingShell .twelveWeekMethod p { max-width:680px; margin:0; color:var(--muted); }
+.quietShell.livingShell .twelveWeekMethod button { padding:11px 0; border:0; border-bottom:1px solid var(--ink); white-space:nowrap; }
 .quietShell.livingShell .recoveryContinue { display:flex; align-items:center; gap:14px; margin:30px 0 0 auto; padding:12px 0; color:#71242f; border:0; border-bottom:1px solid #71242f; }
 .quietShell.livingShell .recoveryRecommendation { display:grid; grid-template-columns:190px minmax(0,1fr); gap:34px; margin-top:48px; }
 .quietShell.livingShell .recoveryRecommendation > aside { display:grid; grid-template-columns:1fr auto; align-content:start; gap:4px 10px; }

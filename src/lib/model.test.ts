@@ -87,6 +87,11 @@ describe("personal freedom model", () => {
       expect(matchingBeautifulMoments(moments, { feelings: [feeling], maxMinutes: 0, maxBudget: -1, energy: "", setting: "", badWeatherOnly: false, condition: "" }).length).toBeGreaterThan(0);
     }
   });
+  it("does not let one calm feeling override playful and energetic choices", () => {
+    const matches = matchingBeautifulMoments(demo("hr").beautifulMoments, { feelings: ["relaxed", "playful", "energetic"], maxMinutes: 0, maxBudget: -1, energy: "", setting: "inside", badWeatherOnly: true, condition: "" });
+    expect(matches.some((moment) => moment.id === "moment-tea-window")).toBe(false);
+    expect(matches.length).toBeGreaterThan(0);
+  });
   it("migrates the curated daily-thought collection without losing existing data", () => {
     const previous = { ...demo("hr"), version: 4, library: demo("hr").library.filter((item) => item.category !== "quotes") };
     const migrated = migrateState(previous);

@@ -27,10 +27,13 @@ const discoveryMethods = {
   },
 } as const;
 
-export default function BeautifulMomentsPanel({ state, today, update }: { state: State; today: string; update: Update }) {
+export default function BeautifulMomentsPanel({ state, today, weatherCode, update }: { state: State; today: string; weatherCode?: number; update: Update }) {
   const { locale } = useLanguage();
   const hr = locale === "hr";
   const preferences = state.momentPreferences[today] || emptyPreferences();
+  const rainy = weatherCode !== undefined && weatherCode >= 51 && weatherCode <= 99;
+  const afterDark = new Date().getHours() >= 17 || new Date().getHours() < 6;
+  const sunday = new Date(`${today}T12:00:00`).getDay() === 0;
   const [skipFeeling, setSkipFeeling] = useState(false);
   const [surpriseId, setSurpriseId] = useState("");
   const [adding, setAdding] = useState(false);
@@ -39,7 +42,10 @@ export default function BeautifulMomentsPanel({ state, today, update }: { state:
   const plannedIds = state.plannedMoments[today] || [];
   const planned = plannedIds.map((id) => state.beautifulMoments.find((moment) => moment.id === id)).filter(Boolean) as BeautifulMoment[];
   const ready = preferences.feelings.length > 0 || skipFeeling;
-  const matches = useMemo(() => matchingBeautifulMoments(state.beautifulMoments, preferences), [state.beautifulMoments, preferences]);
+  const matches = useMemo(() => {
+    const effectivePreferences: MomentPreferences = { ...preferences, badWeatherOnly: preferences.badWeatherOnly || rainy, setting: preferences.setting || (rainy || afterDark ? "inside" : "") };
+    return matchingBeautifulMoments(state.beautifulMoments, effectivePreferences).filter((moment) => !(sunday && ["moment-bookshop", "moment-flower-shop", "moment-market", "moment-window-shopping"].includes(moment.id)));
+  }, [state.beautifulMoments, preferences, rainy, afterDark, sunday]);
   const visible = surpriseId ? matches.filter((moment) => moment.id === surpriseId) : matches.slice(0, 6);
   const selectedFeelings = [...new Set(preferences.feelings.map(normalizeFeeling))];
 
@@ -97,7 +103,7 @@ export default function BeautifulMomentsPanel({ state, today, update }: { state:
         <label><span>{hr ? "Koliko energije imaš?" : "How much energy do you have?"}</span><select aria-label={hr ? "Energija za lijepi trenutak" : "Energy for a beautiful moment"} value={preferences.energy} onChange={(event) => setPreferences({ energy: event.target.value as MomentPreferences["energy"] })}><option value="">{hr ? "Nije važno" : "Any level"}</option><option value="low">{hr ? "Malo" : "Low"}</option><option value="steady">{hr ? "Dovoljno" : "Steady"}</option><option value="high">{hr ? "Puno" : "High"}</option></select></label>
         <label><span>{hr ? "Prostor" : "Setting"}</span><select aria-label={hr ? "Prostor za lijepi trenutak" : "Setting for a beautiful moment"} value={preferences.setting} onChange={(event) => setPreferences({ setting: event.target.value as MomentPreferences["setting"] })}><option value="">{hr ? "svejedno" : "either"}</option><option value="inside">{hr ? "unutra" : "inside"}</option><option value="outside">{hr ? "vani" : "outside"}</option></select></label>
         <label><span>{hr ? "Tijelo danas" : "Body today"}</span><select aria-label={hr ? "Fizički kapacitet" : "Physical capacity"} value={preferences.condition} onChange={(event) => setPreferences({ condition: event.target.value as MomentPreferences["condition"] })}><option value="">{hr ? "bez ograničenja" : "no limits"}</option><option value="gentle">{hr ? "trebam nešto lagano" : "I need something gentle"}</option><option value="rest">{hr ? "trebam odmor" : "I need rest"}</option></select></label>
-        <label className="weatherCheck"><input type="checkbox" checked={preferences.badWeatherOnly} onChange={(event) => setPreferences({ badWeatherOnly: event.target.checked })} /><span>{hr ? "Prikladno za kišu ili loše vrijeme" : "Works in rain or bad weather"}</span></label>
+        <label className="weatherCheck"><input type="checkbox" checked={preferences.badWeatherOnly || rainy} disabled={rainy} onChange={(event) => setPreferences({ badWeatherOnly: event.target.checked })} /><span>{rainy ? (hr ? "Kiša je već uzeta u obzir" : "Rain is already taken into account") : (hr ? "Prikladno za kišu ili loše vrijeme" : "Works in rain or bad weather")}</span></label>
       </div></details>
 
       <div className="momentToolbar"><span>{matches.length} {hr ? "početnih tragova koji stanu u ovaj dan" : "starting traces that fit this day"}</span><div><button onClick={() => { setAdding(!adding); setDiscovering(false); }}><Plus /> {hr ? "Dodaj svoje" : "Add your own"}</button><button className="primary" onClick={surprise} disabled={!matches.length}><Sparkle /> {hr ? "Iznenadi me" : "Surprise me"}</button></div></div>

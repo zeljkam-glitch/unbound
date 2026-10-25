@@ -13,4 +13,12 @@ describe("energy and recovery guidance", () => {
   it("does not push activation when lack of sleep is the cause", () => {
     expect(recommendRecovery({ energy: 2, focus: 2, cause: "sleep" }).need).toBe("complete-rest");
   });
+
+  it("does not prescribe more movement for low physical energy", () => {
+    expect(recommendRecovery({ energy: 2, focus: 3, cause: "low-physical-energy", need: "energy" }).id).toBe("low-battery-20");
+  });
+
+  it("responds to cabin fever with a change of scene indoors", () => {
+    expect(recommendRecovery({ energy: 3, focus: 3, cause: "indoors", need: "energy" }).id).toBe("room-change-12");
+  });
 });

@@ -1,5 +1,5 @@
 import { ArrowRight, Check, Eye, FirstAid, Moon, Plus } from "@phosphor-icons/react";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { newId } from "@/lib/id";
 import { compareRecovery, recommendRecovery, recoveryInsights, recoveryNeeds, recoveryProtocols } from "@/lib/recovery";
 import type { RecoveryCause, RecoveryCheckin, RecoveryNeed, State } from "@/lib/model";
@@ -8,9 +8,14 @@ import { useLanguage } from "./LanguageContext";
 
 const causes: Array<{ id: RecoveryCause; hr: string; en: string }> = [
   { id: "mental", hr: "Mentalni rad ili učenje", en: "Mental work or study" },
-  { id: "physical", hr: "Fizička aktivnost", en: "Physical activity" },
+  { id: "physical", hr: "Umor nakon kretanja ili sjedenja", en: "Fatigue after movement or sitting" },
+  { id: "low-physical-energy", hr: "Manjak fizičke energije", en: "Low physical energy" },
   { id: "stress", hr: "Stres ili previše podražaja", en: "Stress or too much input" },
   { id: "sleep", hr: "Manjak sna", en: "Lack of sleep" },
+  { id: "hunger", hr: "Glad ili žeđ", en: "Hunger or thirst" },
+  { id: "pain", hr: "Bol ili ne osjećam se dobro", en: "Pain or feeling unwell" },
+  { id: "emotional", hr: "Emocionalna iscrpljenost", en: "Emotional exhaustion" },
+  { id: "indoors", hr: "Predugo sam unutra", en: "Too long indoors" },
   { id: "other", hr: "Nešto drugo", en: "Something else" },
 ];
 
@@ -33,6 +38,8 @@ export default function EnergyRecoveryPanel({ state, today, update }: { state: S
   const [rested, setRested] = useState<"yes" | "same" | "no">("same");
   const [saved, setSaved] = useState(false);
   const [afterSaved, setAfterSaved] = useState(false);
+  const recommendationRef = useRef<HTMLDivElement>(null);
+  const checkinRef = useRef<HTMLDivElement>(null);
 
   const protocol = useMemo(() => protocolId ? recoveryProtocols.find((item) => item.id === protocolId) : undefined, [protocolId]);
   const studyChoices = recoveryProtocols.filter((item) => item.need === "study-recovery");
@@ -55,6 +62,7 @@ export default function EnergyRecoveryPanel({ state, today, update }: { state: S
     setSaved(false);
     setAfterSaved(false);
     setStage("recommendation");
+    requestAnimationFrame(() => recommendationRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }));
   };
 
   const addToToday = () => {
@@ -78,14 +86,14 @@ export default function EnergyRecoveryPanel({ state, today, update }: { state: S
     </header>
     {recordedSessions > 0 && <div className="recoveryLearning"><span>{hr ? `${recordedSessions} spremljenih usporedbi` : `${recordedSessions} saved comparison${recordedSessions === 1 ? "" : "s"}`}</span><p>{bestProtocol ? (hr ? `Za sada ti najčešće pomaže: ${bestProtocol.title.hr}.` : `So far, this most often helps: ${bestProtocol.title.en}.`) : (hr ? "Još učimo što ti vraća fokus, što doista odmara i što čuva energiju za sutra." : "We are still learning what restores focus, what truly rests you, and what protects tomorrow’s energy.")}</p></div>}
 
-    {stage === "checkin" && <div className="recoveryCheckin">
+    {stage === "checkin" && <div className="recoveryCheckin" ref={checkinRef}>
       <div className="recoveryMeasures"><Scale label={hr ? "Energija" : "Energy"} value={energy} onChange={setEnergy} /><Scale label={hr ? "Fokus" : "Focus"} value={focus} onChange={setFocus} /></div>
       <div className="recoveryQuestion"><span className="sectionLabel">{hr ? "ŠTO TE NAJVIŠE TROŠI?" : "WHAT IS DRAINING YOU?"}</span><div className="recoveryChoiceRow">{causes.map((item) => <button key={item.id} aria-pressed={cause === item.id} onClick={() => setCause(item.id)}>{item[locale]}</button>)}</div></div>
       <div className="recoveryQuestion"><span className="sectionLabel">{hr ? "ODABERI SMJER" : "CHOOSE A DIRECTION"}</span><div className="recoveryNeeds">{recoveryNeeds.map((item, index) => <button key={item.id} aria-pressed={need === item.id} onClick={() => setNeed(item.id)}><small>0{index + 1}</small><strong>{item[locale]}</strong><span>{hr ? item.noteHr : item.noteEn}</span></button>)}</div></div>
       <button className="recoveryContinue" onClick={start}>{hr ? "Predloži mi sljedeći korak" : "Suggest my next step"} <ArrowRight /></button>
     </div>}
 
-    {stage === "recommendation" && protocol && <div className="recoveryRecommendation">
+    {stage === "recommendation" && protocol && <div className="recoveryRecommendation" ref={recommendationRef} tabIndex={-1}>
       <aside><span className="sectionLabel">{hr ? "PREPORUKA ZA OVO STANJE" : "RECOMMENDED FOR THIS STATE"}</span><strong>{energy}/5</strong><small>{hr ? "energija" : "energy"}</small><strong>{focus}/5</strong><small>{hr ? "fokus" : "focus"}</small></aside>
       <div className="recoveryProtocol">
         <div className="protocolHeading"><div><span>{protocol.minutes} {hr ? "MINUTA" : "MINUTES"}</span><h3>{protocol.title[locale]}</h3><p>{protocol.summary[locale]}</p></div><button onClick={addToToday} disabled={saved}>{saved ? <Check /> : <Plus />}{saved ? (hr ? "Dodano u današnji plan" : "Added to today") : (hr ? "Dodaj u današnji plan" : "Add to today")}</button></div>
@@ -95,7 +103,7 @@ export default function EnergyRecoveryPanel({ state, today, update }: { state: S
         {energy === 3 && focus === 3 && cause === "mental" && protocol.id === "active-recovery-10" && <div className="recoveryHour"><div><span>0–5</span><p>{hr ? "Zatvori otvorene petlje i zapiši gdje nastavljaš." : "Close open loops and write where you will resume."}</p></div><div><span>5–20</span><p>{hr ? "Hodaj bez ekrana i bez novog sadržaja." : "Walk without a screen or new input."}</p></div><div><span>20–30</span><p>{hr ? "Lagano razgibaj tijelo, popij vodu i pojedi nešto ako treba." : "Gently move your body, drink water, and eat if needed."}</p></div><div><span>30–45</span><p>{hr ? "Odaberi aktivnost s malo mentalnog napora." : "Choose a low-cognitive activity."}</p></div><div><span>45–60</span><p>{hr ? "Ponovno provjeri energiju, fokus i osjećaš li više odmora." : "Check energy, focus, and whether you feel more rested."}</p></div></div>}
         <div className="eyeRule"><Eye weight="thin" /><p><strong>{hr ? "20–20–20 za oči" : "20–20–20 for your eyes"}</strong>{hr ? " Svakih 20 minuta, 20 sekundi gledaj nešto udaljeno barem 6 metara." : " Every 20 minutes, look at something at least 6 metres away for 20 seconds."}</p></div>
         {protocol.need === "body-recovery" && <div className="recoverySafety"><FirstAid weight="thin" /><p><strong>{hr ? "Obična zategnutost nije isto što i ozljeda." : "Ordinary soreness is not the same as injury."}</strong> {hr ? "Oštra bol, oticanje ili bol koja se pogoršava traže procjenu. Izrazito jaka bol uz slabost ili tamnu mokraću zahtijeva hitnu medicinsku procjenu." : "Sharp pain, swelling, or worsening pain needs assessment. Unusually severe pain with weakness or dark urine needs urgent medical assessment."}</p></div>}
-        <div className="recoveryActions"><button onClick={() => setStage("checkin")}>{hr ? "Promijeni odabir" : "Change selection"}</button><button className="primary" onClick={() => setStage("after")}>{hr ? "Provjeri stanje nakon toga" : "Check in afterward"} <ArrowRight /></button></div>
+        <div className="recoveryActions"><button onClick={() => { setStage("checkin"); requestAnimationFrame(() => checkinRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })); }}>{hr ? "Promijeni odabir" : "Change selection"}</button><button className="primary" onClick={() => setStage("after")}>{hr ? "Provjeri stanje nakon toga" : "Check in afterward"} <ArrowRight /></button></div>
       </div>
     </div>}
 

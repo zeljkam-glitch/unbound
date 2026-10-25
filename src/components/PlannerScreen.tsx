@@ -4,7 +4,6 @@ import { ArrowLeft, ArrowRight, CalendarBlank, Check, Clock, Note, Plus, Repeat,
 import { useState } from "react";
 import type { Update } from "@/lib/ui-types";
 import { Field } from "./Primitives";
-import TwelveWeekView from "./TwelveWeekView";
 import { useLanguage } from "./LanguageContext";
 import { seasonalContext } from "@/lib/season";
 import { MonthView, shiftMonth, shiftYear, YearView } from "./CalendarViews";
@@ -21,7 +20,7 @@ export default function PlannerScreen({ state, update }: { state: State; update:
   const [movingTask, setMovingTask] = useState<string | null>(null);
   const [projectFilter, setProjectFilter] = useState("");
   const [tagFilter, setTagFilter] = useState("");
-  const [view, setView] = useState<"week" | "month" | "year" | "twelve">("week");
+  const [view, setView] = useState<"week" | "month" | "year">("week");
   const days = Array.from({ length: 7 }, (_, i) => addDays(start, i));
   const tags = Array.from(new Set(state.tasks.flatMap((task) => task.tags || []))).sort();
   const filtered = state.tasks.filter((task) => (!projectFilter || task.projectId === projectFilter) && (!tagFilter || task.tags?.includes(tagFilter)));
@@ -48,8 +47,8 @@ export default function PlannerScreen({ state, update }: { state: State; update:
     </article>;
   };
   return <>
-    <div className="plannerHero"><div><div className="sectionLabel">03 / {hr ? "PLANER" : "PLANNER"} · {seasonal.month.toUpperCase()} · {seasonal.seasonName.toUpperCase()}</div><h2>{view === "month" ? (hr ? <>Vidi mjesec.<br />Sačuvaj prostor.</> : <>See the month.<br />Keep some room.</>) : view === "year" ? (hr ? <>Godina u<br />jednom pogledu.</> : <>The year in<br />one view.</>) : (hr ? <>Oblikuj tjedan.<br />Ne moraš ga ispuniti.</> : <>Shape the week.<br />You don’t have to fill it.</>)}</h2><p className="plannerSeason">{seasonal.theme}</p></div><div className="viewSwitch"><button aria-pressed={view === "week"} onClick={() => setView("week")}>{hr ? "Tjedan" : "Week"}</button><button aria-pressed={view === "month"} onClick={() => setView("month")}>{hr ? "Mjesec" : "Month"}</button><button aria-pressed={view === "year"} onClick={() => setView("year")}>{hr ? "Godina" : "Year"}</button><button aria-pressed={view === "twelve"} onClick={() => setView("twelve")}>{hr ? "12 tjedana" : "12 weeks"}</button></div>{view === "week" && <button className="primary" onClick={() => setOpenDate(days.includes(localDate()) ? localDate() : start)}><Plus /> {hr ? "Novi zadatak" : "New task"}</button>}</div>
-    {view === "twelve" ? <TwelveWeekView state={state} update={update} /> : <>
+    <div className="plannerHero"><div><div className="sectionLabel">03 / {hr ? "PLANER" : "PLANNER"} · {seasonal.month.toUpperCase()} · {seasonal.seasonName.toUpperCase()}</div><h2>{view === "month" ? (hr ? <>Vidi mjesec.<br />Sačuvaj prostor.</> : <>See the month.<br />Keep some room.</>) : view === "year" ? (hr ? <>Godina u<br />jednom pogledu.</> : <>The year in<br />one view.</>) : (hr ? <>Oblikuj tjedan.<br />Ne moraš ga ispuniti.</> : <>Shape the week.<br />You don’t have to fill it.</>)}</h2><p className="plannerSeason">{seasonal.theme}</p></div><div className="viewSwitch"><button aria-pressed={view === "week"} onClick={() => setView("week")}>{hr ? "Tjedan" : "Week"}</button><button aria-pressed={view === "month"} onClick={() => setView("month")}>{hr ? "Mjesec" : "Month"}</button><button aria-pressed={view === "year"} onClick={() => setView("year")}>{hr ? "Godina" : "Year"}</button></div>{view === "week" && <button className="primary" onClick={() => setOpenDate(days.includes(localDate()) ? localDate() : start)}><Plus /> {hr ? "Novi zadatak" : "New task"}</button>}</div>
+    <>
     <div className="plannerFilters" aria-label={hr ? "Filtri planera" : "Planner filters"}>
       <Field label={hr ? "Cilj" : "Project"}><select value={projectFilter} onChange={(e) => setProjectFilter(e.target.value)}><option value="">{hr ? "Svi ciljevi" : "All projects"}</option>{state.projects.map((project) => <option key={project.id} value={project.id}>{project.name}</option>)}</select></Field>
       <Field label={hr ? "Oznaka" : "Tag"}><select value={tagFilter} onChange={(e) => setTagFilter(e.target.value)}><option value="">{hr ? "Sve oznake" : "All tags"}</option>{tags.map((tag) => <option key={tag} value={tag}>#{tag}</option>)}</select></Field>
@@ -73,6 +72,6 @@ export default function PlannerScreen({ state, update }: { state: State; update:
           <div className="composerActions"><button type="button" onClick={() => setOpenDate(null)}>{hr ? "Odustani" : "Cancel"}</button><button className="primary">{hr ? "Dodaj zadatak" : "Add task"}</button></div>
         </form> : <button className="addDayTask" onClick={() => setOpenDate(date)}><Plus /> {hr ? "Dodaj" : "Add"}</button>}
       </section>;
-    })}</div>}</>}
+    })}</div>}</>
   </>;
 }

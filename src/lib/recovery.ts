@@ -58,9 +58,30 @@ export const recoveryProtocols: RecoveryProtocol[] = [
   {
     id: "energy-shift-10", need: "energy", minutes: 10,
     title: { hr: "Mali fizički pomak", en: "Small physical shift" },
-    summary: { hr: "Svjetlo, voda i kretanje prije još jedne kave.", en: "Light, water, and movement before another coffee." },
+    summary: { hr: "Voda, zrak i kratko kretanje bez forsiranja.", en: "Water, fresh air, and brief movement without forcing it." },
     when: { hr: "Kad je energija niska, ali nisi pospana do točke potpunog odmora.", en: "When energy is low, but you are not sleepy enough to need complete rest." },
-    steps: { hr: ["Popij čašu vode.", "Izađi na dnevno svjetlo ili otvori prozor.", "Hodaj ili se razgibaj pet minuta.", "Provjeri trebaš li hranu ili odmor."], en: ["Drink a glass of water.", "Step into daylight or open a window.", "Walk or move for five minutes.", "Check whether you need food or rest."] },
+    steps: { hr: ["Popij čašu vode.", "Nakratko promijeni zrak u prostoru.", "Hodaj po stanu ili se razgibaj pet minuta.", "Provjeri trebaš li hranu ili pravi odmor."], en: ["Drink a glass of water.", "Refresh the air in the room for a moment.", "Walk around the room or move for five minutes.", "Check whether you need food or real rest."] },
+  },
+  {
+    id: "low-battery-20", need: "energy", minutes: 20,
+    title: { hr: "Kad je tijelo na rezervi", en: "When your body is running low" },
+    summary: { hr: "Ne traži dodatnu energiju od tijela koje je već prazno.", en: "Do not demand more energy from a body that is already depleted." },
+    when: { hr: "Kad te crpi manjak fizičke energije, bez obzira na motivaciju.", en: "When low physical energy is the drain, regardless of motivation." },
+    steps: { hr: ["Sjedni ili lezi deset minuta bez sadržaja.", "Provjeri jesi li jela, pila dovoljno i je li ti toplo.", "Odaberi tuš, mali obrok ili kratko drijemanje — ne trening.", "Nakon toga smanji plan ako energija ostane niska."], en: ["Sit or lie down for ten minutes without content.", "Check whether you have eaten, had enough water, and are warm.", "Choose a shower, small meal, or short nap — not a workout.", "Reduce the plan afterward if energy stays low."] },
+  },
+  {
+    id: "room-change-12", need: "energy", minutes: 12,
+    title: { hr: "Promijeni osjećaj prostora", en: "Change how the room feels" },
+    summary: { hr: "Za zasićenost stanom kada izlazak nije dobra opcija.", en: "For cabin fever when going out is not a good option." },
+    when: { hr: "Kad si dugo unutra, prostor je malen i treba ti promjena bez izlaska.", en: "When you have been indoors for a long time, the space is small, and you need a change without going out." },
+    steps: { hr: ["Otvori prozor dvije minute i promijeni zrak.", "Premjesti se u drugi kut ili sjedni na pod uz drugi izvor svjetla.", "Pusti jednu energičnu pjesmu i istegni se ili otpleši koliko ti odgovara.", "Nakon pjesme odluči želiš li tuš, kuhanje ili razgovor s nekim."], en: ["Open the window for two minutes and refresh the air.", "Move to another corner or sit on the floor by a different light source.", "Play one energetic song and stretch or dance as much as feels right.", "After the song, choose between a shower, cooking, or calling someone."] },
+  },
+  {
+    id: "food-water-check-15", need: "energy", minutes: 15,
+    title: { hr: "Gorivo prije plana", en: "Fuel before the plan" },
+    summary: { hr: "Glad i žeđ često izgledaju kao manjak volje.", en: "Hunger and thirst often look like a lack of motivation." },
+    when: { hr: "Kad dugo nisi jela ili pila i energija pada.", en: "When it has been a while since you ate or drank and your energy is dropping." },
+    steps: { hr: ["Popij vodu.", "Pojedi nešto jednostavno što već imaš.", "Sjedni deset minuta bez multitaskinga.", "Tek tada odluči što još stane u dan."], en: ["Drink some water.", "Eat something simple you already have.", "Sit for ten minutes without multitasking.", "Only then decide what else fits in the day."] },
   },
   {
     id: "quiet-input-15", need: "less-stimulation", minutes: 15,
@@ -98,6 +119,11 @@ export function recoveryInsights(checkins: RecoveryCheckin[]) {
 }
 
 export function recommendRecovery(input: { energy: number; focus: number; cause: RecoveryCause; need?: RecoveryNeed; evening?: boolean; history?: RecoveryCheckin[] }) {
+  if (input.cause === "pain") return recoveryProtocols.find((item) => item.id === "full-stop-30")!;
+  if (input.cause === "hunger") return recoveryProtocols.find((item) => item.id === "food-water-check-15")!;
+  if (input.cause === "low-physical-energy") return recoveryProtocols.find((item) => item.id === "low-battery-20")!;
+  if (input.cause === "indoors") return recoveryProtocols.find((item) => item.id === "room-change-12")!;
+  if (input.cause === "emotional" && input.need !== "focus") return recoveryProtocols.find((item) => item.id === "quiet-input-15")!;
   if (input.evening && input.cause === "mental") return recoveryProtocols.find((item) => item.id === "evening-shutdown")!;
   if (input.need === "study-recovery") {
     const insights = recoveryInsights(input.history || []);

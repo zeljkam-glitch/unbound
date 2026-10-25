@@ -81,9 +81,9 @@ describe("UNBOUND Life OS interactions", () => {
     await waitFor(() => expect(JSON.parse(localStorage.getItem("unbound.v1")!).beautifulMoments[0]).toMatchObject({ title: "A quiet room", category: "personal", favorite: true }));
   });
   it("stores an optional twelve-week direction and weekly review", async () => {
-    await open(); go(/Planner/);
-    fireEvent.click(screen.getByRole("button", { name: "12 weeks" }));
-    fireEvent.change(screen.getByLabelText("The outcome that matters"), { target: { value: "Finish the semester calmly" } });
+    await open(); go(/Goals/);
+    fireEvent.click(screen.getByRole("button", { name: "Open 12 weeks" }));
+    fireEvent.change(screen.getByLabelText("What do you want to change in the next 12 weeks?"), { target: { value: "Finish the semester calmly" } });
     fireEvent.click(screen.getByRole("button", { name: "Complete week 1 review" }));
     await waitFor(() => expect(JSON.parse(localStorage.getItem("unbound.v1")!).twelveWeek).toMatchObject({ outcome: "Finish the semester calmly", weeks: { 1: { reviewed: true } } }));
   });
@@ -99,13 +99,13 @@ describe("UNBOUND Life OS interactions", () => {
   it("adds a reusable library item to today", async () => {
     await open();
     fireEvent.click(screen.getByRole("button", { name: "Choose from My Library" }));
-    fireEvent.click(screen.getByRole("option", { name: /Oat milk/ }));
+    fireEvent.click(screen.getByRole("option", { name: /Fresh vegetables/ }));
     fireEvent.click(screen.getByRole("button", { name: "Add today" }));
-    expect(screen.getByText("Oat milk")).toBeTruthy();
+    expect(screen.getByText("Fresh vegetables")).toBeTruthy();
   });
   it("confirms when a Library item is added to Today", async () => {
     await open(); go(/My Library/);
-    fireEvent.click(screen.getAllByRole("button", { name: "Add today" })[0]);
+    fireEvent.click(screen.getAllByRole("button", { name: "Add shopping today" })[0]);
     expect(screen.getByRole("button", { name: "Added for today" })).toBeTruthy();
     expect(screen.getByRole("link", { name: "Open Today" })).toBeTruthy();
   });
@@ -194,7 +194,7 @@ describe("UNBOUND Life OS interactions", () => {
     fireEvent.click(screen.getByRole("button", { name: "Your space and data" }));
     const file = new File([JSON.stringify({ routines: [{ id: "private-morning", title: "Private morning step", period: "morning" }], library: [{ id: "private-bag", category: "bags", title: "My private bag", group: "Travel", details: "One, Two" }, { id: "private-list", category: "lists", title: "My private list", group: "Later", details: "Three, Four" }] })], "private-lists.json", { type: "application/json" });
     fireEvent.change(screen.getByLabelText("Private lists file"), { target: { files: [file] } });
-    expect(await screen.findByText("Private routines, lists, and recovery records were imported. They stay in this browser only.")).toBeTruthy();
+    expect(await screen.findByText("Private routines, lists, and tasks were imported. They stay in this browser only.")).toBeTruthy();
     expect(screen.getByLabelText("Private morning step")).toBeTruthy();
     go(/My Library/);
     fireEvent.click(screen.getByRole("button", { name: "Bag checklists" }));
@@ -207,9 +207,9 @@ describe("UNBOUND Life OS interactions", () => {
     fireEvent.click(screen.getByRole("button", { name: "Your space and data" }));
     const file = new File([JSON.stringify({ routines: [], library: [{ id: "private-beauty", category: "beauty", title: "Evening care", group: "Ritual", details: "Cleanse, Face cream" }] })], "private-beauty.json", { type: "application/json" });
     fireEvent.change(screen.getByLabelText("Private lists file"), { target: { files: [file] } });
-    await screen.findByText("Private routines, lists, and recovery records were imported. They stay in this browser only.");
+    await screen.findByText("Private routines, lists, and tasks were imported. They stay in this browser only.");
     go(/My Library/);
-    fireEvent.click(screen.getByRole("button", { name: "Beauty atlas" }));
+    fireEvent.click(screen.getByRole("button", { name: "Care & appearance" }));
     expect(screen.getByRole("heading", { name: "Evening care" })).toBeTruthy();
     expect(screen.getByLabelText("Cleanse")).toBeTruthy();
   });

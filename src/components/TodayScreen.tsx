@@ -42,7 +42,7 @@ export default function TodayScreen({ state, today, update }: { state: State; to
     };
     return builtIn[item.id] ? { ...item, ...builtIn[item.id] } : localized;
   };
-  const plannableLibrary = state.library.filter((item) => item.category !== "quotes");
+  const plannableLibrary = state.library.filter((item) => ["shopping", "feel-good", "places", "meals", "workouts"].includes(item.category));
   const selectedLibraryItem = plannableLibrary.find((item) => item.id === libraryId);
   const normalizedQuery = libraryQuery.trim().toLocaleLowerCase(hr ? "hr-HR" : "en-GB");
   const visibleLibrary = plannableLibrary.filter((item) => {
@@ -50,9 +50,8 @@ export default function TodayScreen({ state, today, update }: { state: State; to
     return !normalizedQuery || `${display.title} ${display.group}`.toLocaleLowerCase(hr ? "hr-HR" : "en-GB").includes(normalizedQuery);
   });
   const libraryGroups = [
-    { key: "everyday", label: hr ? "SVAKODNEVNO" : "EVERYDAY", categories: ["shopping", "bags", "lists"] },
+    { key: "everyday", label: hr ? "KUPNJA I OBAVEZE" : "SHOPPING & ERRANDS", categories: ["shopping"] },
     { key: "wellbeing", label: hr ? "KRETANJE I PREDAH" : "MOVEMENT & PAUSE", categories: ["feel-good", "workouts"] },
-    { key: "care", label: hr ? "NJEGA" : "CARE", categories: ["beauty"] },
     { key: "food", label: hr ? "OBROCI" : "MEALS", categories: ["meals"] },
     { key: "places", label: hr ? "MJESTA" : "PLACES", categories: ["places"] },
   ].map((group) => ({ ...group, items: visibleLibrary.filter((item) => group.categories.includes(item.category)) })).filter((group) => group.items.length);
@@ -96,7 +95,7 @@ export default function TodayScreen({ state, today, update }: { state: State; to
     <WeatherCard onWeatherChange={setWeatherCode} />
     <SeasonalCompass update={update} today={today} weatherCode={weatherCode} obligations={todayTasks.filter((task) => !task.completedAt).map((task) => taskTitle(task, locale))} />
     <EnergyRecoveryPanel state={state} today={today} update={update} />
-    <BeautifulMomentsPanel state={state} today={today} update={update} />
+    <BeautifulMomentsPanel state={state} today={today} weatherCode={weatherCode} update={update} />
     <div className={`todayGrid ${todayDate.getDay() === 0 ? "hasWeekly" : ""}`}>
       {(["morning", "evening", ...(todayDate.getDay() === 0 ? ["weekly" as const] : [])] as const).map((period) => <section className="card routineCard" key={period}>
         <div className="sectionLabel">{period === "morning" ? (hr ? "JUTARNJA RUTINA" : "MORNING ROUTINE") : period === "evening" ? (hr ? "VEČERNJA RUTINA" : "EVENING ROUTINE") : (hr ? "NEDJELJNA RUTINA" : "SUNDAY ROUTINE")}</div>

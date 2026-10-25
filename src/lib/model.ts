@@ -28,7 +28,7 @@ export type MomentPreferences = { feelings: string[]; maxMinutes: number; maxBud
 export type WeeklyCheckin = { win: string; learned: string; next: string; energy: string };
 export type TwelveWeekPlan = { startDate: string; outcome: string; why: string; leadAction: string; weeklyTarget: number; weeks: Record<string, { focus: string; reviewed: boolean }> };
 export type RecoveryNeed = "focus" | "energy" | "less-stimulation" | "study-recovery" | "body-recovery" | "complete-rest";
-export type RecoveryCause = "mental" | "physical" | "stress" | "sleep" | "other";
+export type RecoveryCause = "mental" | "physical" | "low-physical-energy" | "stress" | "sleep" | "hunger" | "pain" | "emotional" | "indoors" | "other";
 export type RecoveryCheckin = {
   id: string; date: string; createdAt: string; phase: "before" | "after";
   energy: number; focus: number; cause: RecoveryCause; need: RecoveryNeed;
@@ -63,7 +63,7 @@ export function mergePrivateLists(state: State, value: unknown): State | null {
   const incomingMoments = Array.isArray(bundle.beautifulMoments) ? bundle.beautifulMoments : [];
   const beautifulMoments = incomingMoments.filter((item): item is BeautifulMoment => !!item && typeof item === "object" && typeof item.id === "string" && typeof item.title === "string" && typeof item.description === "string" && (item.url === undefined || typeof item.url === "string") && typeof item.duration === "number" && typeof item.budget === "number" && ["low", "steady", "high"].includes(item.energy) && Array.isArray(item.feelings) && ["inside", "outside", "either"].includes(item.setting) && typeof item.badWeather === "boolean");
   const incomingCheckins = Array.isArray(bundle.recoveryCheckins) ? bundle.recoveryCheckins : [];
-  const recoveryCheckins = incomingCheckins.filter((item): item is RecoveryCheckin => !!item && typeof item === "object" && typeof item.id === "string" && typeof item.date === "string" && typeof item.createdAt === "string" && ["before", "after"].includes(item.phase) && typeof item.energy === "number" && typeof item.focus === "number" && ["mental", "physical", "stress", "sleep", "other"].includes(item.cause) && ["focus", "energy", "less-stimulation", "study-recovery", "body-recovery", "complete-rest"].includes(item.need));
+  const recoveryCheckins = incomingCheckins.filter((item): item is RecoveryCheckin => !!item && typeof item === "object" && typeof item.id === "string" && typeof item.date === "string" && typeof item.createdAt === "string" && ["before", "after"].includes(item.phase) && typeof item.energy === "number" && typeof item.focus === "number" && ["mental", "physical", "low-physical-energy", "stress", "sleep", "hunger", "pain", "emotional", "indoors", "other"].includes(item.cause) && ["focus", "energy", "less-stimulation", "study-recovery", "body-recovery", "complete-rest"].includes(item.need));
   if (routines.length !== bundle.routines.length || library.length !== bundle.library.length || tasks.length !== incomingTasks.length || beautifulMoments.length !== incomingMoments.length || recoveryCheckins.length !== incomingCheckins.length) return null;
   const privateRoutinePeriods = new Set(routines.map((item) => item.period));
   return {
@@ -140,6 +140,9 @@ const retireFormerDemoThought = (library: LibraryItem[]) => {
   const alreadyReplaced = library.some((item) => item.id === "quote-notice");
   return library.flatMap((item) => item.id !== "quote-attention" ? [item] : alreadyReplaced ? [] : [{ id: "quote-notice", category: "quotes" as const, title: item.title.startsWith("Pažnja") ? "Primijeti ono zbog čega se vraćaš sebi." : "Notice what brings you back to yourself.", group: "UNBOUND", details: item.title.startsWith("Pažnja") ? "Za dane u kojima želiš ponovno čuti vlastiti ritam." : "For days when you want to hear your own rhythm again." }]);
 };
+const cleanPersonalLibrary = (library: LibraryItem[]) => library
+  .filter((item) => item.id !== "l1")
+  .map((item) => item.id === "private-wishlist-appearance" ? { ...item, category: "lists" as const } : item);
 export function demo(locale: "hr" | "en" = "en"): State {
   const today = localDate();
   const hr = locale === "hr";
@@ -153,7 +156,6 @@ export function demo(locale: "hr" | "en" = "en"): State {
     thoughts: [{ id: "m1", text: hr ? "Kako bi izgledao moj tjedan kada bih sačuvala svoja jutra?" : "What would my week look like if I protected my mornings?", createdAt: new Date().toISOString() }],
     projects: [{ id: "p1", name: hr ? "Malo više slobode" : "A little more freedom", outcome: hr ? "Pronaći ritam rada u kojem ostaje mjesta za život." : "Build a working rhythm that leaves room for life.", deadline: "", nextAction: hr ? "Ovaj tjedan pojednostavni jednu obavezu." : "Choose one commitment to simplify this week.", status: "active", place: hr ? "Počni s jutrima. Sačuvaj prvi sat." : "Start with my mornings. Keep the first hour open.", progress: 35 }],
     library: [
-      { id: "l1", category: "shopping", title: hr ? "Zobeno mlijeko" : "Oat milk", group: "dm", details: hr ? "Tjedna kupnja" : "Weekly buy" },
       { id: "l2", category: "shopping", title: hr ? "Svježe povrće" : "Fresh vegetables", group: hr ? "Plac" : "Market", details: hr ? "Odaberi ono što izgleda najbolje" : "Choose what looks best" },
       { id: "l3", category: "feel-good", title: hr ? "Šetnja uz rijeku" : "Walk by the river", group: "10–30 min", details: hr ? "Mobitel može ostati u torbi" : "The phone can stay in your bag" },
       { id: "l4", category: "places", title: hr ? "Stari grad Samobor" : "Samobor old town", group: hr ? "Mali bijeg" : "Local escape", details: hr ? "Kava i polagana šetnja" : "Coffee and a slow walk" },
@@ -178,7 +180,7 @@ function migrateTask(t: Record<string, unknown>): Task { return task(String(t.id
 export function migrateState(value: unknown): State | null {
   if (!value || typeof value !== "object") return null;
   const v = value as Record<string, unknown>;
-  if (v.version === 5 && isState(v)) return { ...v, library: retireFormerDemoThought(v.library), recoveryCheckins: Array.isArray(v.recoveryCheckins) ? v.recoveryCheckins as RecoveryCheckin[] : [] };
+  if (v.version === 5 && isState(v)) return { ...v, library: cleanPersonalLibrary(retireFormerDemoThought(v.library)), recoveryCheckins: Array.isArray(v.recoveryCheckins) ? v.recoveryCheckins as RecoveryCheckin[] : [] };
   if (v.version === 4 && Array.isArray(v.library)) return { ...(v as unknown as State), version: 5, library: [...(v.library as LibraryItem[]), ...quoteLibrary("hr").filter((quote) => !(v.library as LibraryItem[]).some((item) => item.id === quote.id))] };
   if ((v.version === 2 || v.version === 3) && Array.isArray(v.tasks) && Array.isArray(v.projects) && Array.isArray(v.library) && Array.isArray(v.routines)) return { ...(v as unknown as State), version: 5, library: [...(v.library as LibraryItem[]), ...quoteLibrary("hr")], beautifulMoments: beautifulMomentCatalog("hr"), plannedMoments: {}, momentPreferences: {} };
   if (v.version !== 1 || !Array.isArray(v.tasks) || !Array.isArray(v.projects)) return null;

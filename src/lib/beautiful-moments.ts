@@ -74,8 +74,10 @@ export function beautifulMomentCatalog(locale: Locale): BeautifulMoment[] {
 
 export function matchingBeautifulMoments(moments: BeautifulMoment[], preferences: MomentPreferences) {
   const energyRank = { low: 0, steady: 1, high: 2 } as const;
+  const feelingMatchCount = (moment: BeautifulMoment) => preferences.feelings.filter((feeling) => (feelingSignals[normalizeFeeling(feeling)] || [feeling]).some((signal) => moment.feelings.includes(signal))).length;
   return moments.filter((moment) => {
-    if (preferences.feelings.length && !preferences.feelings.some((feeling) => (feelingSignals[normalizeFeeling(feeling)] || [feeling]).some((signal) => moment.feelings.includes(signal)))) return false;
+    const requiredFeelingMatches = preferences.feelings.length <= 1 ? preferences.feelings.length : Math.ceil(preferences.feelings.length / 2);
+    if (feelingMatchCount(moment) < requiredFeelingMatches) return false;
     if (preferences.maxMinutes > 0 && moment.duration > preferences.maxMinutes) return false;
     if (preferences.maxBudget >= 0 && moment.budget > preferences.maxBudget) return false;
     if (preferences.energy && energyRank[moment.energy] > energyRank[preferences.energy]) return false;
@@ -84,5 +86,5 @@ export function matchingBeautifulMoments(moments: BeautifulMoment[], preferences
     if (preferences.condition === "gentle" && moment.energy === "high") return false;
     if (preferences.condition === "rest" && moment.energy !== "low") return false;
     return true;
-  }).sort((a, b) => Number(b.favorite) - Number(a.favorite) || a.duration - b.duration);
+  }).sort((a, b) => feelingMatchCount(b) - feelingMatchCount(a) || Number(b.favorite) - Number(a.favorite) || a.duration - b.duration);
 }

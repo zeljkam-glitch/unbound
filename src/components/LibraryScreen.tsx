@@ -12,7 +12,7 @@ import MealPlanner from "./MealPlanner";
 const categories: Array<{ id: LibraryCategory; label: string; note: string }> = [
   { id: "shopping", label: "Shopping by store", note: "What to buy, grouped by where you go" },
   { id: "feel-good", label: "Beautiful moments", note: "Small experiences that make an ordinary day feel more alive" },
-  { id: "beauty", label: "Beauty atlas", note: "Care, rituals, references and wishes that feel like you" },
+  { id: "beauty", label: "Care & appearance", note: "Products, routines, references and care you want to remember" },
   { id: "places", label: "Places & escapes", note: "Restaurants, events and day trips" },
   { id: "meals", label: "Meals", note: "Things you actually like to cook" },
   { id: "workouts", label: "Workouts", note: "Gym, home, running and stretching" },
@@ -43,7 +43,7 @@ export default function LibraryScreen({ state, update }: { state: State; update:
   const translated = hr ? [
     { id: "shopping" as const, label: "Kupnja po trgovinama", note: "Što trebaš kupiti, složeno prema mjestu na koje ideš" },
     { id: "feel-good" as const, label: "Lijepi trenuci", note: "Mala iskustva zbog kojih običan dan postane življi" },
-    { id: "beauty" as const, label: "Atlas ljepote", note: "Njega, rituali, reference i želje u kojima se prepoznaješ" },
+    { id: "beauty" as const, label: "Njega i izgled", note: "Proizvodi, rutine, reference i njega koju želiš zapamtiti" },
     { id: "places" as const, label: "Mjesta i mali bijegovi", note: "Restorani, događanja i jednodnevni izleti" },
     { id: "meals" as const, label: "Jela", note: "Ono što doista voliš kuhati" },
     { id: "workouts" as const, label: "Vježbanje", note: "Teretana, dom, trčanje i istezanje" },
@@ -58,6 +58,7 @@ export default function LibraryScreen({ state, update }: { state: State; update:
   const [addedId, setAddedId] = useState("");
   const items = state.library.filter((item) => item.category === category);
   const Icon = icons[category];
+  const canPlanToday = !["bags", "lists", "beauty", "quotes"].includes(category);
 
   const addToday = (item: LibraryItem) => {
     const copy = libraryItemCopy(item, locale);
@@ -116,7 +117,7 @@ export default function LibraryScreen({ state, update }: { state: State; update:
       const copy = libraryItemCopy(item, locale);
       const checklist = category === "shopping" || category === "bags" || category === "lists" || category === "beauty" ? checklistParts(copy.details) : [];
       const checked = state.libraryChecked?.[item.id] || [];
-      return <article className={`card libraryItem ${category === "quotes" ? "quoteItem" : ""}`} key={item.id}><span className="libraryGroup">{copy.group}</span><h3>{copy.title}</h3>{checklist.length ? <div className="libraryChecklist">{checklist.map((entry) => <label key={entry}><input type="checkbox" checked={checked.includes(entry)} onChange={() => toggleChecklist(item.id, entry)} /><span>{entry}</span></label>)}</div> : <p>{copy.details || (hr ? "Nema dodatnih bilješki." : "No extra notes.")}</p>}{item.url && <a className="libraryUrl" href={item.url} target="_blank" rel="noreferrer">{hr ? "Otvori video" : "Open video"} <ArrowSquareOut /></a>}<div className="actions">{category !== "quotes" && <button className="primary" onClick={() => addToday(item)}>{addedId === item.id ? <Check /> : <Plus />} {addedId === item.id ? (hr ? "Dodano za danas" : "Added for today") : (hr ? "Dodaj danas" : "Add today")}</button>}{addedId === item.id && <a className="buttonLink" href="#today">{hr ? "Otvori Danas" : "Open Today"}</a>}<button onClick={() => { setEditing(item); setOpen(true); window.scrollTo({ top: 0 }); }}>{hr ? "Uredi" : "Edit"}</button><button aria-label={(hr ? "Obriši " : "Delete ") + copy.title} onClick={() => update((current) => ({ ...current, library: current.library.filter((existing) => existing.id !== item.id) }))}><Trash /></button></div></article>;
+      return <article className={`card libraryItem ${category === "quotes" ? "quoteItem" : ""}`} key={item.id}><span className="libraryGroup">{copy.group}</span><h3>{copy.title}</h3>{checklist.length ? <div className="libraryChecklist">{checklist.map((entry) => <label key={entry}><input type="checkbox" checked={checked.includes(entry)} onChange={() => toggleChecklist(item.id, entry)} /><span>{entry}</span></label>)}</div> : <p>{copy.details || (hr ? "Nema dodatnih bilješki." : "No extra notes.")}</p>}{item.url && <a className="libraryUrl" href={item.url} target="_blank" rel="noreferrer">{hr ? "Otvori video" : "Open video"} <ArrowSquareOut /></a>}<div className="actions">{canPlanToday && <button className="primary" onClick={() => addToday(item)}>{addedId === item.id ? <Check /> : <Plus />} {addedId === item.id ? (hr ? "Dodano za danas" : "Added for today") : category === "shopping" ? (hr ? "Dodaj kupnju danas" : "Add shopping today") : (hr ? "Dodaj danas" : "Add today")}</button>}{addedId === item.id && <a className="buttonLink" href="#today">{hr ? "Otvori Danas" : "Open Today"}</a>}<button onClick={() => { setEditing(item); setOpen(true); window.scrollTo({ top: 0 }); }}>{hr ? "Uredi" : "Edit"}</button><button className="deleteListItem" aria-label={(hr ? "Obriši " : "Delete ") + copy.title} onClick={() => update((current) => ({ ...current, library: current.library.filter((existing) => existing.id !== item.id) }))}><Trash /> {hr ? "Obriši" : "Delete"}</button></div></article>;
     })}</div>
     {category === "shopping" && <p className="integrationNote">{hr ? "Svaki popis možeš označavati dok kupuješ. Kada dodaš novo jelo sa sastojcima, njegov se popis ovdje stvara automatski." : "You can check off every list as you shop. Add a meal with ingredients and its shopping list will appear here automatically."}</p>}
     {category === "places" && <p className="integrationNote">{hr ? "Događanja u Samoboru još nisu povezana uživo. Zasad ovdje čuvaj mjesta, restorane i ideje za izlet." : "Live Samobor events are not connected yet. For now, keep places, restaurants and trip ideas here."}</p>}
