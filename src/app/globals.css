@@ -2558,8 +2558,9 @@ body:has(.livingShell) { background:#171a1b; }
   .quietShell.livingShell .recoveryPrivacy { grid-column:1; }
   .quietShell.livingShell .recoveryCheckin,.quietShell.livingShell .recoveryAfter { margin-left:0; }
   .quietShell.livingShell .recoveryMeasures { grid-template-columns:1fr; gap:24px; }
-  .quietShell.livingShell .recoveryNeeds { grid-template-columns:1fr; }
-  .quietShell.livingShell .recoveryNeeds button,.quietShell.livingShell .recoveryNeeds button:nth-child(even) { min-height:78px; padding:15px 0; border-left:0; }
+  .quietShell.livingShell .recoveryNeeds { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .quietShell.livingShell .recoveryNeeds button { min-height:108px; padding:16px 12px 15px 0; }
+  .quietShell.livingShell .recoveryNeeds button:nth-child(even) { padding-left:12px; border-left:1px solid var(--line); }
   .quietShell.livingShell .protocolHeading { grid-template-columns:1fr; align-items:start; }
   .quietShell.livingShell .protocolHeading button { justify-self:start; }
   .quietShell.livingShell .recoveryAfter > div:first-child { display:block; }
