@@ -3182,3 +3182,50 @@ body:has(.livingShell) { background:#171a1b; }
   background:#42423d;
   border-color:#42423d;
 }
+
+/* Planner atmosphere: cinematic depth without adding decorative cards. */
+.quietShell.livingShell .plannerHero {
+  position:relative;
+  isolation:isolate;
+  background:#171a19;
+}
+.quietShell.livingShell .plannerHero::before,
+.quietShell.livingShell .plannerHero::after {
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+}
+.quietShell.livingShell .plannerHero::before {
+  z-index:0;
+  inset:-3%;
+  background:url('/images/Unbound_Planner_03.jpg') center 54%/cover no-repeat;
+  filter:saturate(.66) contrast(1.04);
+  animation:plannerDrift 24s ease-in-out infinite alternate;
+}
+.quietShell.livingShell .plannerHero::after {
+  z-index:0;
+  background:linear-gradient(90deg,rgba(8,11,12,.9) 0%,rgba(8,11,12,.6) 48%,rgba(8,11,12,.2) 100%),linear-gradient(180deg,rgba(8,11,12,.05),rgba(8,11,12,.34));
+}
+.quietShell.livingShell .plannerHero > * { position:relative; z-index:1; }
+.quietShell.livingShell .plannerAtmosphere {
+  display:grid;
+  grid-template-columns:minmax(170px,.65fr) minmax(320px,1.5fr) minmax(170px,.65fr);
+  gap:clamp(30px,5vw,84px);
+  align-items:start;
+  padding:24px 0 28px;
+  border-bottom:1px solid #aaa69d;
+}
+.quietShell.livingShell .plannerAtmosphere > div { display:grid; gap:7px; }
+.quietShell.livingShell .plannerAtmosphere span { color:#777a75; font-size:9px; letter-spacing:.19em; }
+.quietShell.livingShell .plannerAtmosphere strong { font-size:14px; font-weight:400; text-transform:capitalize; }
+.quietShell.livingShell .plannerAtmosphere p { max-width:620px; margin:0; color:#555a57; font-size:16px; font-weight:300; line-height:1.5; }
+.quietShell.livingShell .plannerAtmosphere > div:last-child { justify-self:end; text-align:right; }
+.quietShell.livingShell .dayColumn > div > .quiet { color:#777a75; font-size:14px; font-weight:300; }
+@keyframes plannerDrift { from { transform:scale(1.01) translate3d(-.3%,0,0); } to { transform:scale(1.065) translate3d(.5%,-.6%,0); } }
+@media(prefers-reduced-motion:reduce){ .quietShell.livingShell .plannerHero::before { animation:none; } }
+@media(max-width:760px){
+  .quietShell.livingShell .plannerAtmosphere { grid-template-columns:1fr 1fr; gap:24px; padding:22px 0 26px; }
+  .quietShell.livingShell .plannerAtmosphere p { grid-column:1/-1; grid-row:2; font-size:15px; }
+  .quietShell.livingShell .plannerAtmosphere > div:last-child { justify-self:end; }
+}
