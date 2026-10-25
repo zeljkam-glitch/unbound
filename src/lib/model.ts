@@ -20,7 +20,7 @@ export type MealProfile = {
   leftoverFriendly: boolean;
   season: "all" | "spring" | "summer" | "autumn" | "winter";
 };
-export type LibraryItem = { id: string; category: LibraryCategory; title: string; group: string; details: string; url?: string; meal?: MealProfile; translations?: Partial<Record<"hr" | "en", { title: string; group: string; details: string }>> };
+export type LibraryItem = { id: string; category: LibraryCategory; title: string; group: string; details: string; purchaseHorizon?: "short" | "long"; url?: string; meal?: MealProfile; translations?: Partial<Record<"hr" | "en", { title: string; group: string; details: string }>> };
 export type InboxItem = { id: string; text: string; createdAt: string };
 export type Routine = { id: string; title: string; period: "morning" | "evening" | "weekly" };
 export type BeautifulMoment = { id: string; title: string; description: string; url?: string; duration: number; budget: number; energy: "low" | "steady" | "high"; feelings: string[]; category: string; setting: "inside" | "outside" | "either"; badWeather: boolean; solo: boolean; social: boolean; favorite: boolean; completedDates: string[] };
@@ -145,7 +145,9 @@ const retireFormerDemoThought = (library: LibraryItem[]) => {
 };
 const cleanPersonalLibrary = (library: LibraryItem[]) => library
   .filter((item) => item.id !== "l1")
-  .map((item) => item.id === "private-wishlist-appearance" ? { ...item, category: "lists" as const } : item);
+  .map((item) => item.id === "private-wishlist-appearance" ? { ...item, category: "lists" as const } : item)
+  .map((item) => ["private-buy-general", "private-home-buy"].includes(item.id) ? { ...item, category: "shopping" as const, purchaseHorizon: "long" as const } : item)
+  .map((item) => item.category === "shopping" && !item.purchaseHorizon ? { ...item, purchaseHorizon: "short" as const } : item);
 const resetUntouchedExampleGoal = (projects: Goal[]) => projects.map((goal) =>
   goal.id === "p1" && goal.progress === 35 && ["Malo više slobode", "A little more freedom"].includes(goal.name)
     ? { ...goal, progress: 0 }
