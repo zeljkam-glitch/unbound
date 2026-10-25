@@ -146,6 +146,11 @@ const retireFormerDemoThought = (library: LibraryItem[]) => {
 const cleanPersonalLibrary = (library: LibraryItem[]) => library
   .filter((item) => item.id !== "l1")
   .map((item) => item.id === "private-wishlist-appearance" ? { ...item, category: "lists" as const } : item);
+const resetUntouchedExampleGoal = (projects: Goal[]) => projects.map((goal) =>
+  goal.id === "p1" && goal.progress === 35 && ["Malo više slobode", "A little more freedom"].includes(goal.name)
+    ? { ...goal, progress: 0 }
+    : goal
+);
 export function demo(locale: "hr" | "en" = "en"): State {
   const today = localDate();
   const hr = locale === "hr";
@@ -157,7 +162,7 @@ export function demo(locale: "hr" | "en" = "en"): State {
       task("t3", hr ? "Prošetaj bez mobitela" : "Take a walk without your phone", { kind: "optional", duration: 30, area: "outside" }),
     ],
     thoughts: [{ id: "m1", text: hr ? "Kako bi izgledao moj tjedan kada bih sačuvala svoja jutra?" : "What would my week look like if I protected my mornings?", createdAt: new Date().toISOString() }],
-    projects: [{ id: "p1", name: hr ? "Malo više slobode" : "A little more freedom", outcome: hr ? "Pronaći ritam rada u kojem ostaje mjesta za život." : "Build a working rhythm that leaves room for life.", deadline: "", nextAction: hr ? "Ovaj tjedan pojednostavni jednu obavezu." : "Choose one commitment to simplify this week.", status: "active", place: hr ? "Počni s jutrima. Sačuvaj prvi sat." : "Start with my mornings. Keep the first hour open.", progress: 35 }],
+    projects: [{ id: "p1", name: hr ? "Malo više slobode" : "A little more freedom", outcome: hr ? "Pronaći ritam rada u kojem ostaje mjesta za život." : "Build a working rhythm that leaves room for life.", deadline: "", nextAction: hr ? "Ovaj tjedan pojednostavni jednu obavezu." : "Choose one commitment to simplify this week.", status: "active", place: hr ? "Počni s jutrima. Sačuvaj prvi sat." : "Start with my mornings. Keep the first hour open.", progress: 0 }],
     library: [
       { id: "l2", category: "shopping", title: hr ? "Svježe povrće" : "Fresh vegetables", group: hr ? "Plac" : "Market", details: hr ? "Odaberi ono što izgleda najbolje" : "Choose what looks best" },
       { id: "l3", category: "feel-good", title: hr ? "Šetnja uz rijeku" : "Walk by the river", group: "10–30 min", details: hr ? "Mobitel može ostati u torbi" : "The phone can stay in your bag" },
@@ -190,7 +195,7 @@ export function migrateState(value: unknown): State | null {
     const beautifulMoments = (current.momentCatalogRevision || 0) < 2
       ? [...current.beautifulMoments.filter((moment) => moment.id !== "moment-tea-window" && !catalog.some((seed) => seed.id === moment.id)), ...catalog.map((seed) => { const saved = current.beautifulMoments.find((moment) => moment.id === seed.id); return saved ? { ...seed, favorite: saved.favorite, completedDates: saved.completedDates, url: saved.url || seed.url } : seed; })]
       : current.beautifulMoments;
-    return { ...current, library: cleanPersonalLibrary(retireFormerDemoThought(current.library)), recoveryCheckins: Array.isArray(current.recoveryCheckins) ? current.recoveryCheckins : [], dayContexts: current.dayContexts || {}, beautifulMoments, momentCatalogRevision: 2 };
+    return { ...current, projects: resetUntouchedExampleGoal(current.projects), library: cleanPersonalLibrary(retireFormerDemoThought(current.library)), recoveryCheckins: Array.isArray(current.recoveryCheckins) ? current.recoveryCheckins : [], dayContexts: current.dayContexts || {}, beautifulMoments, momentCatalogRevision: 2 };
   }
   if (v.version === 5 && isState({ ...v, version: 6 })) {
     const previous = v as unknown as State;

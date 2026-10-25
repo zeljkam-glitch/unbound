@@ -98,7 +98,7 @@ export default function ReportsPanel({ state }: { state: State }) {
     <div className="reportsHead">
       <div>
         <div className="sectionLabel">{hr ? "OSVRTI · KADA IH POŽELIŠ" : "REPORTS · WHEN YOU WANT THEM"}</div>
-        <h2 id="reports-heading">{hr ? "Pogled unatrag. Bez prosuđivanja." : "A look back. Without judgment."}</h2>
+        <h2 id="reports-heading" aria-label={hr ? "Pogled unatrag. Bez prosuđivanja." : "A look back. Without judgment."}>{hr ? <>Pogled unatrag.<br />Bez prosuđivanja.</> : <>A look back.<br />Without judgment.</>}</h2>
         <p>{hr ? "Ništa se ne generira automatski. Odaberi razdoblje kada želiš primijetiti svoj ritam." : "Nothing is generated automatically. Choose a period when you want to notice your rhythm."}</p>
       </div>
       <button className="reportDownload" onClick={download}><DownloadSimple /> {hr ? "Preuzmi izvještaj" : "Download report"}</button>

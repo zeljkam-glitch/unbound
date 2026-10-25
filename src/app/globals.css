@@ -1522,6 +1522,21 @@ body:has(.livingShell) { background:#171a1b; }
 .progressMeta { color: var(--muted); font-size: 12px; margin: 20px 0 5px; }
 .progressRange { padding: 0; accent-color: var(--teal); }
 .goalCard .next { border-top: 1px solid var(--line); margin-top: 20px; padding-top: 15px; }
+.livingShell .goalConcept { display:grid; grid-template-columns:220px minmax(0,760px); gap:28px; margin:8px 0 42px; padding:24px 0 30px; border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
+.livingShell .goalConcept p { margin:0; color:var(--muted); line-height:1.65; }
+.livingShell .goalCard { padding:42px; }
+.livingShell .goalCard .goalTop { margin-bottom:34px; }
+.livingShell .goalCard > .sectionLabel { margin-bottom:10px; }
+.livingShell .goalCard h2 { margin:0 0 30px; font-size:clamp(36px,4vw,56px); }
+.livingShell .goalOutcomeLabel { margin-top:0; }
+.livingShell .goalCard > p { margin:0; max-width:650px; color:var(--muted); font-size:18px; line-height:1.5; }
+.livingShell .goalCard .progressMeta { margin-top:34px; }
+.livingShell .goalProgressNote { display:block; margin-top:10px; color:var(--muted); line-height:1.45; }
+.livingShell .goalCard .next { margin-top:34px; padding-top:24px; }
+.livingShell .goalCard label { display:grid; gap:12px; margin-top:30px; }
+.livingShell .goalCard textarea { min-height:130px; }
+.livingShell .goalActions { display:flex; flex-wrap:wrap; gap:12px; margin-top:26px; }
+.livingShell .goalActions button { min-height:48px; padding:10px 18px; }
 .weeklyCheckin { margin-top: 18px; border-bottom: 3px solid var(--purple); }
 .checkinGrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 16px; }
 
@@ -1559,6 +1574,8 @@ body:has(.livingShell) { background:#171a1b; }
   .mealWizardFields,.mealProfileFields { grid-template-columns:1fr; }
   .mealWizardFields label { border-right:0; }
   .mealSuggestionsHead { display:grid; }
+  .livingShell .goalConcept { grid-template-columns:1fr; gap:12px; }
+  .livingShell .goalCard { padding:28px 20px; }
 }
 
 /* Final scoped guard: keep the selected Quiet Luxury system above legacy MVP rules. */
@@ -1838,7 +1855,7 @@ body:has(.livingShell) { background:#171a1b; }
 .livingShell .reportsHead h2 { max-width:760px; margin:14px 0 12px; font-size:clamp(44px,5.2vw,78px); font-weight:300; line-height:.94; letter-spacing:-.048em; }
 .livingShell .reportsHead p { max-width:620px; color:var(--muted); line-height:1.55; }
 .livingShell .reportDownload { min-height:50px; padding:12px 18px; background:var(--ink); color:var(--surface); border-color:var(--ink); }
-.livingShell .reportPeriodSwitch { display:grid; grid-template-columns:repeat(4,1fr); margin-top:34px; border:1px solid var(--ink); }
+.livingShell .reportPeriodSwitch { display:grid; grid-template-columns:repeat(4,1fr); margin-top:58px; border:1px solid var(--ink); }
 .livingShell .reportPeriodSwitch button { min-height:54px; border:0; border-right:1px solid var(--line); color:var(--muted); text-transform:uppercase; letter-spacing:.14em; font-size:10px; }
 .livingShell .reportPeriodSwitch button:last-child { border-right:0; }
 .livingShell .reportPeriodSwitch button[aria-pressed="true"] { background:var(--ink); color:var(--surface); }
