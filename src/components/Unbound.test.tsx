@@ -106,6 +106,21 @@ describe("UNBOUND Life OS interactions", () => {
     expect(screen.getByRole("heading", { name: "Lists" })).toBeTruthy();
     expect(screen.getByLabelText("Name")).toBeTruthy();
   });
+  it("turns a saved meal into a plan and a deduplicated shopping list", async () => {
+    await open(); go(/My Library/);
+    fireEvent.click(screen.getByRole("button", { name: "Meals" }));
+    fireEvent.click(screen.getByRole("button", { name: "Plan a meal" }));
+    fireEvent.change(screen.getByLabelText("Ingredients at home"), { target: { value: "rice, onion" } });
+    fireEvent.click(screen.getByRole("button", { name: "Show what fits" }));
+    fireEvent.click(screen.getByRole("button", { name: "Plan and add shopping" }));
+    await waitFor(() => {
+      const saved = JSON.parse(localStorage.getItem("unbound.v1")!);
+      expect(saved.tasks.some((task: { title: string; tags?: string[] }) => task.title === "Vegetable risotto" && task.tags?.includes("meal"))).toBe(true);
+      const shopping = saved.library.find((item: { title: string }) => item.title === "Shopping for planned meals");
+      expect(shopping.details).toContain("zucchini");
+      expect(shopping.details).not.toContain("rice");
+    });
+  }, 15000);
   it("offers a city fallback when browser location is unavailable", async () => {
     await open();
     Object.defineProperty(navigator, "geolocation", { configurable: true, value: undefined });
@@ -137,6 +152,25 @@ describe("UNBOUND Life OS interactions", () => {
       expect(Object.values(saved.weeklyCheckins)[0]).toMatchObject({ win: "Protected one morning" });
     });
   });
+  it("recommends study recovery, adds it to today, and records the after check-in", async () => {
+    await open();
+    fireEvent.click(screen.getByRole("button", { name: "Energy 3 / 5" }));
+    fireEvent.click(screen.getByRole("button", { name: "Focus 3 / 5" }));
+    fireEvent.click(screen.getByRole("button", { name: "Mental work or study" }));
+    fireEvent.click(screen.getByRole("button", { name: /Recovery after study/ }));
+    fireEvent.click(screen.getByRole("button", { name: "Suggest my next step" }));
+    expect(screen.getByRole("heading", { name: "Active recovery" })).toBeTruthy();
+    fireEvent.click(screen.getByRole("button", { name: "Add to today" }));
+    fireEvent.click(screen.getByRole("button", { name: /Check in afterward/ }));
+    fireEvent.click(screen.getByRole("button", { name: "Yes" }));
+    fireEvent.click(screen.getByRole("button", { name: "Save comparison" }));
+    expect(await screen.findByText("The numbers are the same, but you feel more rested.")).toBeTruthy();
+    await waitFor(() => {
+      const saved = JSON.parse(localStorage.getItem("unbound.v1")!);
+      expect(saved.recoveryCheckins).toHaveLength(2);
+      expect(saved.tasks.some((task: { tags?: string[] }) => task.tags?.includes("recovery"))).toBe(true);
+    });
+  });
   it("offers optional weekly, monthly, quarterly, and yearly reports", async () => {
     await open(); go(/Goals/);
     expect(screen.getByRole("heading", { name: "A look back. Without judgment." })).toBeTruthy();
@@ -150,7 +184,7 @@ describe("UNBOUND Life OS interactions", () => {
     fireEvent.click(screen.getByRole("button", { name: "Your space and data" }));
     const file = new File([JSON.stringify({ routines: [{ id: "private-morning", title: "Private morning step", period: "morning" }], library: [{ id: "private-bag", category: "bags", title: "My private bag", group: "Travel", details: "One, Two" }, { id: "private-list", category: "lists", title: "My private list", group: "Later", details: "Three, Four" }] })], "private-lists.json", { type: "application/json" });
     fireEvent.change(screen.getByLabelText("Private lists file"), { target: { files: [file] } });
-    expect(await screen.findByText("Private routines and lists were imported. They stay in this browser only.")).toBeTruthy();
+    expect(await screen.findByText("Private routines, lists, and recovery records were imported. They stay in this browser only.")).toBeTruthy();
     expect(screen.getByLabelText("Private morning step")).toBeTruthy();
     go(/My Library/);
     fireEvent.click(screen.getByRole("button", { name: "Bag checklists" }));
@@ -163,7 +197,7 @@ describe("UNBOUND Life OS interactions", () => {
     fireEvent.click(screen.getByRole("button", { name: "Your space and data" }));
     const file = new File([JSON.stringify({ routines: [], library: [{ id: "private-beauty", category: "beauty", title: "Evening care", group: "Ritual", details: "Cleanse, Face cream" }] })], "private-beauty.json", { type: "application/json" });
     fireEvent.change(screen.getByLabelText("Private lists file"), { target: { files: [file] } });
-    await screen.findByText("Private routines and lists were imported. They stay in this browser only.");
+    await screen.findByText("Private routines, lists, and recovery records were imported. They stay in this browser only.");
     go(/My Library/);
     fireEvent.click(screen.getByRole("button", { name: "Beauty atlas" }));
     expect(screen.getByRole("heading", { name: "Evening care" })).toBeTruthy();

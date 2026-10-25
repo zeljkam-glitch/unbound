@@ -9,6 +9,7 @@ import { Empty } from "./Primitives";
 import { useLanguage } from "./LanguageContext";
 import SeasonalCompass from "./SeasonalCompass";
 import BeautifulMomentsPanel from "./BeautifulMomentsPanel";
+import EnergyRecoveryPanel from "./EnergyRecoveryPanel";
 
 export default function TodayScreen({ state, today, update }: { state: State; today: string; update: Update }) {
   const [idea, setIdea] = useState("");
@@ -47,11 +48,7 @@ export default function TodayScreen({ state, today, update }: { state: State; to
     <div className="livingDayDetails">
     <WeatherCard onWeatherChange={setWeatherCode} />
     <SeasonalCompass update={update} today={today} weatherCode={weatherCode} obligations={todayTasks.filter((task) => !task.completedAt).map((task) => task.title)} />
-    <div className="checkinBand">
-      <div><span className="sectionLabel">{hr ? "KAKO STIŽEŠ U OVAJ DAN?" : "HOW ARE YOU ARRIVING?"}</span><strong>{hr ? "Neka plan prati tvoj stvarni kapacitet." : "Let the plan reflect your actual capacity."}</strong></div>
-      {(["low", "steady", "high"] as const).map((v) => <button key={v} aria-pressed={state.energies[today] === v} onClick={() => update((s) => ({ ...s, energies: { ...s.energies, [today]: s.energies[today] === v ? "" : v } }))}>{hr ? "Energija" : "Energy"} · {hr ? ({ low: "niska", steady: "stabilna", high: "visoka" } as const)[v] : v}</button>)}
-      {(["scattered", "present", "focused"] as const).map((v) => <button key={v} aria-pressed={state.focus[today] === v} onClick={() => update((s) => ({ ...s, focus: { ...s.focus, [today]: s.focus[today] === v ? "" : v } }))}>{hr ? "Fokus" : "Focus"} · {hr ? ({ scattered: "raspršen", present: "prisutan", focused: "dubok" } as const)[v] : v}</button>)}
-    </div>
+    <EnergyRecoveryPanel state={state} today={today} update={update} />
     <BeautifulMomentsPanel state={state} today={today} update={update} />
     <div className={`todayGrid ${todayDate.getDay() === 0 ? "hasWeekly" : ""}`}>
       {(["morning", "evening", ...(todayDate.getDay() === 0 ? ["weekly" as const] : [])] as const).map((period) => <section className="card routineCard" key={period}>

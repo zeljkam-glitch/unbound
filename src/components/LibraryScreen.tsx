@@ -7,6 +7,7 @@ import type { Update } from "@/lib/ui-types";
 import { Empty, Field } from "./Primitives";
 import { useLanguage } from "./LanguageContext";
 import { seasonalContext } from "@/lib/season";
+import MealPlanner from "./MealPlanner";
 
 const categories: Array<{ id: LibraryCategory; label: string; note: string }> = [
   { id: "shopping", label: "Shopping by store", note: "What to buy, grouped by where you go" },
@@ -80,12 +81,14 @@ export default function LibraryScreen({ state, update }: { state: State; update:
     </section>}
     <div className="sectionHead"><div><div className="sectionLabel"><Icon /> {hr ? "MOJA ZBIRKA" : "MY LIBRARY"}</div><h2>{translated.find((item) => item.id === category)?.label}</h2><p className="quiet">{translated.find((item) => item.id === category)?.note}</p></div><button className="primary" onClick={() => { setEditing(null); setOpen(!open); }}><Plus /> {hr ? "Dodaj" : "Add item"}</button></div>
     {category === "feel-good" && <div className="libraryMood"><Image src="/living-frames/library-rain-window.jpg" alt="" fill sizes="100vw" /><div><span>{seasonal.month.toUpperCase()} · {seasonal.seasonName.toUpperCase()}</span><strong>{seasonal.theme}</strong></div></div>}
+    {category === "meals" && <MealPlanner meals={items} state={state} update={update} />}
     {open && <form className="card libraryForm" onSubmit={(event) => {
       event.preventDefault();
       const form = new FormData(event.currentTarget);
       const title = String(form.get("title")).trim();
       const details = String(form.get("details")).trim();
-      const item: LibraryItem = { id: editing?.id || newId(), category, title, group: String(form.get("group")).trim(), details, url: String(form.get("url") || "").trim() || undefined };
+      const item: LibraryItem = { id: editing?.id || newId(), category, title, group: String(form.get("group")).trim(), details, url: String(form.get("url") || "").trim() || undefined,
+        meal: category === "meals" ? { minutes: Number(form.get("minutes") || 30), servings: Number(form.get("servings") || 2), energy: String(form.get("mealEnergy") || "steady") as "low" | "steady" | "high", ingredients: checklistParts(details), leftoverFriendly: form.get("leftoverFriendly") === "on", season: String(form.get("mealSeason") || "all") as "all" | "spring" | "summer" | "autumn" | "winter" } : undefined };
       update((current) => {
         let library = editing ? current.library.map((existing) => existing.id === editing.id ? item : existing) : [...current.library, item];
         if (!editing && category === "meals" && details) library = [...library, { id: newId(), category: "shopping", title: `${hr ? "Namirnice" : "Ingredients"} · ${title}`, group: hr ? "Planirano jelo" : "Planned meal", details }];
@@ -96,6 +99,13 @@ export default function LibraryScreen({ state, update }: { state: State; update:
       <Field label={hr ? "Naziv" : "Name"}><input name="title" required defaultValue={editing?.title} autoFocus /></Field>
       <Field label={category === "shopping" ? (hr ? "Trgovina" : "Store") : category === "quotes" ? (hr ? "Autor ili izvor" : "Author or source") : (hr ? "Skupina ili kontekst" : "Group or context")}><input name="group" required defaultValue={editing?.group} placeholder={category === "shopping" ? "dm, Lidl, plac…" : category === "quotes" ? (hr ? "Autor, knjiga ili UNBOUND" : "Author, book or UNBOUND") : (hr ? "Doma, brzo, vikend…" : "Home, quick, weekend…")} /></Field>
       <Field label={category === "meals" ? (hr ? "Sastojci, odvojeni zarezom" : "Ingredients, separated by commas") : (category === "shopping" || category === "bags" || category === "lists" || category === "beauty" ? (hr ? "Stavke, odvojene zarezom" : "Items, separated by commas") : category === "quotes" ? (hr ? "Kada ti ova misao može koristiti?" : "When might this thought help?") : (hr ? "Detalji ili opis" : "Details or description"))}><textarea name="details" rows={3} defaultValue={editing?.details} /></Field>
+      {category === "meals" && <div className="mealProfileFields">
+        <Field label={hr ? "Vrijeme pripreme" : "Prep time"}><select name="minutes" defaultValue={editing?.meal?.minutes || 30}><option value="15">15 min</option><option value="30">30 min</option><option value="45">45 min</option><option value="60">60+ min</option></select></Field>
+        <Field label={hr ? "Za koliko osoba" : "Servings"}><select name="servings" defaultValue={editing?.meal?.servings || 2}>{[1,2,3,4,5,6].map((value) => <option value={value} key={value}>{value}</option>)}</select></Field>
+        <Field label={hr ? "Energija za pripremu" : "Prep energy"}><select name="mealEnergy" defaultValue={editing?.meal?.energy || "steady"}><option value="low">{hr ? "Malo" : "Low"}</option><option value="steady">{hr ? "Dovoljno" : "Steady"}</option><option value="high">{hr ? "Više" : "High"}</option></select></Field>
+        <Field label={hr ? "Najbolje godišnje doba" : "Best season"}><select name="mealSeason" defaultValue={editing?.meal?.season || "all"}><option value="all">{hr ? "Cijele godine" : "All year"}</option><option value="spring">{hr ? "Proljeće" : "Spring"}</option><option value="summer">{hr ? "Ljeto" : "Summer"}</option><option value="autumn">{hr ? "Jesen" : "Autumn"}</option><option value="winter">{hr ? "Zima" : "Winter"}</option></select></Field>
+        <label className="mealToggle"><input name="leftoverFriendly" type="checkbox" defaultChecked={editing?.meal?.leftoverFriendly} /><span>{hr ? "Dobro je i sutradan" : "Good the next day too"}</span></label>
+      </div>}
       {category === "workouts" && <Field label={hr ? "YouTube poveznica" : "YouTube link"}><input type="url" name="url" defaultValue={editing?.url} placeholder="https://youtube.com/…" /></Field>}
       <div className="actions"><button className="primary">{hr ? "Spremi" : "Save item"}</button><button type="button" onClick={() => setOpen(false)}>{hr ? "Odustani" : "Cancel"}</button></div>
     </form>}
