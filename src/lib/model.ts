@@ -22,7 +22,7 @@ export type MealProfile = {
 export type LibraryItem = { id: string; category: LibraryCategory; title: string; group: string; details: string; url?: string; meal?: MealProfile };
 export type InboxItem = { id: string; text: string; createdAt: string };
 export type Routine = { id: string; title: string; period: "morning" | "evening" | "weekly" };
-export type BeautifulMoment = { id: string; title: string; description: string; duration: number; budget: number; energy: "low" | "steady" | "high"; feelings: string[]; category: string; setting: "inside" | "outside" | "either"; badWeather: boolean; solo: boolean; social: boolean; favorite: boolean; completedDates: string[] };
+export type BeautifulMoment = { id: string; title: string; description: string; url?: string; duration: number; budget: number; energy: "low" | "steady" | "high"; feelings: string[]; category: string; setting: "inside" | "outside" | "either"; badWeather: boolean; solo: boolean; social: boolean; favorite: boolean; completedDates: string[] };
 export type MomentPreferences = { feelings: string[]; maxMinutes: number; maxBudget: number; energy: "" | "low" | "steady" | "high"; setting: "" | "inside" | "outside"; badWeatherOnly: boolean; condition: "" | "gentle" | "rest" };
 export type WeeklyCheckin = { win: string; learned: string; next: string; energy: string };
 export type TwelveWeekPlan = { startDate: string; outcome: string; why: string; leadAction: string; weeklyTarget: number; weeks: Record<string, { focus: string; reviewed: boolean }> };
@@ -56,13 +56,14 @@ export function mergePrivateLists(state: State, value: unknown): State | null {
   const routines = bundle.routines.filter((item): item is Routine => !!item && typeof item === "object" && typeof item.id === "string" && typeof item.title === "string" && ["morning", "evening", "weekly"].includes(item.period));
   const library = bundle.library.filter((item): item is LibraryItem => !!item && typeof item === "object" && typeof item.id === "string" && typeof item.title === "string" && typeof item.group === "string" && typeof item.details === "string" && ["shopping", "feel-good", "beauty", "places", "meals", "workouts", "bags", "lists", "quotes"].includes(item.category));
   const incomingMoments = Array.isArray(bundle.beautifulMoments) ? bundle.beautifulMoments : [];
-  const beautifulMoments = incomingMoments.filter((item): item is BeautifulMoment => !!item && typeof item === "object" && typeof item.id === "string" && typeof item.title === "string" && typeof item.description === "string" && typeof item.duration === "number" && typeof item.budget === "number" && ["low", "steady", "high"].includes(item.energy) && Array.isArray(item.feelings) && ["inside", "outside", "either"].includes(item.setting) && typeof item.badWeather === "boolean");
+  const beautifulMoments = incomingMoments.filter((item): item is BeautifulMoment => !!item && typeof item === "object" && typeof item.id === "string" && typeof item.title === "string" && typeof item.description === "string" && (item.url === undefined || typeof item.url === "string") && typeof item.duration === "number" && typeof item.budget === "number" && ["low", "steady", "high"].includes(item.energy) && Array.isArray(item.feelings) && ["inside", "outside", "either"].includes(item.setting) && typeof item.badWeather === "boolean");
   const incomingCheckins = Array.isArray(bundle.recoveryCheckins) ? bundle.recoveryCheckins : [];
   const recoveryCheckins = incomingCheckins.filter((item): item is RecoveryCheckin => !!item && typeof item === "object" && typeof item.id === "string" && typeof item.date === "string" && typeof item.createdAt === "string" && ["before", "after"].includes(item.phase) && typeof item.energy === "number" && typeof item.focus === "number" && ["mental", "physical", "stress", "sleep", "other"].includes(item.cause) && ["focus", "energy", "less-stimulation", "study-recovery", "body-recovery", "complete-rest"].includes(item.need));
   if (routines.length !== bundle.routines.length || library.length !== bundle.library.length || beautifulMoments.length !== incomingMoments.length || recoveryCheckins.length !== incomingCheckins.length) return null;
+  const privateRoutinePeriods = new Set(routines.map((item) => item.period));
   return {
     ...state,
-    routines: [...state.routines.filter((item) => !routines.some((incoming) => incoming.id === item.id)), ...routines],
+    routines: [...state.routines.filter((item) => !privateRoutinePeriods.has(item.period)), ...routines],
     library: [...state.library.filter((item) => !library.some((incoming) => incoming.id === item.id)), ...library],
     beautifulMoments: [...state.beautifulMoments.filter((item) => !beautifulMoments.some((incoming) => incoming.id === item.id)), ...beautifulMoments.map((item) => ({ ...item, favorite: !!item.favorite, completedDates: Array.isArray(item.completedDates) ? item.completedDates : [] }))],
     recoveryCheckins: [...(state.recoveryCheckins || []).filter((item) => !recoveryCheckins.some((incoming) => incoming.id === item.id)), ...recoveryCheckins],

@@ -11,6 +11,7 @@ import {
   parseTaskInput,
   weekStart,
   migrateState,
+  mergePrivateLists,
 } from "./model";
 import { matchingBeautifulMoments } from "./beautiful-moments";
 describe("personal freedom model", () => {
@@ -83,6 +84,16 @@ describe("personal freedom model", () => {
     expect(migrated?.version).toBe(5);
     expect(migrated?.library.some((item) => item.category === "quotes")).toBe(true);
     expect(migrated?.tasks).toHaveLength(previous.tasks.length);
+  });
+  it("lets private routine groups replace public examples and keeps external moment links", () => {
+    const current = demo("hr");
+    const privateMorning = { id: "private-morning", title: "Moja jutarnja stavka", period: "morning" as const };
+    const linkedMoment = { ...current.beautifulMoments[0], id: "private-song", url: "https://open.spotify.com/track/example" };
+    const merged = mergePrivateLists(current, { routines: [privateMorning], library: [], beautifulMoments: [linkedMoment] });
+
+    expect(merged?.routines.filter((item) => item.period === "morning")).toEqual([privateMorning]);
+    expect(merged?.routines.some((item) => item.period === "evening")).toBe(true);
+    expect(merged?.beautifulMoments.find((item) => item.id === "private-song")?.url).toBe(linkedMoment.url);
   });
   it("retires a former demo thought from already saved browsers", () => {
     const current = demo("en");

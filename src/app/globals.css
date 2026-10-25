@@ -2228,6 +2228,19 @@ body:has(.livingShell) { background:#171a1b; }
 .quietShell.livingShell .momentCard p { color:var(--muted); }
 .quietShell.livingShell .momentCard > small,.quietShell.livingShell .momentHeart[aria-pressed="true"] { color:#71242f; }
 .quietShell.livingShell .momentHeart { color:#5f625f; }
+.quietShell.livingShell .momentListen {
+  display:inline-flex;
+  align-items:center;
+  align-self:flex-start;
+  gap:8px;
+  margin:2px 0 16px;
+  padding:7px 0 5px;
+  color:var(--ink);
+  border-bottom:1px solid #8f887d;
+  text-decoration:none;
+  font-size:13px;
+}
+.quietShell.livingShell .momentListen:hover { border-bottom-color:var(--ink); }
 .quietShell.livingShell .momentDone { color:var(--ink); background:transparent; border-color:#777c79; }
 .quietShell.livingShell .plannedMoments,.quietShell.livingShell .plannedMoment { border-color:var(--line); }
 .quietShell.livingShell .plannedMoment small { color:var(--muted); }
