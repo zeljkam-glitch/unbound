@@ -87,6 +87,15 @@ describe("UNBOUND Life OS interactions", () => {
     fireEvent.click(screen.getByRole("button", { name: "Complete week 1 review" }));
     await waitFor(() => expect(JSON.parse(localStorage.getItem("unbound.v1")!).twelveWeek).toMatchObject({ outcome: "Finish the semester calmly", weeks: { 1: { reviewed: true } } }));
   });
+  it("offers useful monthly and yearly planner views", async () => {
+    await open(); go(/Planner/);
+    fireEvent.click(screen.getByRole("button", { name: "Month" }));
+    expect(screen.getByRole("heading", { name: new Date().toLocaleDateString("en-GB", { month: "long", year: "numeric" }) })).toBeTruthy();
+    expect(screen.getByText("Choose a day to open its detailed week.")).toBeTruthy();
+    fireEvent.click(screen.getByRole("button", { name: "Year" }));
+    expect(screen.getByRole("heading", { name: String(new Date().getFullYear()) })).toBeTruthy();
+    expect(screen.getByText("The year as a rhythm, not a list to fill.")).toBeTruthy();
+  });
   it("adds a reusable library item to today", async () => {
     await open();
     fireEvent.click(screen.getByRole("button", { name: "Choose from My Library" }));

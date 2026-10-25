@@ -7,6 +7,7 @@ import { Field } from "./Primitives";
 import TwelveWeekView from "./TwelveWeekView";
 import { useLanguage } from "./LanguageContext";
 import { seasonalContext } from "@/lib/season";
+import { MonthView, shiftMonth, shiftYear, YearView } from "./CalendarViews";
 
 const durationOptions = [5, 10, 15, 30, 60, 120, 180, 240, 480];
 const minutesLabel = (minutes: number) => minutes < 60 ? `${minutes}m` : minutes % 60 ? `${Math.floor(minutes / 60)}h ${minutes % 60}m` : `${minutes / 60}h`;
@@ -20,7 +21,7 @@ export default function PlannerScreen({ state, update }: { state: State; update:
   const [movingTask, setMovingTask] = useState<string | null>(null);
   const [projectFilter, setProjectFilter] = useState("");
   const [tagFilter, setTagFilter] = useState("");
-  const [view, setView] = useState<"week" | "twelve">("week");
+  const [view, setView] = useState<"week" | "month" | "year" | "twelve">("week");
   const days = Array.from({ length: 7 }, (_, i) => addDays(start, i));
   const tags = Array.from(new Set(state.tasks.flatMap((task) => task.tags || []))).sort();
   const filtered = state.tasks.filter((task) => (!projectFilter || task.projectId === projectFilter) && (!tagFilter || task.tags?.includes(tagFilter)));
@@ -46,15 +47,15 @@ export default function PlannerScreen({ state, update }: { state: State; update:
     </article>;
   };
   return <>
-    <div className="plannerHero"><div><div className="sectionLabel">03 / {hr ? "PLANER" : "PLANNER"} · {seasonal.month.toUpperCase()} · {seasonal.seasonName.toUpperCase()}</div><h2>{hr ? <>Oblikuj tjedan.<br />Ne moraš ga ispuniti.</> : <>Shape the week.<br />You don’t have to fill it.</>}</h2><p className="plannerSeason">{seasonal.theme}</p></div><div className="viewSwitch"><button aria-pressed={view === "week"} onClick={() => setView("week")}>{hr ? "Tjedan" : "Week"}</button><button aria-pressed={view === "twelve"} onClick={() => setView("twelve")}>{hr ? "12 tjedana" : "12 weeks"}</button></div>{view === "week" && <button className="primary" onClick={() => setOpenDate(days.includes(localDate()) ? localDate() : start)}><Plus /> {hr ? "Novi zadatak" : "New task"}</button>}</div>
+    <div className="plannerHero"><div><div className="sectionLabel">03 / {hr ? "PLANER" : "PLANNER"} · {seasonal.month.toUpperCase()} · {seasonal.seasonName.toUpperCase()}</div><h2>{view === "month" ? (hr ? <>Vidi mjesec.<br />Sačuvaj prostor.</> : <>See the month.<br />Keep some room.</>) : view === "year" ? (hr ? <>Godina u<br />jednom pogledu.</> : <>The year in<br />one view.</>) : (hr ? <>Oblikuj tjedan.<br />Ne moraš ga ispuniti.</> : <>Shape the week.<br />You don’t have to fill it.</>)}</h2><p className="plannerSeason">{seasonal.theme}</p></div><div className="viewSwitch"><button aria-pressed={view === "week"} onClick={() => setView("week")}>{hr ? "Tjedan" : "Week"}</button><button aria-pressed={view === "month"} onClick={() => setView("month")}>{hr ? "Mjesec" : "Month"}</button><button aria-pressed={view === "year"} onClick={() => setView("year")}>{hr ? "Godina" : "Year"}</button><button aria-pressed={view === "twelve"} onClick={() => setView("twelve")}>{hr ? "12 tjedana" : "12 weeks"}</button></div>{view === "week" && <button className="primary" onClick={() => setOpenDate(days.includes(localDate()) ? localDate() : start)}><Plus /> {hr ? "Novi zadatak" : "New task"}</button>}</div>
     {view === "twelve" ? <TwelveWeekView state={state} update={update} /> : <>
     <div className="plannerFilters" aria-label={hr ? "Filtri planera" : "Planner filters"}>
       <Field label={hr ? "Cilj" : "Project"}><select value={projectFilter} onChange={(e) => setProjectFilter(e.target.value)}><option value="">{hr ? "Svi ciljevi" : "All projects"}</option>{state.projects.map((project) => <option key={project.id} value={project.id}>{project.name}</option>)}</select></Field>
       <Field label={hr ? "Oznaka" : "Tag"}><select value={tagFilter} onChange={(e) => setTagFilter(e.target.value)}><option value="">{hr ? "Sve oznake" : "All tags"}</option>{tags.map((tag) => <option key={tag} value={tag}>#{tag}</option>)}</select></Field>
       {(projectFilter || tagFilter) && <button onClick={() => { setProjectFilter(""); setTagFilter(""); }}>{hr ? "Očisti filtre" : "Clear filters"}</button>}
     </div>
-    <div className="plannerToolbar"><button onClick={() => setStart(addDays(start, -7))}>{hr ? "Prošli tjedan" : "Previous week"}</button><button onClick={() => setStart(localDate())}>{hr ? "Danas" : "Today"}</button><button onClick={() => setStart(addDays(start, 7))}>{hr ? "Sljedeći tjedan" : "Next week"}</button></div>
-    <div className="weekColumns">{days.map((date) => {
+    <div className="plannerToolbar">{view === "week" ? <><button onClick={() => setStart(addDays(start, -7))}>{hr ? "Prošli tjedan" : "Previous week"}</button><button onClick={() => setStart(localDate())}>{hr ? "Danas" : "Today"}</button><button onClick={() => setStart(addDays(start, 7))}>{hr ? "Sljedeći tjedan" : "Next week"}</button></> : view === "month" ? <><button onClick={() => setStart(shiftMonth(start, -1))}>{hr ? "Prošli mjesec" : "Previous month"}</button><button onClick={() => setStart(localDate())}>{hr ? "Ovaj mjesec" : "This month"}</button><button onClick={() => setStart(shiftMonth(start, 1))}>{hr ? "Sljedeći mjesec" : "Next month"}</button></> : <><button onClick={() => setStart(shiftYear(start, -1))}>{hr ? "Prošla godina" : "Previous year"}</button><button onClick={() => setStart(localDate())}>{hr ? "Ova godina" : "This year"}</button><button onClick={() => setStart(shiftYear(start, 1))}>{hr ? "Sljedeća godina" : "Next year"}</button></>}</div>
+    {view === "month" ? <MonthView tasks={filtered} anchor={start} locale={locale} today={localDate()} onOpenDay={(date) => { setStart(date); setView("week"); }} /> : view === "year" ? <YearView tasks={filtered} anchor={start} locale={locale} today={localDate()} onOpenMonth={(date) => { setStart(date); setView("month"); }} /> : <div className="weekColumns">{days.map((date) => {
       const items = filtered.filter((t) => taskOccursOn(t, date));
       const planned = items.reduce((n, t) => n + t.duration, 0);
       return <section className={"dayColumn " + (date === localDate() ? "isToday" : "")} key={date} onDragOver={(event) => { event.preventDefault(); event.dataTransfer.dropEffect = "move"; }} onDrop={(event) => { event.preventDefault(); const taskId = event.dataTransfer.getData("text/plain"); if (taskId) moveTask(taskId, date); }}>
@@ -71,6 +72,6 @@ export default function PlannerScreen({ state, update }: { state: State; update:
           <div className="composerActions"><button type="button" onClick={() => setOpenDate(null)}>{hr ? "Odustani" : "Cancel"}</button><button className="primary">{hr ? "Dodaj zadatak" : "Add task"}</button></div>
         </form> : <button className="addDayTask" onClick={() => setOpenDate(date)}><Plus /> {hr ? "Dodaj" : "Add"}</button>}
       </section>;
-    })}</div></>}
+    })}</div>}</>}
   </>;
 }
