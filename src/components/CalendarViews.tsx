@@ -1,4 +1,4 @@
-import { taskOccursOn, type Task } from "@/lib/model";
+import { taskOccursOn, taskTitle, type Task } from "@/lib/model";
 
 type Locale = "hr" | "en";
 
@@ -43,7 +43,7 @@ export function MonthView({ tasks, anchor, locale, today, onOpenDay }: { tasks: 
       const outside = calendarDate.getMonth() !== month;
       return <button type="button" className={`${outside ? "outsideMonth " : ""}${date === today ? "isToday" : ""}`} key={date} onClick={() => onOpenDay(date)} aria-label={`${calendarDate.toLocaleDateString(hr ? "hr-HR" : "en-GB", { weekday: "long", day: "numeric", month: "long" })}${items.length ? `, ${items.length} ${hr ? "stavki" : "items"}` : ""}`}>
         <time dateTime={date}>{calendarDate.getDate()}</time>
-        <span className="monthItems">{items.slice(0, 3).map((task) => <span className={task.completedAt ? "done" : ""} key={task.id}>{task.time && <i>{task.time}</i>}{task.title}</span>)}</span>
+        <span className="monthItems">{items.slice(0, 3).map((task) => <span className={task.completedAt ? "done" : ""} key={task.id}>{task.time && <i>{task.time}</i>}{taskTitle(task, locale)}</span>)}</span>
         {items.length > 3 && <small>+ {items.length - 3} {hr ? "još" : "more"}</small>}
         {planned > 0 && <em>{minutesLabel(planned, locale)}</em>}
       </button>;

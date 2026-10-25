@@ -1,5 +1,5 @@
 import { newId } from "@/lib/id";
-import { addDays, deadlineAwareness, localDate, parseTaskInput, taskOccursOn, toggleTask, type State, type Task, type TaskKind } from "@/lib/model";
+import { addDays, deadlineAwareness, localDate, parseTaskInput, taskOccursOn, taskTitle, toggleTask, type State, type Task, type TaskKind } from "@/lib/model";
 import { ArrowLeft, ArrowRight, CalendarBlank, Check, Clock, Note, Plus, Repeat, Tag, Warning } from "@phosphor-icons/react";
 import { useState } from "react";
 import type { Update } from "@/lib/ui-types";
@@ -27,17 +27,18 @@ export default function PlannerScreen({ state, update }: { state: State; update:
   const filtered = state.tasks.filter((task) => (!projectFilter || task.projectId === projectFilter) && (!tagFilter || task.tags?.includes(tagFilter)));
   const moveTask = (taskId: string, date: string, time?: string) => update((s) => ({ ...s, tasks: s.tasks.map((task) => task.id === taskId ? { ...task, date, ...(time === undefined ? {} : { time }) } : task) }));
   const taskCard = (t: Task, date: string) => {
+    const title = taskTitle(t, locale);
     const deadline = deadlineAwareness(t.deadline, localDate(), locale);
     const afterDeadline = !!t.deadline && date > t.deadline;
     const moveKey = `${t.id}@${date}`;
     return <article className={`plannerTask ${t.kind} ${t.completedAt ? "done" : ""} ${afterDeadline ? "afterDeadline" : ""}`} key={date + "-" + t.id} draggable onDragStart={(event) => { event.dataTransfer.setData("text/plain", t.id); event.dataTransfer.effectAllowed = "move"; }}>
-      <button aria-label={(t.completedAt ? (hr ? "Ponovno otvori " : "Reopen ") : (hr ? "Dovrši " : "Complete ")) + t.title} onClick={() => update((s) => ({ ...s, tasks: s.tasks.map((x) => x.id === t.id ? toggleTask(x) : x) }))}>{t.completedAt ? <Check /> : null}</button>
-      <strong>{t.title}</strong>
+      <button aria-label={(t.completedAt ? (hr ? "Ponovno otvori " : "Reopen ") : (hr ? "Dovrši " : "Complete ")) + title} onClick={() => update((s) => ({ ...s, tasks: s.tasks.map((x) => x.id === t.id ? toggleTask(x) : x) }))}>{t.completedAt ? <Check /> : null}</button>
+      <strong>{title}</strong>
       <span><Clock /> {minutesLabel(t.duration)}{t.time ? ` · ${t.time}` : (hr ? " · bez satnice" : " · no set time")}</span>
       {deadline && <small className={`deadline ${deadline.tone}`}><CalendarBlank /> {deadline.label} · {new Date(t.deadline + "T12:00:00").toLocaleDateString(hr ? "hr-HR" : "en-GB", { day: "numeric", month: "short" })}</small>}
       {afterDeadline && <small className="deadline overdue"><Warning /> {hr ? "Planirano nakon krajnjeg roka" : "Planned after deadline"}</small>}
       {t.repeat !== "none" && <small><Repeat /> {hr ? (t.repeat === "daily" ? "svaki dan" : t.repeat === "weekly" ? "svaki tjedan" : "svaki mjesec") : t.repeat}</small>}{t.tags?.length ? <small><Tag /> {t.tags.map((tag) => `#${tag}`).join(" ")}</small> : null}{t.notes && <small><Note /> {t.notes}</small>}
-      <button className="moveTaskButton" aria-label={`${hr ? "Premjesti" : "Move"} ${t.title}`} onClick={() => setMovingTask(movingTask === moveKey ? null : moveKey)}><CalendarBlank /> {hr ? "Premjesti" : "Move"}</button>
+      <button className="moveTaskButton" aria-label={`${hr ? "Premjesti" : "Move"} ${title}`} onClick={() => setMovingTask(movingTask === moveKey ? null : moveKey)}><CalendarBlank /> {hr ? "Premjesti" : "Move"}</button>
       {movingTask === moveKey && <form className="moveTaskPanel" onSubmit={(event) => { event.preventDefault(); const f = new FormData(event.currentTarget); moveTask(t.id, String(f.get("moveDate")), String(f.get("moveTime"))); setMovingTask(null); }}>
         <div className="moveQuick"><button type="button" aria-label={hr ? "Premjesti dan ranije" : "Move one day earlier"} onClick={() => { moveTask(t.id, addDays(t.date || date, -1)); setMovingTask(null); }}><ArrowLeft /> {hr ? "1 dan" : "1 day"}</button><button type="button" aria-label={hr ? "Premjesti dan kasnije" : "Move one day later"} onClick={() => { moveTask(t.id, addDays(t.date || date, 1)); setMovingTask(null); }}>{hr ? "1 dan" : "1 day"} <ArrowRight /></button></div>
         <label>{hr ? "Premjesti na datum" : "Move to date"}<input aria-label={hr ? "Premjesti na datum" : "Move to date"} name="moveDate" type="date" required defaultValue={t.date || date} /></label>

@@ -1,5 +1,5 @@
 import { newId } from "@/lib/id";
-import { taskOccursOn, toggleTask, type State } from "@/lib/model";
+import { libraryItemCopy, taskOccursOn, taskTitle, toggleTask, type State } from "@/lib/model";
 import { ArrowRight, CaretDown, Check, NotePencil, Plus } from "@phosphor-icons/react";
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
@@ -28,6 +28,8 @@ export default function TodayScreen({ state, today, update }: { state: State; to
   const done = state.routineDone[today] || [];
   const toggleRoutine = (id: string) => update((s) => ({ ...s, routineDone: { ...s.routineDone, [today]: done.includes(id) ? done.filter((x) => x !== id) : [...done, id] } }));
   const displayLibraryItem = (item: State["library"][number]) => {
+    const localized = libraryItemCopy(item, locale);
+    if (item.translations?.[locale]) return localized;
     if (!hr) return item;
     const builtIn: Record<string, { title: string; group: string }> = {
       l1: { title: "Zobeno mlijeko", group: "dm" },
@@ -38,7 +40,7 @@ export default function TodayScreen({ state, today, update }: { state: State; to
       l6: { title: "Joga za početnike · 20 min", group: "Doma" },
       l7: { title: "Torba za teretanu", group: "Popis" },
     };
-    return builtIn[item.id] ? { ...item, ...builtIn[item.id] } : item;
+    return builtIn[item.id] ? { ...item, ...builtIn[item.id] } : localized;
   };
   const plannableLibrary = state.library.filter((item) => item.category !== "quotes");
   const selectedLibraryItem = plannableLibrary.find((item) => item.id === libraryId);
@@ -85,14 +87,14 @@ export default function TodayScreen({ state, today, update }: { state: State; to
       </div>
       <aside className="livingAgenda">
         <div className="livingAgendaHead"><div><span className="sectionLabel">{hr ? `DANAS / ${todayTasks.length} TRENUTKA` : `TODAY / ${todayTasks.length} MOMENTS`}</span><h2>{hr ? "Tvoj dan, u jednom mirnom pogledu." : "Your day, in one quiet view."}</h2></div></div>
-        <div className="livingAgendaList">{todayTasks.map((t) => <button className={t.completedAt ? "isDone" : ""} key={t.id} aria-label={(t.completedAt ? (hr ? "Ponovno otvori " : "Reopen ") : (hr ? "Dovrši " : "Complete ")) + t.title} aria-pressed={!!t.completedAt} onClick={() => update((s) => ({ ...s, tasks: s.tasks.map((x) => x.id === t.id ? toggleTask(x) : x) }))}><time>{t.time || (hr ? "bez satnice" : "open")}</time><span><strong>{t.title}</strong><small>{t.duration} min · {hr ? ({ home: "doma", outside: "vani", anywhere: "bilo gdje" } as const)[t.area] : t.area}</small></span><i>{t.completedAt ? <Check weight="thin" /> : null}</i></button>)}</div>
+        <div className="livingAgendaList">{todayTasks.map((t) => { const title = taskTitle(t, locale); return <button className={t.completedAt ? "isDone" : ""} key={t.id} aria-label={(t.completedAt ? (hr ? "Ponovno otvori " : "Reopen ") : (hr ? "Dovrši " : "Complete ")) + title} aria-pressed={!!t.completedAt} onClick={() => update((s) => ({ ...s, tasks: s.tasks.map((x) => x.id === t.id ? toggleTask(x) : x) }))}><time>{t.time || (hr ? "bez satnice" : "open")}</time><span><strong>{title}</strong><small>{t.duration} min · {hr ? ({ home: "doma", outside: "vani", anywhere: "bilo gdje" } as const)[t.area] : t.area}</small></span><i>{t.completedAt ? <Check weight="thin" /> : null}</i></button>; })}</div>
         {!todayTasks.length && <p className="livingEmpty">{hr ? "Dan je još otvoren." : "The day is still open."}</p>}
         <blockquote>{dailyQuote.title}<cite>{dailyQuote.group}</cite></blockquote>
       </aside>
     </section>
     <div className="livingDayDetails">
     <WeatherCard onWeatherChange={setWeatherCode} />
-    <SeasonalCompass update={update} today={today} weatherCode={weatherCode} obligations={todayTasks.filter((task) => !task.completedAt).map((task) => task.title)} />
+    <SeasonalCompass update={update} today={today} weatherCode={weatherCode} obligations={todayTasks.filter((task) => !task.completedAt).map((task) => taskTitle(task, locale))} />
     <EnergyRecoveryPanel state={state} today={today} update={update} />
     <BeautifulMomentsPanel state={state} today={today} update={update} />
     <div className={`todayGrid ${todayDate.getDay() === 0 ? "hasWeekly" : ""}`}>

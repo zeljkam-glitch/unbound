@@ -12,7 +12,9 @@ import {
   weekStart,
   migrateState,
   mergePrivateLists,
+  libraryItemCopy,
   taskOccursOn,
+  taskTitle,
 } from "./model";
 import { feelingOptions, matchingBeautifulMoments } from "./beautiful-moments";
 describe("personal freedom model", () => {
@@ -114,6 +116,13 @@ describe("personal freedom model", () => {
     const monthly = { ...demo("hr").tasks[0], date: "2026-10-25", repeat: "monthly" as const };
     expect(taskOccursOn(monthly, "2026-11-25")).toBe(true);
     expect(taskOccursOn(monthly, "2026-11-24")).toBe(false);
+  });
+  it("shows private content in the selected language", () => {
+    const task = { ...demo("hr").tasks[0], translations: { en: { title: "English task" } } };
+    const item = { ...demo("hr").library[0], translations: { en: { title: "English item", group: "Store", details: "One, Two" } } };
+    expect(taskTitle(task, "en")).toBe("English task");
+    expect(taskTitle(task, "hr")).toBe(task.title);
+    expect(libraryItemCopy(item, "en").details).toBe("One, Two");
   });
   it("retires a former demo thought from already saved browsers", () => {
     const current = demo("en");

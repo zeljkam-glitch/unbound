@@ -6,6 +6,7 @@ export type Task = {
   kind: TaskKind; duration: number; repeat: "none" | "daily" | "weekly" | "monthly";
   area: "home" | "outside" | "anywhere"; effort: "light" | "deep";
   completedAt: string | null; notes?: string; tags?: string[]; projectId?: string;
+  translations?: Partial<Record<"hr" | "en", { title: string }>>;
 };
 export type Thought = { id: string; text: string; createdAt: string };
 export type Goal = { id: string; name: string; outcome: string; deadline: string; nextAction: string; status: "active" | "paused" | "completed"; place: string; progress: number };
@@ -19,7 +20,7 @@ export type MealProfile = {
   leftoverFriendly: boolean;
   season: "all" | "spring" | "summer" | "autumn" | "winter";
 };
-export type LibraryItem = { id: string; category: LibraryCategory; title: string; group: string; details: string; url?: string; meal?: MealProfile };
+export type LibraryItem = { id: string; category: LibraryCategory; title: string; group: string; details: string; url?: string; meal?: MealProfile; translations?: Partial<Record<"hr" | "en", { title: string; group: string; details: string }>> };
 export type InboxItem = { id: string; text: string; createdAt: string };
 export type Routine = { id: string; title: string; period: "morning" | "evening" | "weekly" };
 export type BeautifulMoment = { id: string; title: string; description: string; url?: string; duration: number; budget: number; energy: "low" | "steady" | "high"; feelings: string[]; category: string; setting: "inside" | "outside" | "either"; badWeather: boolean; solo: boolean; social: boolean; favorite: boolean; completedDates: string[] };
@@ -48,6 +49,8 @@ export type State = {
 };
 
 export const localDate = (d = new Date()) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+export const taskTitle = (task: Task, locale: "hr" | "en") => task.translations?.[locale]?.title || task.title;
+export const libraryItemCopy = (item: LibraryItem, locale: "hr" | "en") => ({ ...item, ...(item.translations?.[locale] || {}) });
 export function addDays(date: string, amount: number) { const [y, m, day] = date.split("-").map(Number); const d = new Date(y, m - 1, day); d.setDate(d.getDate() + amount); return localDate(d); }
 export function mergePrivateLists(state: State, value: unknown): State | null {
   if (!value || typeof value !== "object") return null;
