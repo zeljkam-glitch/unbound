@@ -1,6 +1,7 @@
 "use client";
 import { Books, CalendarDots, Clock, GearSix, Target, Tray, X } from "@phosphor-icons/react";
 import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import type { Tab } from "@/lib/ui-types";
 import { demo, localDate, mergePrivateLists, migrateState, type State } from "@/lib/model";
 import TodayScreen from "./TodayScreen";
@@ -13,6 +14,11 @@ import { LanguageProvider, type Locale } from "./LanguageContext";
 const KEY = "unbound.v1";
 const tabs: Tab[] = ["Today", "Planner", "Library", "Inbox", "Goals"];
 const icons = { Today: Clock, Planner: CalendarDots, Library: Books, Inbox: Tray, Goals: Target };
+const pageVisuals: Partial<Record<Tab, { src: string; hr: [string, string]; en: [string, string] }>> = {
+  Library: { src: "/images/Unbound_Planner_10.jpg", hr: ["TVOJA ZBIRKA", "Sačuvaj ono čemu se želiš vratiti."], en: ["YOUR LIBRARY", "Keep what you want to return to."] },
+  Inbox: { src: "/images/Unbound_Planner_08.jpg", hr: ["IZMEĐU MISLI I PLANA", "Ne moraš još znati kamo pripada."], en: ["BETWEEN A THOUGHT AND A PLAN", "You do not need to know where it belongs yet."] },
+  Goals: { src: "/images/Unbound_Planner_01.jpg", hr: ["SMJER PRIJE BRZINE", "Pomak ne mora biti velik da bi bio stvaran."], en: ["DIRECTION BEFORE SPEED", "Progress does not have to be large to be real."] },
+};
 const labels: Record<Locale, Record<Tab, string>> = {
   hr: { Today: "Danas", Planner: "Planer", Library: "Moja zbirka", Inbox: "Bilješke", Goals: "Ciljevi" },
   en: { Today: "Today", Planner: "Planner", Library: "My Library", Inbox: "Inbox", Goals: "Goals" },
@@ -89,12 +95,14 @@ export default function Unbound() {
   if (!state) return <main className="loading">Otvaram tvoj prostor…</main>;
   const Icon = icons[tab];
   const hr = locale === "hr";
+  const pageVisual = pageVisuals[tab];
   return <LanguageProvider locale={locale}><div className={`shell quietShell livingShell tab-${tab.toLowerCase()}`}>
     <a className="skip" href="#main">{hr ? "Preskoči na sadržaj" : "Skip to content"}</a>
     <header className="quietHeader"><a href="#today" className="brand" onClick={() => navigate("Today")}>UNBOUND<span>®</span></a><p className="productThesis">{hr ? <>Jedno privatno mjesto<br />za tvoj dan, ideje<br />i planove.</> : <>One private place<br />for your day, ideas<br />and plans.</>}</p><nav aria-label={hr ? "Glavna navigacija" : "Main navigation"}>{tabs.map((name, index) => <a href={"#" + name.toLowerCase()} key={name} aria-current={tab === name ? "page" : undefined} onClick={() => navigate(name)}><small>{String(index + 1).padStart(2, "0")}</small><span>{labels[locale][name]}</span></a>)}</nav><div className="headerTools"><div className="languageSwitch" aria-label={hr ? "Odabir jezika" : "Language selection"}><button aria-pressed={locale === "hr"} onClick={() => setLocale("hr")}>HR</button><button aria-pressed={locale === "en"} onClick={() => setLocale("en")}>EN</button></div><button aria-label={hr ? "Tvoj prostor i podaci" : "Your space and data"} onClick={() => setSettings(!settings)}><GearSix /> <span>{hr ? "Privatni prostor" : "Private space"}</span></button></div></header>
     <div className="content">
       <main id="main">
         <div className="pageIntro"><div className="eyebrow">{String(tabs.indexOf(tab) + 1).padStart(2, "0")} / {labels[locale][tab].toUpperCase()}</div><h1>{tab === "Inbox" ? (hr ? <>Zapiši sada.<br />Odluči poslije.</> : <>Write it down.<br />Decide later.</>) : intros[locale][tab][0]}</h1><p className="intro">{intros[locale][tab][1]}</p></div>
+        {pageVisual && <figure className={`pagePhotograph pagePhotograph${tab}`}><div className="pagePhotographImage"><Image src={pageVisual.src} alt="" fill sizes="(max-width: 760px) 100vw, 72vw" /></div><figcaption><span>{pageVisual[locale][0]}</span><p>{pageVisual[locale][1]}</p></figcaption></figure>}
         {message && <div className="notice" role="status">{message}<button aria-label={hr ? "Zatvori poruku" : "Dismiss"} onClick={() => setMessage("")}><X /></button></div>}
         {settings && <section className="card settings"><h2>{hr ? "Tvoj prostor i podaci" : "Your space and data"}</h2><p>{hr ? "Sve ostaje u ovom pregledniku. Kopiju možeš preuzeti kad god poželiš." : "Everything stays in this browser. You can download a copy whenever you like."}</p><div className="actions"><button className="primary" onClick={exportData}>{hr ? "Preuzmi kopiju" : "Download a copy"}</button><label className="buttonLink">{hr ? "Uvezi privatne popise" : "Import private lists"}<input className="srOnly" aria-label={hr ? "Datoteka privatnih popisa" : "Private lists file"} type="file" accept="application/json,.json" onChange={(event) => importPrivateLists(event.target.files?.[0])} /></label><button onClick={() => setConfirmReset(true)}>{hr ? "Obriši sve podatke" : "Reset all data"}</button><button onClick={() => setSettings(false)}>{hr ? "Zatvori" : "Close"}</button></div>{confirmReset && <div role="alert"><p>{hr ? "Obrisati sve planove, liste, ciljeve i osvrte? Ovo se ne može vratiti." : "Delete every plan, list, goal and check-in? This cannot be undone."}</p><button className="danger" onClick={() => { storageBlocked.current = false; setState({ ...demo(locale), tasks: [], thoughts: [], projects: [], library: [], inbox: [], routines: [], routineDone: {}, anchors: {}, energies: {}, focus: {}, reflections: {}, weeklyCheckins: {}, recoveryCheckins: [] }); setConfirmReset(false); setMessage(hr ? "Tvoj je prostor očišćen." : "Your space has been cleared."); }}>{hr ? "Da, obriši sve" : "Delete everything"}</button><button onClick={() => setConfirmReset(false)}>{hr ? "Zadrži moje podatke" : "Keep my data"}</button></div>}</section>}
         {tab === "Today" && <TodayScreen state={state} today={today} update={update} />}

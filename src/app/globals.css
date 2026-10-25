@@ -3229,3 +3229,34 @@ body:has(.livingShell) { background:#171a1b; }
   .quietShell.livingShell .plannerAtmosphere p { grid-column:1/-1; grid-row:2; font-size:15px; }
   .quietShell.livingShell .plannerAtmosphere > div:last-child { justify-self:end; }
 }
+
+/* Every main section carries one distinct editorial photograph. */
+.quietShell.livingShell .pagePhotograph {
+  display:grid;
+  grid-template-columns:minmax(0,1.72fr) minmax(240px,.58fr);
+  min-height:390px;
+  margin-top:32px;
+  margin-bottom:28px;
+  overflow:hidden;
+  border-top:1px solid #77756f;
+  border-bottom:1px solid #77756f;
+  background:#ddd9d0;
+}
+.quietShell.livingShell .pagePhotographImage { position:relative; min-height:390px; overflow:hidden; }
+.quietShell.livingShell .pagePhotographImage::after { content:""; position:absolute; inset:0; background:linear-gradient(90deg,rgba(18,19,18,.08),transparent 55%,rgba(18,19,18,.16)); pointer-events:none; }
+.quietShell.livingShell .pagePhotograph img { object-fit:cover; filter:saturate(.68) contrast(1.03); transition:transform 1.2s ease; }
+.quietShell.livingShell .pagePhotograph:hover img { transform:scale(1.015); }
+.quietShell.livingShell .pagePhotograph figcaption { display:flex; flex-direction:column; justify-content:flex-end; gap:18px; padding:34px 30px; border-left:1px solid #aaa69d; }
+.quietShell.livingShell .pagePhotograph figcaption span { color:#686d6d; font-size:9px; letter-spacing:.19em; }
+.quietShell.livingShell .pagePhotograph figcaption p { max-width:12ch; margin:0; font-size:clamp(24px,2.5vw,36px); font-weight:300; line-height:1.08; letter-spacing:-.025em; }
+.quietShell.livingShell .pagePhotographLibrary img { object-position:center 48%; }
+.quietShell.livingShell .pagePhotographInbox img { object-position:center 55%; }
+.quietShell.livingShell .pagePhotographGoals img { object-position:center 55%; }
+@media(prefers-reduced-motion:reduce){ .quietShell.livingShell .pagePhotograph img { transition:none; } }
+@media(max-width:760px){
+  .quietShell.livingShell .pagePhotograph { grid-template-columns:1fr; min-height:0; margin-top:18px; margin-bottom:20px; }
+  .quietShell.livingShell .pagePhotographImage { min-height:270px; }
+  .quietShell.livingShell .pagePhotograph figcaption { min-height:150px; padding:24px 20px 28px; border-top:1px solid #aaa69d; border-left:0; }
+  .quietShell.livingShell .pagePhotograph figcaption p { max-width:15ch; font-size:29px; }
+  .quietShell.livingShell .pagePhotographGoals img { object-position:center 42%; }
+}
