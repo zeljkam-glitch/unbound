@@ -2387,3 +2387,134 @@ body:has(.livingShell) { background:#171a1b; }
   .quietShell.livingShell .recoveryHour p { margin:0; }
   .quietShell.livingShell .recoveryLearning { grid-template-columns:150px minmax(0,1fr); }
   .quietShell.livingShell .recoveryLearning { grid-template-columns:1fr; gap:8px; }
+
+/* Atlas refinement: one calm reading flow instead of a control dashboard. */
+.quietShell.livingShell .beautifulMoments { padding:52px 0 48px; }
+.quietShell.livingShell .beautifulMomentsIntro > div { display:block; max-width:940px; }
+.quietShell.livingShell .beautifulMomentsIntro .sectionLabel { display:flex; margin:0 0 18px; padding:0; }
+.quietShell.livingShell .beautifulMomentsIntro h2 {
+  max-width:13ch;
+  margin:0 0 16px;
+  font-size:clamp(42px,5vw,68px);
+  line-height:1;
+}
+.quietShell.livingShell .beautifulMomentsIntro p { max-width:560px; }
+.quietShell.livingShell .momentOwnership {
+  grid-template-columns:minmax(0,680px) auto;
+  justify-content:space-between;
+  gap:40px;
+  margin:36px 0 26px;
+  padding:22px 0;
+}
+.quietShell.livingShell .momentOwnership button { align-self:center; white-space:nowrap; }
+.quietShell.livingShell .feelingChoices {
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(138px,1fr));
+  gap:8px;
+  margin:24px 0 18px;
+  padding:0;
+  border:0;
+}
+.quietShell.livingShell .feelingChoices button {
+  position:relative;
+  min-height:46px;
+  padding:11px 14px;
+  color:#50534f;
+  text-align:left;
+  border:1px solid #c9c5bd;
+  background:transparent;
+}
+.quietShell.livingShell .feelingChoices button:hover { color:#71242f; background:#e8e3da; border-color:#a8a298; }
+.quietShell.livingShell .feelingChoices button[aria-pressed="true"] {
+  color:#71242f;
+  background:#e7e1d7;
+  border-color:#9f8b85;
+  box-shadow:inset 0 -2px #71242f;
+}
+.quietShell.livingShell .quietAction,
+.quietShell.livingShell .momentFootnote,
+.quietShell.livingShell .momentFilters,
+.quietShell.livingShell .momentToolbar,
+.quietShell.livingShell .momentGrid,
+.quietShell.livingShell .momentAddForm,
+.quietShell.livingShell .plannedMoments,
+.quietShell.livingShell .momentEmpty { margin-left:0; }
+.quietShell.livingShell .quietAction { width:max-content; max-width:100%; }
+.quietShell.livingShell .momentFilters { margin-top:30px; margin-bottom:30px; }
+.quietShell.livingShell .momentFilters summary {
+  position:relative;
+  padding:18px 42px 18px 0;
+  list-style:none;
+  font-size:17px;
+}
+.quietShell.livingShell .momentFilters summary::-webkit-details-marker { display:none; }
+.quietShell.livingShell .momentFilters summary::after {
+  content:"+";
+  position:absolute;
+  top:50%;
+  right:2px;
+  width:28px;
+  height:28px;
+  color:#71242f;
+  font-size:24px;
+  font-weight:300;
+  line-height:25px;
+  text-align:center;
+  border:1px solid #aaa49a;
+  transform:translateY(-50%);
+}
+.quietShell.livingShell .momentFilters[open] summary::after { content:"−"; }
+.quietShell.livingShell .momentFilters > div { grid-template-columns:repeat(3,minmax(0,1fr)); gap:24px 28px; padding:8px 0 26px; }
+.quietShell.livingShell .momentFilters > div > label { position:relative; gap:10px; font-size:11px; }
+.quietShell.livingShell .momentFilters select { min-height:48px; padding:10px 28px 10px 0; font-size:16px; appearance:none; }
+.quietShell.livingShell .momentFilters > div > label:not(.weatherCheck)::after {
+  content:"⌄";
+  position:absolute;
+  right:4px;
+  bottom:15px;
+  color:#71242f;
+  pointer-events:none;
+}
+.quietShell.livingShell .momentFilters .weatherCheck { padding-top:8px; }
+.quietShell.livingShell .momentToolbar { padding:18px 0; border-top:1px solid var(--line); }
+.quietShell.livingShell .momentGrid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+.quietShell.livingShell .momentAgain { margin-top:22px; padding:10px 0; }
+.quietShell.livingShell .momentFootnote { margin-top:34px; padding-top:20px; border-top:1px solid var(--line); }
+
+/* Personal routines read as three useful lists, not three oversized cards. */
+.quietShell.livingShell .todayGrid,
+.quietShell.livingShell .todayGrid.hasWeekly {
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  align-items:start;
+  margin-top:64px;
+  border-top:1px solid var(--ink);
+  border-bottom:1px solid var(--ink);
+}
+.quietShell.livingShell .routineCard,
+.quietShell.livingShell .routineCard:first-child,
+.quietShell.livingShell .routineCard:last-child {
+  min-height:0;
+  padding:28px 30px 34px;
+  border:0;
+  border-right:1px solid var(--line);
+  border-bottom:0;
+}
+.quietShell.livingShell .routineCard:last-child { border-right:0; }
+.quietShell.livingShell .routineCard h2 { margin:16px 0 22px; font-size:clamp(26px,2.5vw,36px); font-weight:300; line-height:1.08; }
+.quietShell.livingShell .routineRow { align-items:flex-start; min-height:46px; padding:11px 0; line-height:1.35; }
+.quietShell.livingShell .routineRow input { flex:0 0 18px; width:18px; min-height:18px; margin-top:1px; accent-color:#71242f; }
+.quietShell.livingShell .routineRow:has(input:checked) span { color:var(--muted); text-decoration:line-through; }
+
+@media(max-width:1050px){
+  .quietShell.livingShell .feelingChoices { grid-template-columns:repeat(3,minmax(0,1fr)); }
+  .quietShell.livingShell .momentOwnership { grid-template-columns:1fr; gap:18px; }
+  .quietShell.livingShell .momentOwnership button { justify-self:start; }
+  .quietShell.livingShell .momentFilters > div { grid-template-columns:repeat(2,minmax(0,1fr)); }
+}
+@media(max-width:760px){
+  .quietShell.livingShell .feelingChoices { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .quietShell.livingShell .momentFilters > div,.quietShell.livingShell .momentGrid { grid-template-columns:1fr; }
+  .quietShell.livingShell .todayGrid,.quietShell.livingShell .todayGrid.hasWeekly { grid-template-columns:1fr; }
+  .quietShell.livingShell .routineCard,.quietShell.livingShell .routineCard:first-child,.quietShell.livingShell .routineCard:last-child { padding:26px 0 30px; border-right:0; border-bottom:1px solid var(--line); }
+  .quietShell.livingShell .routineCard:last-child { border-bottom:0; }
+}

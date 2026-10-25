@@ -73,7 +73,7 @@ export default function EnergyRecoveryPanel({ state, today, update }: { state: S
   return <section className="energyRecovery" aria-labelledby="energy-recovery-title">
     <header className="recoveryIntro">
       <div className="sectionLabel">{hr ? "ENERGIJA I OPORAVAK" : "ENERGY & RECOVERY"}</div>
-      <div><h2 id="energy-recovery-title">{hr ? "Što ti sada zapravo treba?" : "What do you actually need now?"}</h2><p>{hr ? "Ne pokušavamo svaki umor pretvoriti u još energije. Prvo razlikujemo fokus, preopterećenost i stvarnu potrebu za odmorom." : "We do not try to turn every kind of fatigue into more energy. First we distinguish focus, overload, and a real need for rest."}</p></div>
+      <div><h2 id="energy-recovery-title">{hr ? "Što ti sada zapravo treba?" : "What do you actually need now?"}</h2><p>{hr ? "Nije svaki umor znak da ti treba više energije. Najprije provjeri nedostaje li ti fokus, mir ili pravi odmor." : "Not every kind of fatigue means you need more energy. First check whether you need focus, quiet, or real rest."}</p></div>
       <span className="recoveryPrivacy">{hr ? "Privatno · ostaje na ovom uređaju" : "Private · stays on this device"}</span>
     </header>
     {recordedSessions > 0 && <div className="recoveryLearning"><span>{hr ? `${recordedSessions} spremljenih usporedbi` : `${recordedSessions} saved comparison${recordedSessions === 1 ? "" : "s"}`}</span><p>{bestProtocol ? (hr ? `Za sada ti najčešće pomaže: ${bestProtocol.title.hr}.` : `So far, this most often helps: ${bestProtocol.title.en}.`) : (hr ? "Još učimo što ti vraća fokus, što doista odmara i što čuva energiju za sutra." : "We are still learning what restores focus, what truly rests you, and what protects tomorrow’s energy.")}</p></div>}

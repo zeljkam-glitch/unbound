@@ -53,7 +53,7 @@ export default function TodayScreen({ state, today, update }: { state: State; to
     <div className={`todayGrid ${todayDate.getDay() === 0 ? "hasWeekly" : ""}`}>
       {(["morning", "evening", ...(todayDate.getDay() === 0 ? ["weekly" as const] : [])] as const).map((period) => <section className="card routineCard" key={period}>
         <div className="sectionLabel">{period === "morning" ? (hr ? "JUTARNJA RUTINA" : "MORNING ROUTINE") : period === "evening" ? (hr ? "VEČERNJA RUTINA" : "EVENING ROUTINE") : (hr ? "NEDJELJNA RUTINA" : "SUNDAY ROUTINE")}</div>
-        <h2>{period === "morning" ? (hr ? "Počni polako." : "Begin gently.") : period === "evening" ? (hr ? "Olakšaj si sutra." : "Make tomorrow lighter.") : (hr ? "Vrati tjedan na njegovo mjesto." : "Set the week gently back in place.")}</h2>
+        <h2>{period === "morning" ? (hr ? "Počni svojim ritmom." : "Begin at your own pace.") : period === "evening" ? (hr ? "Zatvori dan." : "Close the day.") : (hr ? "Nedjeljni ritam." : "Sunday rhythm.")}</h2>
         {state.routines.filter((r) => r.period === period).map((r) => <label className="routineRow" key={r.id}><input type="checkbox" checked={done.includes(r.id)} onChange={() => toggleRoutine(r.id)} /><span>{r.title}</span></label>)}
       </section>)}
     </div>

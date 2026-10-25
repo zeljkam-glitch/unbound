@@ -42,7 +42,7 @@ const seasonIdeas: Record<SeasonLocale, Record<Season, string[]>> = {
     winter: ["Potraži dnevno svjetlo prije podneva", "Pripremi mirnu večer prije nego što se dan ubrza", "Odaberi jedan topao obrok bez kompliciranja", "Provjeri što ti ovaj tjedan stvarno čuva energiju"],
     spring: ["Prošetaj rutom na kojoj možeš primijetiti što se promijenilo", "Otvori prostor za jednu novu ideju", "Ponesi dio dana van", "Odaberi jednu stvar koju želiš osvježiti"],
     summer: ["Pomakni jednu obavezu iz najtoplijeg dijela dana", "Sačuvaj vrijeme za vodu, hlad ili večernji zrak", "Ostavi jedan obrok jednostavnim", "Odaberi mali izlazak bez gustog plana"],
-    autumn: ["Ponesi sloj više i ostavi planu rezervu", "Odaberi jedno mjesto koje želiš učiniti toplijim", "Sačuvaj malo dnevnog svjetla za sebe", "Pripremi nešto zbog čega će sutrašnje jutro biti lakše"],
+    autumn: ["Provjeri prognozu prije izlaska i ponesi lagani sloj", "Odaberi jedno mjesto koje želiš učiniti toplijim", "Provedi barem dvadeset minuta vani dok još ima dnevnog svjetla", "Pripremi nešto zbog čega će sutrašnje jutro biti lakše"],
   },
   en: {
     winter: ["Find the daylight before noon", "Prepare a quiet evening before the day speeds up", "Choose one warm meal without overcomplicating it", "Notice what genuinely protects your energy this week"],
