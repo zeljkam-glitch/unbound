@@ -3,7 +3,7 @@ import { beautifulMomentCatalog } from "./beautiful-moments";
 export type TaskKind = "fixed" | "deadline" | "flexible" | "optional";
 export type Task = {
   id: string; title: string; date: string; time: string; deadline: string;
-  kind: TaskKind; duration: number; repeat: "none" | "daily" | "weekly";
+  kind: TaskKind; duration: number; repeat: "none" | "daily" | "weekly" | "monthly";
   area: "home" | "outside" | "anywhere"; effort: "light" | "deep";
   completedAt: string | null; notes?: string; tags?: string[]; projectId?: string;
 };
@@ -51,20 +51,23 @@ export const localDate = (d = new Date()) => `${d.getFullYear()}-${String(d.getM
 export function addDays(date: string, amount: number) { const [y, m, day] = date.split("-").map(Number); const d = new Date(y, m - 1, day); d.setDate(d.getDate() + amount); return localDate(d); }
 export function mergePrivateLists(state: State, value: unknown): State | null {
   if (!value || typeof value !== "object") return null;
-  const bundle = value as { routines?: unknown; library?: unknown; beautifulMoments?: unknown; recoveryCheckins?: unknown };
+  const bundle = value as { routines?: unknown; library?: unknown; tasks?: unknown; beautifulMoments?: unknown; recoveryCheckins?: unknown };
   if (!Array.isArray(bundle.routines) || !Array.isArray(bundle.library)) return null;
   const routines = bundle.routines.filter((item): item is Routine => !!item && typeof item === "object" && typeof item.id === "string" && typeof item.title === "string" && ["morning", "evening", "weekly"].includes(item.period));
   const library = bundle.library.filter((item): item is LibraryItem => !!item && typeof item === "object" && typeof item.id === "string" && typeof item.title === "string" && typeof item.group === "string" && typeof item.details === "string" && ["shopping", "feel-good", "beauty", "places", "meals", "workouts", "bags", "lists", "quotes"].includes(item.category));
+  const incomingTasks = Array.isArray(bundle.tasks) ? bundle.tasks : [];
+  const tasks = incomingTasks.filter((item): item is Task => !!item && typeof item === "object" && typeof item.id === "string" && typeof item.title === "string" && typeof item.date === "string" && typeof item.time === "string" && typeof item.deadline === "string" && ["fixed", "deadline", "flexible", "optional"].includes(item.kind) && typeof item.duration === "number" && ["none", "daily", "weekly", "monthly"].includes(item.repeat) && ["home", "outside", "anywhere"].includes(item.area) && ["light", "deep"].includes(item.effort));
   const incomingMoments = Array.isArray(bundle.beautifulMoments) ? bundle.beautifulMoments : [];
   const beautifulMoments = incomingMoments.filter((item): item is BeautifulMoment => !!item && typeof item === "object" && typeof item.id === "string" && typeof item.title === "string" && typeof item.description === "string" && (item.url === undefined || typeof item.url === "string") && typeof item.duration === "number" && typeof item.budget === "number" && ["low", "steady", "high"].includes(item.energy) && Array.isArray(item.feelings) && ["inside", "outside", "either"].includes(item.setting) && typeof item.badWeather === "boolean");
   const incomingCheckins = Array.isArray(bundle.recoveryCheckins) ? bundle.recoveryCheckins : [];
   const recoveryCheckins = incomingCheckins.filter((item): item is RecoveryCheckin => !!item && typeof item === "object" && typeof item.id === "string" && typeof item.date === "string" && typeof item.createdAt === "string" && ["before", "after"].includes(item.phase) && typeof item.energy === "number" && typeof item.focus === "number" && ["mental", "physical", "stress", "sleep", "other"].includes(item.cause) && ["focus", "energy", "less-stimulation", "study-recovery", "body-recovery", "complete-rest"].includes(item.need));
-  if (routines.length !== bundle.routines.length || library.length !== bundle.library.length || beautifulMoments.length !== incomingMoments.length || recoveryCheckins.length !== incomingCheckins.length) return null;
+  if (routines.length !== bundle.routines.length || library.length !== bundle.library.length || tasks.length !== incomingTasks.length || beautifulMoments.length !== incomingMoments.length || recoveryCheckins.length !== incomingCheckins.length) return null;
   const privateRoutinePeriods = new Set(routines.map((item) => item.period));
   return {
     ...state,
     routines: [...state.routines.filter((item) => !privateRoutinePeriods.has(item.period)), ...routines],
     library: [...state.library.filter((item) => !library.some((incoming) => incoming.id === item.id)), ...library],
+    tasks: [...state.tasks.filter((item) => !tasks.some((incoming) => incoming.id === item.id)), ...tasks.map((item) => ({ ...item, completedAt: item.completedAt || null }))],
     beautifulMoments: [...state.beautifulMoments.filter((item) => !beautifulMoments.some((incoming) => incoming.id === item.id)), ...beautifulMoments.map((item) => ({ ...item, favorite: !!item.favorite, completedDates: Array.isArray(item.completedDates) ? item.completedDates : [] }))],
     recoveryCheckins: [...(state.recoveryCheckins || []).filter((item) => !recoveryCheckins.some((incoming) => incoming.id === item.id)), ...recoveryCheckins],
   };
@@ -98,6 +101,13 @@ export function taskOccursOn(task: Task, date: string) {
   if (task.date === date || (!task.date && task.deadline === date)) return true;
   if (!task.date || task.date > date || task.repeat === "none") return false;
   if (task.repeat === "daily") return true;
+  if (task.repeat === "monthly") {
+    const [, startMonth, startDay] = task.date.split("-").map(Number);
+    const [year, month, day] = date.split("-").map(Number);
+    const lastDay = new Date(year, month, 0).getDate();
+    const startLastDay = new Date(Number(task.date.slice(0, 4)), startMonth, 0).getDate();
+    return day === startDay || (startDay === startLastDay && day === lastDay);
+  }
   const a = new Date(`${task.date}T12:00:00`), b = new Date(`${date}T12:00:00`);
   return Math.round((b.getTime() - a.getTime()) / 86400000) % 7 === 0;
 }

@@ -12,6 +12,7 @@ import {
   weekStart,
   migrateState,
   mergePrivateLists,
+  taskOccursOn,
 } from "./model";
 import { feelingOptions, matchingBeautifulMoments } from "./beautiful-moments";
 describe("personal freedom model", () => {
@@ -100,6 +101,19 @@ describe("personal freedom model", () => {
     expect(merged?.routines.filter((item) => item.period === "morning")).toEqual([privateMorning]);
     expect(merged?.routines.some((item) => item.period === "evening")).toBe(true);
     expect(merged?.beautifulMoments.find((item) => item.id === "private-song")?.url).toBe(linkedMoment.url);
+  });
+  it("imports private tasks idempotently", () => {
+    const current = demo("hr");
+    const privateTask = { ...current.tasks[0], id: "private-task", title: "Moj zadatak", repeat: "monthly" as const };
+    const once = mergePrivateLists(current, { routines: [], library: [], tasks: [privateTask] });
+    const twice = once && mergePrivateLists(once, { routines: [], library: [], tasks: [privateTask] });
+
+    expect(twice?.tasks.filter((item) => item.id === privateTask.id)).toHaveLength(1);
+  });
+  it("shows monthly tasks on the matching day", () => {
+    const monthly = { ...demo("hr").tasks[0], date: "2026-10-25", repeat: "monthly" as const };
+    expect(taskOccursOn(monthly, "2026-11-25")).toBe(true);
+    expect(taskOccursOn(monthly, "2026-11-24")).toBe(false);
   });
   it("retires a former demo thought from already saved browsers", () => {
     const current = demo("en");

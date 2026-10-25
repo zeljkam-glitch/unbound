@@ -80,7 +80,7 @@ export default function Unbound() {
       const merged = mergePrivateLists(state, JSON.parse(await file.text()));
       if (!merged) throw new Error("Invalid private list file");
       setState(merged);
-      setMessage(locale === "hr" ? "Privatne rutine, popisi i zapisi oporavka su uvezeni. Ostaju samo u ovom pregledniku." : "Private routines, lists, and recovery records were imported. They stay in this browser only.");
+      setMessage(locale === "hr" ? "Privatne rutine, popisi i zadaci su uvezeni. Ostaju samo u ovom pregledniku." : "Private routines, lists, and tasks were imported. They stay in this browser only.");
       setSettings(false);
     } catch {
       setMessage(locale === "hr" ? "Ovu datoteku nismo mogli uvesti." : "We could not import this file.");
