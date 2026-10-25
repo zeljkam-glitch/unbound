@@ -2262,7 +2262,7 @@ body:has(.livingShell) { background:#171a1b; }
 .quietShell.livingShell .tasksSection {
   display:block;
   margin:58px 0 48px;
-  border-top:1px solid var(--ink);
+  border-top:0;
 }
 .quietShell.livingShell .tasksSection .sectionHead {
   display:flex;
