@@ -13,7 +13,7 @@ import {
   migrateState,
   mergePrivateLists,
 } from "./model";
-import { matchingBeautifulMoments } from "./beautiful-moments";
+import { feelingOptions, matchingBeautifulMoments } from "./beautiful-moments";
 describe("personal freedom model", () => {
   it("completes and reopens a task", () => {
     const task = demo().tasks[0];
@@ -77,6 +77,12 @@ describe("personal freedom model", () => {
     const matches = matchingBeautifulMoments(moments, { feelings: ["inspired"], maxMinutes: 60, maxBudget: 0, energy: "low", setting: "inside", badWeatherOnly: true, condition: "gentle" });
     expect(matches.length).toBeGreaterThan(0);
     expect(matches.every((moment) => moment.duration <= 60 && moment.budget === 0 && moment.energy === "low" && moment.badWeather)).toBe(true);
+  });
+  it("offers at least one suggestion for every curated feeling", () => {
+    const moments = demo("hr").beautifulMoments;
+    for (const feeling of feelingOptions) {
+      expect(matchingBeautifulMoments(moments, { feelings: [feeling], maxMinutes: 0, maxBudget: -1, energy: "", setting: "", badWeatherOnly: false, condition: "" }).length).toBeGreaterThan(0);
+    }
   });
   it("migrates the curated daily-thought collection without losing existing data", () => {
     const previous = { ...demo("hr"), version: 4, library: demo("hr").library.filter((item) => item.category !== "quotes") };

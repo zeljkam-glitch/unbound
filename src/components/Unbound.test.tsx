@@ -59,7 +59,7 @@ describe("UNBOUND Life OS interactions", () => {
   });
   it("plans a beautiful moment without turning it into a productivity task", async () => {
     await open();
-    fireEvent.click(screen.getByRole("button", { name: "inspired" }));
+    fireEvent.click(screen.getByRole("button", { name: "motivated" }));
     fireEvent.change(screen.getByLabelText("Budget for a beautiful moment"), { target: { value: "0" } });
     const add = screen.getAllByRole("button", { name: "Add as a beautiful moment" })[0];
     fireEvent.click(add);

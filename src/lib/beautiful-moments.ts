@@ -36,11 +36,35 @@ const seeds: Seed[] = [
   { id: "moment-nothing", title: ["Pola sata bez cilja", "Half an hour with no goal"], description: ["Ne optimiziraj ga. Ne dokumentiraj ga. Samo ostani.", "Do not optimise it. Do not document it. Just stay."], duration: 30, budget: 0, energy: "low", feelings: ["free", "calm", "safe"], category: "rest", setting: "either", badWeather: true, solo: true, social: false },
 ];
 
-export const feelingOptions = ["inspired", "relaxed", "free", "playful", "pampered", "calm", "curious", "connected", "creative", "adventurous", "safe", "alone-good", "traveling", "romantic", "fulfilled"] as const;
+export const feelingOptions = ["productive", "grounded", "organized", "focused", "clear", "capable", "motivated", "energetic", "present", "stable", "relieved", "in-control", "open-new", "proud", "confident"] as const;
+
+const legacyFeelingMap: Record<string, typeof feelingOptions[number]> = {
+  inspired: "motivated", relaxed: "relieved", free: "relieved", playful: "energetic", pampered: "present", calm: "stable", curious: "open-new", connected: "grounded", creative: "motivated", adventurous: "confident", safe: "stable", "alone-good": "grounded", traveling: "open-new", romantic: "present", fulfilled: "proud",
+};
+
+export const normalizeFeeling = (value: string): string => legacyFeelingMap[value] || value;
 
 export const feelingLabel = (value: string, locale: Locale) => ({
-  inspired: ["nadahnuto", "inspired"], relaxed: ["opušteno", "relaxed"], free: ["slobodno", "free"], playful: ["razigrano", "playful"], pampered: ["razmaženo", "pampered"], calm: ["mirno", "calm"], curious: ["znatiželjno", "curious"], connected: ["povezano", "connected"], creative: ["kreativno", "creative"], adventurous: ["pustolovno", "adventurous"], safe: ["sigurno", "safe"], "alone-good": ["sama, ali dobro mi je", "alone, and content"], traveling: ["kao da putujem", "as if I am travelling"], romantic: ["romantično", "romantic"], fulfilled: ["ispunjeno", "fulfilled"],
-}[value]?.[locale === "hr" ? 0 : 1] || value);
+  productive: ["produktivno", "productive"], grounded: ["čvrsto na zemlji", "grounded"], organized: ["organizirano", "organized"], focused: ["usredotočeno", "focused"], clear: ["jasno", "clear"], capable: ["sposobno", "capable"], motivated: ["motivirano", "motivated"], energetic: ["energično", "energetic"], present: ["prisutno", "present"], stable: ["stabilno", "stable"], relieved: ["rasterećeno", "relieved"], "in-control": ["imam kontrolu", "in control"], "open-new": ["otvoreno za nešto novo", "open to something new"], proud: ["ponosno na sebe", "proud of myself"], confident: ["samopouzdano", "confident"],
+}[normalizeFeeling(value)]?.[locale === "hr" ? 0 : 1] || value);
+
+const feelingSignals: Record<string, string[]> = {
+  productive: ["productive", "fulfilled", "creative"],
+  grounded: ["grounded", "connected", "safe", "alone-good", "calm"],
+  organized: ["organized", "safe", "fulfilled"],
+  focused: ["focused", "calm", "creative"],
+  clear: ["clear", "calm", "free"],
+  capable: ["capable", "fulfilled", "adventurous", "creative"],
+  motivated: ["motivated", "inspired", "creative"],
+  energetic: ["energetic", "playful", "adventurous"],
+  present: ["present", "calm", "relaxed", "connected", "romantic"],
+  stable: ["stable", "safe", "calm"],
+  relieved: ["relieved", "relaxed", "free", "pampered"],
+  "in-control": ["in-control", "safe", "fulfilled"],
+  "open-new": ["open-new", "curious", "adventurous", "traveling", "playful"],
+  proud: ["proud", "fulfilled", "creative"],
+  confident: ["confident", "adventurous", "safe", "fulfilled"],
+};
 
 export function beautifulMomentCatalog(locale: Locale): BeautifulMoment[] {
   const index = locale === "hr" ? 0 : 1;
@@ -50,7 +74,7 @@ export function beautifulMomentCatalog(locale: Locale): BeautifulMoment[] {
 export function matchingBeautifulMoments(moments: BeautifulMoment[], preferences: MomentPreferences) {
   const energyRank = { low: 0, steady: 1, high: 2 } as const;
   return moments.filter((moment) => {
-    if (preferences.feelings.length && !preferences.feelings.some((feeling) => moment.feelings.includes(feeling))) return false;
+    if (preferences.feelings.length && !preferences.feelings.some((feeling) => (feelingSignals[normalizeFeeling(feeling)] || [feeling]).some((signal) => moment.feelings.includes(signal)))) return false;
     if (preferences.maxMinutes > 0 && moment.duration > preferences.maxMinutes) return false;
     if (preferences.maxBudget >= 0 && moment.budget > preferences.maxBudget) return false;
     if (preferences.energy && energyRank[moment.energy] > energyRank[preferences.energy]) return false;
