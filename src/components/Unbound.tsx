@@ -14,7 +14,7 @@ const KEY = "unbound.v1";
 const tabs: Tab[] = ["Today", "Planner", "Library", "Inbox", "Goals"];
 const icons = { Today: Clock, Planner: CalendarDots, Library: Books, Inbox: Tray, Goals: Target };
 const labels: Record<Locale, Record<Tab, string>> = {
-  hr: { Today: "Danas", Planner: "Planer", Library: "Moja zbirka", Inbox: "Ulazno", Goals: "Ciljevi" },
+  hr: { Today: "Danas", Planner: "Planer", Library: "Moja zbirka", Inbox: "Bilješke", Goals: "Ciljevi" },
   en: { Today: "Today", Planner: "Planner", Library: "My Library", Inbox: "Inbox", Goals: "Goals" },
 };
 const intros: Record<Locale, Record<Tab, [string, string]>> = {
