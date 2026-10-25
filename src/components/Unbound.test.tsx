@@ -131,6 +131,17 @@ describe("UNBOUND Life OS interactions", () => {
       expect(shopping.details).not.toContain("rice");
     });
   }, 15000);
+  it("lets a person save a meal with only its name", async () => {
+    await open(); go(/My Library/);
+    fireEvent.click(screen.getByRole("button", { name: "Meals" }));
+    fireEvent.click(screen.getByRole("button", { name: "Add item" }));
+    fireEvent.change(screen.getByLabelText("What do you call this meal?"), { target: { value: "Sunday soup" } });
+    fireEvent.click(screen.getByRole("button", { name: "Save item" }));
+    await waitFor(() => {
+      const saved = JSON.parse(localStorage.getItem("unbound.v1")!);
+      expect(saved.library.find((item: { title: string }) => item.title === "Sunday soup")).toMatchObject({ group: "My meals", details: "", meal: { minutes: 30, servings: 2, energy: "steady", ingredients: [], season: "all" } });
+    });
+  });
   it("offers a city fallback when browser location is unavailable", async () => {
     await open();
     Object.defineProperty(navigator, "geolocation", { configurable: true, value: undefined });

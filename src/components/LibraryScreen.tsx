@@ -84,12 +84,13 @@ export default function LibraryScreen({ state, update }: { state: State; update:
     <div className="sectionHead"><div><div className="sectionLabel"><Icon /> {hr ? "MOJA ZBIRKA" : "MY LIBRARY"}</div><h2>{translated.find((item) => item.id === category)?.label}</h2><p className="quiet">{translated.find((item) => item.id === category)?.note}</p></div><button className="primary" onClick={() => { setEditing(null); setOpen(!open); }}><Plus /> {hr ? "Dodaj" : "Add item"}</button></div>
     {category === "feel-good" && <div className="libraryMood"><Image src="/living-frames/library-rain-window.jpg" alt="" fill sizes="100vw" /><div><span>{seasonal.month.toUpperCase()} · {seasonal.seasonName.toUpperCase()}</span><strong>{seasonal.theme}</strong></div></div>}
     {category === "meals" && <MealPlanner meals={items} state={state} update={update} />}
-    {open && <form className="card libraryForm" onSubmit={(event) => {
+    {open && <form className={`card libraryForm ${category === "meals" ? "mealEntryForm" : ""}`} onSubmit={(event) => {
       event.preventDefault();
       const form = new FormData(event.currentTarget);
       const title = String(form.get("title")).trim();
       const details = String(form.get("details")).trim();
-      const item: LibraryItem = { id: editing?.id || newId(), category, title, group: String(form.get("group")).trim(), details, translations: editing?.translations, url: String(form.get("url") || "").trim() || undefined,
+      const group = String(form.get("group") || "").trim() || (category === "meals" ? (hr ? "Moja jela" : "My meals") : "");
+      const item: LibraryItem = { id: editing?.id || newId(), category, title, group, details, translations: editing?.translations, url: String(form.get("url") || "").trim() || undefined,
         meal: category === "meals" ? { minutes: Number(form.get("minutes") || 30), servings: Number(form.get("servings") || 2), energy: String(form.get("mealEnergy") || "steady") as "low" | "steady" | "high", ingredients: checklistParts(details), leftoverFriendly: form.get("leftoverFriendly") === "on", season: String(form.get("mealSeason") || "all") as "all" | "spring" | "summer" | "autumn" | "winter" } : undefined };
       update((current) => {
         let library = editing ? current.library.map((existing) => existing.id === editing.id ? item : existing) : [...current.library, item];
@@ -98,16 +99,26 @@ export default function LibraryScreen({ state, update }: { state: State; update:
       });
       setEditing(null); setOpen(false);
     }}>
-      <Field label={hr ? "Naziv" : "Name"}><input name="title" required defaultValue={editing?.title} autoFocus /></Field>
-      <Field label={category === "shopping" ? (hr ? "Trgovina" : "Store") : category === "quotes" ? (hr ? "Autor ili izvor" : "Author or source") : (hr ? "Skupina ili kontekst" : "Group or context")}><input name="group" required defaultValue={editing?.group} placeholder={category === "shopping" ? "dm, Lidl, plac…" : category === "quotes" ? (hr ? "Autor, knjiga ili UNBOUND" : "Author, book or UNBOUND") : (hr ? "Doma, brzo, vikend…" : "Home, quick, weekend…")} /></Field>
-      <Field label={category === "meals" ? (hr ? "Sastojci, odvojeni zarezom" : "Ingredients, separated by commas") : (category === "shopping" || category === "bags" || category === "lists" || category === "beauty" ? (hr ? "Stavke, odvojene zarezom" : "Items, separated by commas") : category === "quotes" ? (hr ? "Kada ti ova misao može koristiti?" : "When might this thought help?") : (hr ? "Detalji ili opis" : "Details or description"))}><textarea name="details" rows={3} defaultValue={editing?.details} /></Field>
-      {category === "meals" && <div className="mealProfileFields">
-        <Field label={hr ? "Vrijeme pripreme" : "Prep time"}><select name="minutes" defaultValue={editing?.meal?.minutes || 30}><option value="15">15 min</option><option value="30">30 min</option><option value="45">45 min</option><option value="60">60+ min</option></select></Field>
-        <Field label={hr ? "Za koliko osoba" : "Servings"}><select name="servings" defaultValue={editing?.meal?.servings || 2}>{[1,2,3,4,5,6].map((value) => <option value={value} key={value}>{value}</option>)}</select></Field>
-        <Field label={hr ? "Energija za pripremu" : "Prep energy"}><select name="mealEnergy" defaultValue={editing?.meal?.energy || "steady"}><option value="low">{hr ? "Malo" : "Low"}</option><option value="steady">{hr ? "Dovoljno" : "Steady"}</option><option value="high">{hr ? "Više" : "High"}</option></select></Field>
-        <Field label={hr ? "Najbolje godišnje doba" : "Best season"}><select name="mealSeason" defaultValue={editing?.meal?.season || "all"}><option value="all">{hr ? "Cijele godine" : "All year"}</option><option value="spring">{hr ? "Proljeće" : "Spring"}</option><option value="summer">{hr ? "Ljeto" : "Summer"}</option><option value="autumn">{hr ? "Jesen" : "Autumn"}</option><option value="winter">{hr ? "Zima" : "Winter"}</option></select></Field>
-        <label className="mealToggle"><input name="leftoverFriendly" type="checkbox" defaultChecked={editing?.meal?.leftoverFriendly} /><span>{hr ? "Dobro je i sutradan" : "Good the next day too"}</span></label>
-      </div>}
+      {category === "meals" ? <>
+        <div className="mealEntryLead"><span className="sectionLabel">{editing ? (hr ? "UREDI JELO" : "EDIT MEAL") : (hr ? "NOVO JELO" : "NEW MEAL")}</span><h3>{hr ? "Za početak je dovoljan naziv." : "A name is enough to begin."}</h3><p>{hr ? "Sve ostalo možeš dodati sada, kasnije ili nikada." : "Add everything else now, later, or never."}</p></div>
+        <div className="mealNameField"><Field label={hr ? "Kako zoveš ovo jelo?" : "What do you call this meal?"}><input name="title" required defaultValue={editing?.title} autoFocus placeholder={hr ? "npr. Juha od piletine" : "e.g. Chicken soup"} /></Field></div>
+        <details className="mealOptionalDetails" open={!!editing}>
+          <summary><span>{hr ? "Dodaj sastojke i detalje" : "Add ingredients and details"}</span><small>{hr ? "Neobavezno" : "Optional"}</small></summary>
+          <div className="mealOptionalGrid">
+            <Field label={hr ? "Kontekst" : "Context"}><input name="group" defaultValue={editing?.group} placeholder={hr ? "npr. brzo, vikend, comfort food" : "e.g. quick, weekend, comfort food"} /></Field>
+            <Field label={hr ? "Sastojci" : "Ingredients"}><textarea name="details" rows={3} defaultValue={editing?.details} placeholder={hr ? "Dodaj samo ako želiš automatski popis za kupnju" : "Add only if you want an automatic shopping list"} /></Field>
+            <div className="mealChoiceField"><span>{hr ? "Vrijeme pripreme" : "Prep time"}</span><div className="mealSegmented">{[15,30,45,60].map((value) => <label key={value}><input type="radio" name="minutes" value={value} defaultChecked={(editing?.meal?.minutes || 30) === value} /><span>{value === 60 ? "60+" : value} min</span></label>)}</div></div>
+            <div className="mealChoiceField"><span>{hr ? "Za koliko osoba" : "Servings"}</span><div className="mealSegmented">{[1,2,3,4,5,6].map((value) => <label key={value}><input type="radio" name="servings" value={value} defaultChecked={(editing?.meal?.servings || 2) === value} /><span>{value}</span></label>)}</div></div>
+            <div className="mealChoiceField"><span>{hr ? "Energija za pripremu" : "Prep energy"}</span><div className="mealSegmented">{(["low","steady","high"] as const).map((value) => <label key={value}><input type="radio" name="mealEnergy" value={value} defaultChecked={(editing?.meal?.energy || "steady") === value} /><span>{hr ? ({ low: "Malo", steady: "Dovoljno", high: "Više" }[value]) : ({ low: "Low", steady: "Enough", high: "More" }[value])}</span></label>)}</div></div>
+            <div className="mealChoiceField mealSeasonField"><span>{hr ? "Kada ga najčešće kuhaš?" : "When do you usually cook it?"}</span><div className="mealSegmented">{(["all","spring","summer","autumn","winter"] as const).map((value) => <label key={value}><input type="radio" name="mealSeason" value={value} defaultChecked={(editing?.meal?.season || "all") === value} /><span>{hr ? ({ all: "Bilo kada", spring: "Proljeće", summer: "Ljeto", autumn: "Jesen", winter: "Zima" }[value]) : ({ all: "Any time", spring: "Spring", summer: "Summer", autumn: "Autumn", winter: "Winter" }[value])}</span></label>)}</div></div>
+            <label className="mealToggle"><input name="leftoverFriendly" type="checkbox" defaultChecked={editing?.meal?.leftoverFriendly} /><span>{hr ? "Dobro je i sutradan" : "Good the next day too"}</span></label>
+          </div>
+        </details>
+      </> : <>
+        <Field label={hr ? "Naziv" : "Name"}><input name="title" required defaultValue={editing?.title} autoFocus /></Field>
+        <Field label={category === "shopping" ? (hr ? "Trgovina" : "Store") : category === "quotes" ? (hr ? "Autor ili izvor" : "Author or source") : (hr ? "Skupina ili kontekst" : "Group or context")}><input name="group" required defaultValue={editing?.group} placeholder={category === "shopping" ? "dm, Lidl, plac…" : category === "quotes" ? (hr ? "Autor, knjiga ili UNBOUND" : "Author, book or UNBOUND") : (hr ? "Doma, brzo, vikend…" : "Home, quick, weekend…")} /></Field>
+        <Field label={category === "shopping" || category === "bags" || category === "lists" || category === "beauty" ? (hr ? "Stavke, odvojene zarezom" : "Items, separated by commas") : category === "quotes" ? (hr ? "Kada ti ova misao može koristiti?" : "When might this thought help?") : (hr ? "Detalji ili opis" : "Details or description")}><textarea name="details" rows={3} defaultValue={editing?.details} /></Field>
+      </>}
       {category === "workouts" && <Field label={hr ? "YouTube poveznica" : "YouTube link"}><input type="url" name="url" defaultValue={editing?.url} placeholder="https://youtube.com/…" /></Field>}
       <div className="actions"><button className="primary">{hr ? "Spremi" : "Save item"}</button><button type="button" onClick={() => setOpen(false)}>{hr ? "Odustani" : "Cancel"}</button></div>
     </form>}
