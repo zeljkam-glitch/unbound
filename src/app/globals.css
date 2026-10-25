@@ -2853,3 +2853,46 @@ body:has(.livingShell) { background:#171a1b; }
   .quietShell.livingShell .momentGrid { grid-template-columns:1fr; }
   .quietShell.livingShell .momentCard,.quietShell.livingShell .momentCard:nth-child(even) { padding:28px 0; border-right:0; }
 }
+
+/* Atlas uses a neutral material palette. Burgundy belongs elsewhere in the system. */
+.quietShell.livingShell .beautifulMoments {
+  --atlas-accent:#6f695f;
+  --atlas-ink:#292a27;
+}
+.quietShell.livingShell .beautifulMomentsIntro > svg,
+.quietShell.livingShell .momentCard > small,
+.quietShell.livingShell .momentHeart[aria-pressed="true"],
+.quietShell.livingShell .discoveryMethods button::before { color:var(--atlas-accent); }
+.quietShell.livingShell .momentOwnership button:hover,
+.quietShell.livingShell .quietAction:hover {
+  color:var(--atlas-ink);
+  border-bottom-color:var(--atlas-ink);
+  background:transparent;
+}
+.quietShell.livingShell .feelingChoices button:hover {
+  color:var(--atlas-ink);
+  border-bottom-color:#8f887d;
+  background:transparent;
+}
+.quietShell.livingShell .feelingChoices button[aria-pressed="true"] {
+  color:var(--atlas-ink);
+  border-bottom-color:var(--atlas-ink);
+}
+.quietShell.livingShell .feelingChoices button[aria-pressed="true"]::before { background:var(--atlas-ink); }
+.quietShell.livingShell .momentFilters summary::after,
+.quietShell.livingShell .momentFilters > div > label:not(.weatherCheck)::after { color:var(--atlas-accent); }
+.quietShell.livingShell .momentToolbar .primary,
+.quietShell.livingShell .momentToolbar .primary:hover {
+  color:var(--atlas-ink);
+  border-color:var(--atlas-ink);
+  background:transparent;
+}
+.quietShell.livingShell .momentAddForm input:focus,
+.quietShell.livingShell .momentAddForm select:focus { border-bottom-color:var(--atlas-ink); }
+.quietShell.livingShell .momentRainCheck input { accent-color:var(--atlas-ink); }
+.quietShell.livingShell .beautifulMoments .primary:hover,
+.quietShell.livingShell .momentAddFinish .primary:hover {
+  color:#f3f0e9;
+  background:#42423d;
+  border-color:#42423d;
+}
