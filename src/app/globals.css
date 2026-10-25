@@ -2179,6 +2179,8 @@ body:has(.livingShell) { background:#171a1b; }
 .quietShell.livingShell .twelveWeekMethod { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:32px; align-items:end; margin:64px 0 24px; padding:28px 0; border-top:1px solid var(--ink); border-bottom:1px solid var(--line); }
 .quietShell.livingShell .twelveWeekMethod h2 { margin:8px 0; font-size:clamp(28px,3vw,42px); font-weight:300; }
 .quietShell.livingShell .twelveWeekMethod p { max-width:680px; margin:0; color:var(--muted); }
+.quietShell.livingShell .twelveWeekMethod .twelveWeekSource { margin-top:12px; font-size:13px; }
+.quietShell.livingShell .twelveWeekSource a { color:var(--ink); text-decoration-color:#918c83; text-underline-offset:4px; }
 .quietShell.livingShell .twelveWeekMethod button { padding:11px 0; border:0; border-bottom:1px solid var(--ink); white-space:nowrap; }
 .quietShell.livingShell .recoveryContinue { display:flex; align-items:center; gap:14px; margin:30px 0 0 auto; padding:12px 0; color:#71242f; border:0; border-bottom:1px solid #71242f; }
 .quietShell.livingShell .recoveryRecommendation { display:grid; grid-template-columns:190px minmax(0,1fr); gap:34px; margin-top:48px; }
@@ -2549,6 +2551,7 @@ body:has(.livingShell) { background:#171a1b; }
   .quietShell.livingShell .plannerTask .moveTaskButton,.quietShell.livingShell .plannerTask.deadline .moveTaskButton { grid-column:2; grid-row:auto; justify-self:start; padding-left:0; }
   .quietShell.livingShell .calendarNote { grid-template-columns:1fr; gap:10px; }
 }
+@media(max-width:760px){
   .quietShell.livingShell .energyRecovery { margin:48px -18px; padding:34px 18px; }
   .quietShell.livingShell .recoveryIntro,.quietShell.livingShell .recoveryRecommendation { grid-template-columns:1fr; gap:20px; }
   .quietShell.livingShell .recoveryIntro h2 { font-size:44px; }
@@ -2567,6 +2570,12 @@ body:has(.livingShell) { background:#171a1b; }
   .quietShell.livingShell .recoveryHour p { margin:0; }
   .quietShell.livingShell .recoveryLearning { grid-template-columns:150px minmax(0,1fr); }
   .quietShell.livingShell .recoveryLearning { grid-template-columns:1fr; gap:8px; }
+}
+
+.quietShell.livingShell .atlasExplanation { display:grid; grid-template-columns:190px minmax(0,680px); gap:34px; margin:0 0 34px; padding:20px 0; border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
+.quietShell.livingShell .atlasExplanation strong { font-weight:400; }
+.quietShell.livingShell .atlasExplanation p { margin:0; color:var(--muted); line-height:1.6; }
+@media(max-width:760px){ .quietShell.livingShell .atlasExplanation { grid-template-columns:1fr; gap:8px; } }
 
 /* Atlas refinement: one calm reading flow instead of a control dashboard. */
 .quietShell.livingShell .beautifulMoments { padding:52px 0 48px; }

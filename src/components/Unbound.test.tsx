@@ -182,8 +182,8 @@ describe("UNBOUND Life OS interactions", () => {
     await open();
     fireEvent.click(screen.getByRole("button", { name: "Energy 3 / 5" }));
     fireEvent.click(screen.getByRole("button", { name: "Focus 3 / 5" }));
-    fireEvent.click(screen.getByRole("button", { name: "Mental work or study" }));
-    fireEvent.click(screen.getByRole("button", { name: /Recovery after study/ }));
+    fireEvent.click(screen.getByRole("button", { name: "Screen work or deep mental work" }));
+    fireEvent.click(screen.getByRole("button", { name: /Mental recovery/ }));
     fireEvent.click(screen.getByRole("button", { name: "Suggest my next step" }));
     expect(screen.getByRole("heading", { name: "Active recovery" })).toBeTruthy();
     fireEvent.click(screen.getByRole("button", { name: "Add to today" }));
@@ -225,7 +225,7 @@ describe("UNBOUND Life OS interactions", () => {
     fireEvent.change(screen.getByLabelText("Private lists file"), { target: { files: [file] } });
     await screen.findByText("Private routines, lists, and tasks were imported. They stay in this browser only.");
     go(/My Library/);
-    fireEvent.click(screen.getByRole("button", { name: "Care & appearance" }));
+    fireEvent.click(screen.getByRole("button", { name: "Beauty atlas" }));
     expect(screen.getByRole("heading", { name: "Evening care" })).toBeTruthy();
     expect(screen.getByLabelText("Cleanse")).toBeTruthy();
   });

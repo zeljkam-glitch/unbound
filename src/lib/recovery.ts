@@ -14,7 +14,7 @@ export const recoveryNeeds: Array<{ id: RecoveryNeed; hr: string; en: string; no
   { id: "focus", hr: "Više fokusa", en: "More focus", noteHr: "Kad imaš snage, ali misli bježe.", noteEn: "When you have energy but your attention drifts." },
   { id: "energy", hr: "Više energije", en: "More energy", noteHr: "Kad ti treba mali fizički pomak.", noteEn: "When you need a small physical lift." },
   { id: "less-stimulation", hr: "Manje podražaja", en: "Less stimulation", noteHr: "Kad je svega previše.", noteEn: "When everything feels like too much." },
-  { id: "study-recovery", hr: "Oporavak nakon učenja", en: "Recovery after study", noteHr: "Za umor nakon dubokog mentalnog rada.", noteEn: "For fatigue after deep mental work." },
+  { id: "study-recovery", hr: "Mentalni oporavak", en: "Mental recovery", noteHr: "Nakon rada za računalom, učenja ili mnogo odluka.", noteEn: "After screen work, study, or too many decisions." },
   { id: "body-recovery", hr: "Oporavak tijela", en: "Body recovery", noteHr: "Nakon vježbanja ili dugog sjedenja.", noteEn: "After exercise or long sitting." },
   { id: "complete-rest", hr: "Potpuni odmor", en: "Complete rest", noteHr: "Kad nastavak rada više nije odgovor.", noteEn: "When continuing to work is not the answer." },
 ];

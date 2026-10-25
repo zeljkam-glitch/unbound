@@ -12,7 +12,7 @@ import MealPlanner from "./MealPlanner";
 const categories: Array<{ id: LibraryCategory; label: string; note: string }> = [
   { id: "shopping", label: "Shopping by store", note: "What to buy, grouped by where you go" },
   { id: "feel-good", label: "Beautiful moments", note: "Small experiences that make an ordinary day feel more alive" },
-  { id: "beauty", label: "Care & appearance", note: "Products, routines, references and care you want to remember" },
+  { id: "beauty", label: "Beauty atlas", note: "Products, treatments, routines and references you want to keep in one place" },
   { id: "places", label: "Places & escapes", note: "Restaurants, events and day trips" },
   { id: "meals", label: "Meals", note: "Things you actually like to cook" },
   { id: "workouts", label: "Workouts", note: "Gym, home, running and stretching" },
@@ -33,6 +33,7 @@ const listGuide = [
   { category: "meals" as const, hr: { title: "Želim lakše odlučiti što kuhati ili kupiti", note: "Počni jednim jelom koje stvarno voliš; sastojci mogu postati popis za kupnju." }, en: { title: "I want choosing meals or groceries to feel easier", note: "Begin with one meal you genuinely like; its ingredients can become a shopping list." } },
   { category: "places" as const, hr: { title: "Želim sačuvati mjesto, ideju ili mali bijeg", note: "Zapiši nešto čemu se želiš vratiti, bez obveze da odmah napraviš plan." }, en: { title: "I want to keep a place, idea, or small escape", note: "Save something you want to return to, without having to plan it now." } },
   { category: "feel-good" as const, hr: { title: "Želim otkriti što mi zapravo čini dobro", note: "Počni stvarnim trenutkom u kojem si osjetila malo više mira, radosti ili sebe." }, en: { title: "I want to discover what genuinely feels good", note: "Begin with a real moment when you felt a little more calm, joy, or yourself." } },
+  { category: "beauty" as const, hr: { title: "Želim sačuvati ideje za njegu ili izgled", note: "Atlas ljepote čuva proizvode, tretmane, rutine i reference — nije dnevni popis zadataka." }, en: { title: "I want to keep care or appearance ideas", note: "The beauty atlas keeps products, treatments, routines, and references—it is not a daily task list." } },
   { category: "lists" as const, hr: { title: "Nešto mi se stalno vraća u glavu", note: "Daj mu vlastiti popis i naziv koji tebi ima smisla, bez zadane kategorije." }, en: { title: "Something keeps returning to my mind", note: "Give it its own list and a name that makes sense to you, without a prescribed category." } },
 ];
 
@@ -43,7 +44,7 @@ export default function LibraryScreen({ state, update }: { state: State; update:
   const translated = hr ? [
     { id: "shopping" as const, label: "Kupnja po trgovinama", note: "Što trebaš kupiti, složeno prema mjestu na koje ideš" },
     { id: "feel-good" as const, label: "Lijepi trenuci", note: "Mala iskustva zbog kojih običan dan postane življi" },
-    { id: "beauty" as const, label: "Njega i izgled", note: "Proizvodi, rutine, reference i njega koju želiš zapamtiti" },
+    { id: "beauty" as const, label: "Atlas ljepote", note: "Proizvodi, tretmani, rutine i reference koje želiš čuvati na jednom mjestu" },
     { id: "places" as const, label: "Mjesta i mali bijegovi", note: "Restorani, događanja i jednodnevni izleti" },
     { id: "meals" as const, label: "Jela", note: "Ono što doista voliš kuhati" },
     { id: "workouts" as const, label: "Vježbanje", note: "Teretana, dom, trčanje i istezanje" },
@@ -82,6 +83,7 @@ export default function LibraryScreen({ state, update }: { state: State; update:
       <p>{hr ? "Ako se ništa ne uklapa, odaberi Popisi i nazovi ga svojim riječima. Ne mora nalikovati ničijoj tuđoj zbirci." : "If none of these fit, choose Lists and name it in your own words. It does not need to resemble anybody else's library."}</p>
     </section>}
     <div className="sectionHead"><div><div className="sectionLabel"><Icon /> {hr ? "MOJA ZBIRKA" : "MY LIBRARY"}</div><h2>{translated.find((item) => item.id === category)?.label}</h2><p className="quiet">{translated.find((item) => item.id === category)?.note}</p></div><button className="primary" onClick={() => { setEditing(null); setOpen(!open); }}><Plus /> {hr ? "Dodaj" : "Add item"}</button></div>
+    {category === "beauty" && <div className="atlasExplanation"><strong>{hr ? "Što ide u Atlas?" : "What belongs in the Atlas?"}</strong><p>{hr ? "Konkretan proizvod, tretman, rutina ili vizualna referenca kojoj se želiš vratiti. Opće želje i stvari za kupnju ostaju u Popisima ili Kupnji — zato ih ovdje ne miješamo." : "A specific product, treatment, routine, or visual reference you want to revisit. General wishes and shopping stay in Lists or Shopping, so they do not get mixed in here."}</p></div>}
     {category === "feel-good" && <div className="libraryMood"><Image src="/images/Unbound_Planner_02.jpg" alt="" fill sizes="100vw" /><div><span>{seasonal.month.toUpperCase()} · {seasonal.seasonName.toUpperCase()}</span><strong>{seasonal.theme}</strong></div></div>}
     {category === "meals" && <MealPlanner meals={items} state={state} update={update} />}
     {open && <form className={`card libraryForm ${category === "meals" ? "mealEntryForm" : ""}`} onSubmit={(event) => {

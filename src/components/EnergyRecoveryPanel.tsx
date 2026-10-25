@@ -7,7 +7,7 @@ import type { Update } from "@/lib/ui-types";
 import { useLanguage } from "./LanguageContext";
 
 const causes: Array<{ id: RecoveryCause; hr: string; en: string }> = [
-  { id: "mental", hr: "Mentalni rad ili učenje", en: "Mental work or study" },
+  { id: "mental", hr: "Rad za računalom ili duboki mentalni rad", en: "Screen work or deep mental work" },
   { id: "physical", hr: "Umor nakon kretanja ili sjedenja", en: "Fatigue after movement or sitting" },
   { id: "low-physical-energy", hr: "Manjak fizičke energije", en: "Low physical energy" },
   { id: "stress", hr: "Stres ili previše podražaja", en: "Stress or too much input" },
