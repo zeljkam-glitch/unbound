@@ -1194,6 +1194,19 @@ body:has(.livingShell) { background:#171a1b; }
 .livingShell .quietHeader nav a small { width:18px; color:#555b5a; font-size:8px; letter-spacing:.14em; }
 .livingShell .quietHeader nav a[aria-current] { color:#f4f3ee; }
 .livingShell .quietHeader nav a[aria-current]::after { display:none; }
+.livingShell .quietHeader nav a:focus-visible {
+  outline:0;
+  color:#f4f3ee;
+}
+.livingShell .quietHeader nav a:focus-visible::before {
+  content:"";
+  position:absolute;
+  left:-13px;
+  top:7px;
+  bottom:7px;
+  width:2px;
+  background:#9b3947;
+}
 .livingShell .headerTools { display:grid; justify-items:stretch; gap:12px; }
 .livingShell .languageSwitch { border-color:rgba(255,255,255,.16); }
 .livingShell .languageSwitch button { flex:1; color:#777c7b; }
@@ -2002,12 +2015,17 @@ body:has(.livingShell) { background:#171a1b; }
 .quietShell.livingShell .weatherIcon svg { width:34px; height:34px; }
 .quietShell.livingShell .weatherCard h2 { margin-top:8px; font-size:30px; font-weight:300; }
 .quietShell.livingShell .weatherCard p { margin-top:8px; }
-.quietShell.livingShell .weatherActions { display:grid; grid-template-columns:auto minmax(300px,430px); align-items:end; gap:18px; }
-.quietShell.livingShell .weatherActions > button { min-height:48px; padding:10px 0; border:0; border-bottom:1px solid #918c83; }
-.quietShell.livingShell .weatherActions > button:hover { color:#71242f; background:transparent; border-bottom-color:#71242f; }
-.quietShell.livingShell .weatherActions form { display:grid; grid-template-columns:minmax(180px,1fr) auto; gap:10px; }
-.quietShell.livingShell .weatherActions input { min-height:48px; padding:10px 0; }
-.quietShell.livingShell .weatherActions .primary { min-height:48px; }
+.quietShell.livingShell .weatherActions { display:flex; justify-content:flex-end; align-items:end; gap:30px; min-width:min(540px,100%); }
+.quietShell.livingShell .weatherActions .weatherLocation { display:flex; align-items:center; gap:8px; min-height:42px; padding:9px 0; color:#40433f; border:0; border-bottom:1px solid #918c83; white-space:nowrap; }
+.quietShell.livingShell .weatherActions .weatherLocation:hover { color:#71242f; background:transparent; border-bottom-color:#71242f; }
+.quietShell.livingShell .weatherActions form { display:grid; grid-template-columns:minmax(190px,300px) auto; align-items:end; gap:14px; }
+.quietShell.livingShell .weatherActions label { display:grid; gap:7px; }
+.quietShell.livingShell .weatherActions label > span { color:#767870; font-size:9px; letter-spacing:.15em; }
+.quietShell.livingShell .weatherActions input { width:100%; min-height:42px; margin:0; padding:8px 0; border:0; border-bottom:1px solid #918c83; background:transparent; }
+.quietShell.livingShell .weatherActions input:focus-visible { outline:0; border-bottom:2px solid #71242f; }
+.quietShell.livingShell .weatherActions .weatherSubmit { display:flex; align-items:center; gap:12px; min-height:42px; padding:8px 0; color:#30322f; border:0; border-bottom:1px solid #30322f; background:transparent; }
+.quietShell.livingShell .weatherActions .weatherSubmit:not(:disabled):hover { color:#71242f; border-bottom-color:#71242f; background:transparent; }
+.quietShell.livingShell .weatherActions .weatherSubmit:disabled { color:#9a9a94; border-bottom-color:#c8c5bd; background:transparent; }
 
 /* The Atlas is editorial content, not a dark dashboard module. */
 .quietShell.livingShell .energyRecovery {
@@ -2048,17 +2066,19 @@ body:has(.livingShell) { background:#171a1b; }
 .quietShell.livingShell .recoveryChoiceRow { display:flex; flex-wrap:wrap; margin-top:14px; border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
 .quietShell.livingShell .recoveryChoiceRow button { min-height:46px; padding:8px 16px; border:0; border-right:1px solid var(--line); }
 .quietShell.livingShell .recoveryChoiceRow button[aria-pressed="true"] { color:#71242f; background:#e5dfd5; }
-.quietShell.livingShell .recoveryNeeds { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); margin-top:16px; border-top:1px solid var(--ink); }
-.quietShell.livingShell .recoveryNeeds button { display:grid; grid-template-columns:26px 1fr; gap:7px 12px; min-height:136px; padding:20px 18px 18px 0; text-align:left; border:0; border-right:1px solid var(--line); border-bottom:1px solid var(--line); }
-.quietShell.livingShell .recoveryNeeds button:nth-child(3n+2),.quietShell.livingShell .recoveryNeeds button:nth-child(3n+3) { padding-left:18px; }
-.quietShell.livingShell .recoveryNeeds button:nth-child(3n) { border-right:0; }
-.quietShell.livingShell .recoveryNeeds small { grid-row:1/3; color:#71242f; font-size:10px; letter-spacing:.14em; }
-.quietShell.livingShell .recoveryNeeds strong { font-size:18px; font-weight:400; }
-.quietShell.livingShell .recoveryNeeds span { color:var(--muted); font-size:13px; line-height:1.45; }
-.quietShell.livingShell .recoveryNeeds button:hover { background:#e7e2d9; }
-.quietShell.livingShell .recoveryNeeds button[aria-pressed="true"] { color:#f4f1eb; background:#252724; }
-.quietShell.livingShell .recoveryNeeds button[aria-pressed="true"] small { color:#c9a06c; }
-.quietShell.livingShell .recoveryNeeds button[aria-pressed="true"] span { color:#c7c8c3; }
+.quietShell.livingShell .recoveryNeeds { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); margin-top:16px; border-top:1px solid var(--ink); }
+.quietShell.livingShell .recoveryNeeds button { position:relative; display:grid; grid-template-columns:34px minmax(0,1fr); gap:4px 14px; min-height:92px; padding:18px 28px 17px 0; text-align:left; border:0; border-bottom:1px solid var(--line); }
+.quietShell.livingShell .recoveryNeeds button:nth-child(even) { padding-left:24px; border-left:1px solid var(--line); }
+.quietShell.livingShell .recoveryNeeds small { grid-row:1/3; padding-top:3px; color:#71242f; font-size:9px; letter-spacing:.14em; }
+.quietShell.livingShell .recoveryNeeds strong { font-size:16px; font-weight:400; line-height:1.25; }
+.quietShell.livingShell .recoveryNeeds span { color:var(--muted); font-size:12px; line-height:1.4; }
+.quietShell.livingShell .recoveryNeeds button::after { content:""; position:absolute; right:0; bottom:-1px; left:0; height:2px; background:transparent; }
+.quietShell.livingShell .recoveryNeeds button:hover { background:transparent; }
+.quietShell.livingShell .recoveryNeeds button:hover strong { color:#71242f; }
+.quietShell.livingShell .recoveryNeeds button[aria-pressed="true"] { color:var(--ink); background:#e7e2d9; }
+.quietShell.livingShell .recoveryNeeds button[aria-pressed="true"]::after { background:#71242f; }
+.quietShell.livingShell .recoveryNeeds button[aria-pressed="true"] small { color:#71242f; }
+.quietShell.livingShell .recoveryNeeds button[aria-pressed="true"] span { color:#5f625f; }
 .quietShell.livingShell .recoveryContinue { display:flex; align-items:center; gap:14px; margin:30px 0 0 auto; padding:12px 0; color:#71242f; border:0; border-bottom:1px solid #71242f; }
 .quietShell.livingShell .recoveryRecommendation { display:grid; grid-template-columns:190px minmax(0,1fr); gap:34px; margin-top:48px; }
 .quietShell.livingShell .recoveryRecommendation > aside { display:grid; grid-template-columns:1fr auto; align-content:start; gap:4px 10px; }
@@ -2317,7 +2337,7 @@ body:has(.livingShell) { background:#171a1b; }
   .quietShell.livingShell .recoveryCheckin,.quietShell.livingShell .recoveryAfter { margin-left:184px; }
   .quietShell.livingShell .recoveryRecommendation { grid-template-columns:150px minmax(0,1fr); }
   .quietShell.livingShell .weatherCard { grid-template-columns:44px 1fr; }
-  .quietShell.livingShell .weatherActions { grid-column:2; grid-template-columns:1fr; width:100%; }
+  .quietShell.livingShell .weatherActions { grid-column:2; flex-wrap:wrap; width:100%; }
   .quietShell.livingShell .beautifulMomentsIntro > div,.quietShell.livingShell .momentDiscoveryHead { grid-template-columns:150px minmax(0,1fr); }
   .quietShell.livingShell .momentOwnership,.quietShell.livingShell .feelingChoices,.quietShell.livingShell .quietAction,.quietShell.livingShell .momentFootnote,.quietShell.livingShell .discoveryMethods,.quietShell.livingShell .discoveryForm,.quietShell.livingShell .momentFilters,.quietShell.livingShell .momentToolbar,.quietShell.livingShell .momentGrid,.quietShell.livingShell .momentAddForm,.quietShell.livingShell .plannedMoments,.quietShell.livingShell .momentEmpty { margin-left:184px; }
   .quietShell.livingShell .discoveryMethods button { grid-template-columns:28px 1fr; }
@@ -2329,8 +2349,9 @@ body:has(.livingShell) { background:#171a1b; }
 @media(max-width:760px){
   .quietShell.livingShell .pageIntro h1,.quietShell.livingShell.tab-inbox .pageIntro h1 { line-height:1.05; }
   .quietShell.livingShell .weatherCard { grid-template-columns:36px 1fr; gap:14px; }
-  .quietShell.livingShell .weatherActions { grid-column:1/-1; }
-  .quietShell.livingShell .weatherActions form { grid-template-columns:1fr; }
+  .quietShell.livingShell .weatherActions { grid-column:1/-1; align-items:stretch; flex-direction:column; gap:16px; }
+  .quietShell.livingShell .weatherActions .weatherLocation { align-self:start; }
+  .quietShell.livingShell .weatherActions form { grid-template-columns:minmax(0,1fr) auto; width:100%; }
   .quietShell.livingShell .beautifulMoments { margin:48px -18px; padding:34px 18px; }
   .quietShell.livingShell .beautifulMomentsIntro > div,.quietShell.livingShell .momentDiscoveryHead { display:block; }
   .quietShell.livingShell .beautifulMomentsIntro .sectionLabel { display:flex; margin-bottom:18px; }
@@ -2355,7 +2376,7 @@ body:has(.livingShell) { background:#171a1b; }
   .quietShell.livingShell .recoveryCheckin,.quietShell.livingShell .recoveryAfter { margin-left:0; }
   .quietShell.livingShell .recoveryMeasures { grid-template-columns:1fr; gap:24px; }
   .quietShell.livingShell .recoveryNeeds { grid-template-columns:1fr; }
-  .quietShell.livingShell .recoveryNeeds button,.quietShell.livingShell .recoveryNeeds button:nth-child(3n+2),.quietShell.livingShell .recoveryNeeds button:nth-child(3n+3) { padding:18px 0; border-right:0; }
+  .quietShell.livingShell .recoveryNeeds button,.quietShell.livingShell .recoveryNeeds button:nth-child(even) { min-height:78px; padding:15px 0; border-left:0; }
   .quietShell.livingShell .protocolHeading { grid-template-columns:1fr; align-items:start; }
   .quietShell.livingShell .protocolHeading button { justify-self:start; }
   .quietShell.livingShell .recoveryAfter > div:first-child { display:block; }
