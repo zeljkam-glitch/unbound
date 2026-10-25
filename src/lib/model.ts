@@ -25,6 +25,7 @@ export type InboxItem = { id: string; text: string; createdAt: string };
 export type Routine = { id: string; title: string; period: "morning" | "evening" | "weekly" };
 export type BeautifulMoment = { id: string; title: string; description: string; url?: string; duration: number; budget: number; energy: "low" | "steady" | "high"; feelings: string[]; category: string; setting: "inside" | "outside" | "either"; badWeather: boolean; solo: boolean; social: boolean; favorite: boolean; completedDates: string[] };
 export type MomentPreferences = { feelings: string[]; maxMinutes: number; maxBudget: number; energy: "" | "low" | "steady" | "high"; setting: "" | "inside" | "outside"; badWeatherOnly: boolean; condition: "" | "gentle" | "rest" };
+export type DayContext = { indoorsAllDay: boolean; smallSpace: boolean; cabinFever: boolean; lowPhysicalEnergy: boolean };
 export type WeeklyCheckin = { win: string; learned: string; next: string; energy: string };
 export type TwelveWeekPlan = { startDate: string; outcome: string; why: string; leadAction: string; weeklyTarget: number; weeks: Record<string, { focus: string; reviewed: boolean }> };
 export type RecoveryNeed = "focus" | "energy" | "less-stimulation" | "study-recovery" | "body-recovery" | "complete-rest";
@@ -46,6 +47,8 @@ export type State = {
   momentPreferences: Record<string, MomentPreferences>;
   recoveryCheckins?: RecoveryCheckin[];
   twelveWeek?: TwelveWeekPlan;
+  dayContexts?: Record<string, DayContext>;
+  momentCatalogRevision?: number;
 };
 
 export const localDate = (d = new Date()) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
@@ -172,7 +175,7 @@ export function demo(locale: "hr" | "en" = "en"): State {
       { id: "r4", title: hr ? "Odaberi prvi mali korak za sutra" : "Choose tomorrow’s first small step", period: "evening" },
     ],
     routineDone: {}, anchors: {}, energies: {}, focus: {}, reflections: {}, weeklyCheckins: {}, libraryChecked: {},
-    beautifulMoments: beautifulMomentCatalog(locale), plannedMoments: {}, momentPreferences: {}, recoveryCheckins: [],
+    beautifulMoments: beautifulMomentCatalog(locale), plannedMoments: {}, momentPreferences: {}, recoveryCheckins: [], dayContexts: {}, momentCatalogRevision: 2,
     twelveWeek: { startDate: today, outcome: "", why: "", leadAction: "", weeklyTarget: 3, weeks: {} },
   };
 }
@@ -180,12 +183,20 @@ function migrateTask(t: Record<string, unknown>): Task { return task(String(t.id
 export function migrateState(value: unknown): State | null {
   if (!value || typeof value !== "object") return null;
   const v = value as Record<string, unknown>;
-  if (v.version === 6 && isState(v)) return { ...v, library: cleanPersonalLibrary(retireFormerDemoThought(v.library)), recoveryCheckins: Array.isArray(v.recoveryCheckins) ? v.recoveryCheckins as RecoveryCheckin[] : [] };
+  if (v.version === 6 && isState(v)) {
+    const current = v as unknown as State;
+    const locale = current.beautifulMoments.some((moment) => /[čćžšđ]/i.test(`${moment.title} ${moment.description}`)) ? "hr" : "en";
+    const catalog = beautifulMomentCatalog(locale);
+    const beautifulMoments = (current.momentCatalogRevision || 0) < 2
+      ? [...current.beautifulMoments.filter((moment) => moment.id !== "moment-tea-window" && !catalog.some((seed) => seed.id === moment.id)), ...catalog.map((seed) => { const saved = current.beautifulMoments.find((moment) => moment.id === seed.id); return saved ? { ...seed, favorite: saved.favorite, completedDates: saved.completedDates, url: saved.url || seed.url } : seed; })]
+      : current.beautifulMoments;
+    return { ...current, library: cleanPersonalLibrary(retireFormerDemoThought(current.library)), recoveryCheckins: Array.isArray(current.recoveryCheckins) ? current.recoveryCheckins : [], dayContexts: current.dayContexts || {}, beautifulMoments, momentCatalogRevision: 2 };
+  }
   if (v.version === 5 && isState({ ...v, version: 6 })) {
     const previous = v as unknown as State;
     const hr = previous.beautifulMoments.some((moment) => moment.id === "moment-one-song" && moment.title.startsWith("Jedna pjesma"));
     const addition = beautifulMomentCatalog(hr ? "hr" : "en").find((moment) => moment.id === "moment-one-song-move");
-    return { ...previous, version: 6, library: cleanPersonalLibrary(retireFormerDemoThought(previous.library)), beautifulMoments: addition && !previous.beautifulMoments.some((moment) => moment.id === addition.id) ? [addition, ...previous.beautifulMoments] : previous.beautifulMoments, recoveryCheckins: Array.isArray(previous.recoveryCheckins) ? previous.recoveryCheckins : [] };
+    return { ...previous, version: 6, library: cleanPersonalLibrary(retireFormerDemoThought(previous.library)), beautifulMoments: addition && !previous.beautifulMoments.some((moment) => moment.id === addition.id) ? [addition, ...previous.beautifulMoments] : previous.beautifulMoments, recoveryCheckins: Array.isArray(previous.recoveryCheckins) ? previous.recoveryCheckins : [], dayContexts: {}, momentCatalogRevision: 0 };
   }
   if (v.version === 4 && Array.isArray(v.library)) return { ...(v as unknown as State), version: 6, library: [...(v.library as LibraryItem[]), ...quoteLibrary("hr").filter((quote) => !(v.library as LibraryItem[]).some((item) => item.id === quote.id))] };
   if ((v.version === 2 || v.version === 3) && Array.isArray(v.tasks) && Array.isArray(v.projects) && Array.isArray(v.library) && Array.isArray(v.routines)) return { ...(v as unknown as State), version: 6, library: [...(v.library as LibraryItem[]), ...quoteLibrary("hr")], beautifulMoments: beautifulMomentCatalog("hr"), plannedMoments: {}, momentPreferences: {} };

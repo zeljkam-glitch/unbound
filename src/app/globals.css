@@ -1098,6 +1098,33 @@ html[data-theme="quiet"] button { border-radius:0; }
 .cycleFields label:first-child { grid-column:1/-1; }
 .cyclePair { display:grid; grid-template-columns:1fr 1fr; gap:18px; }
 .cycleWeeks { display:grid; grid-template-columns:1fr 1fr; }
+.cycleGuideStep { max-width:820px; padding:22px 0 80px; }
+.cycleGuideStep h3,.cycleCurrentWeek h3 { max-width:760px; margin:18px 0 14px; font:300 clamp(38px,4.5vw,64px)/1.02 "Inter Tight",sans-serif; letter-spacing:-.035em; }
+.cycleGuideStep > p,.cycleCurrentWeek > p { max-width:640px; margin:0 0 42px; color:var(--muted); font-size:18px; line-height:1.5; }
+.cycleGuideStep label { display:grid; gap:12px; max-width:760px; margin:0 0 36px; }
+.cycleGuideStep input,.cycleGuideStep textarea,.cycleCurrentWeek input { width:100%; min-height:58px; padding:12px 0; border:0; border-bottom:1px solid var(--ink); background:transparent; font-size:20px; }
+.cycleGuideStep textarea { min-height:120px; resize:vertical; }
+.cycleNext { margin-left:auto; }
+.cycleNav { display:flex; justify-content:space-between; gap:16px; margin-top:34px; }
+.cycleNav button,.cycleNext { display:inline-flex; align-items:center; gap:10px; min-height:52px; padding:12px 20px; }
+.cycleFrequency { display:grid; gap:14px; margin:8px 0 36px; }
+.cycleFrequency > span { color:var(--muted); }
+.cycleFrequency > div { display:flex; gap:8px; }
+.cycleFrequency button { min-width:56px; min-height:48px; border:1px solid var(--line); }
+.cycleFrequency button[aria-pressed="true"] { color:var(--paper); background:var(--ink); border-color:var(--ink); }
+.cycleSummary { display:flex; justify-content:space-between; gap:24px; padding-bottom:34px; border-bottom:1px solid var(--line); }
+.cycleSummary h3 { margin:10px 0 8px; font-size:32px; }
+.cycleSummary p { max-width:640px; margin:0; color:var(--muted); }
+.cycleCurrentWeek { padding:48px 0; border-bottom:1px solid var(--ink); }
+.cycleCurrentWeek label { display:grid; gap:10px; max-width:760px; margin-bottom:28px; }
+.cycleCurrentWeek > button { display:inline-flex; align-items:center; gap:10px; min-height:50px; padding:10px 18px; }
+.cycleReviewed { border:1px solid var(--line); }
+.cycleAllWeeks { padding:30px 0; }
+.cycleAllWeeks summary { cursor:pointer; font-size:18px; }
+.cycleAllWeeks .cycleWeeks { margin-top:24px; border-top:1px solid var(--line); }
+.cycleAllWeeks .cycleWeek { display:flex; gap:14px; min-height:90px; padding:20px; border-right:1px solid var(--line); border-bottom:1px solid var(--line); }
+.cycleAllWeeks .cycleWeek div { display:grid; gap:8px; }
+.cycleAllWeeks .cycleWeek small { color:var(--muted); }
 .cycleWeek { display:grid; grid-template-columns:44px 1fr; min-height:105px; padding:18px 18px 18px 0; border-bottom:1px solid var(--line); }
 .cycleWeek:nth-child(odd) { border-right:1px solid var(--line); }
 .cycleWeek:nth-child(even) { padding-left:18px; }
@@ -1258,10 +1285,15 @@ body:has(.livingShell) { background:#171a1b; }
 .livingShell .seasonalIdeas p { margin:42px 0 28px; font-size:clamp(17px,1.8vw,25px); font-weight:300; line-height:1.18; }
 .livingShell .seasonalIdeas button { justify-content:flex-start; width:max-content; max-width:100%; margin-top:auto; padding:8px 0; border:0; color:var(--muted); font-size:10px; }
 .livingShell .seasonalIdeas button:disabled { opacity:.55; }
-.livingShell .seasonalContextChoices { grid-column:1/-1; display:flex; flex-wrap:wrap; align-items:center; gap:8px; padding:18px 0; border-top:1px solid var(--line); }
-.livingShell .seasonalContextChoices > span { margin-right:12px; color:var(--muted); font-size:9px; letter-spacing:.15em; }
+.livingShell .seasonalContextChoices { grid-column:1/-1; padding:18px 0; border-top:1px solid var(--line); }
+.livingShell .seasonalContextChoices summary { display:flex; align-items:baseline; justify-content:space-between; gap:18px; cursor:pointer; list-style:none; }
+.livingShell .seasonalContextChoices summary::-webkit-details-marker { display:none; }
+.livingShell .seasonalContextChoices summary span { font-size:14px; }
+.livingShell .seasonalContextChoices summary small { color:var(--muted); font-size:11px; }
+.livingShell .seasonalContextChoices > div { display:flex; flex-wrap:wrap; align-items:center; gap:8px; padding-top:18px; }
 .livingShell .seasonalContextChoices button { min-height:36px; padding:7px 12px; border:1px solid var(--line); font-size:12px; }
 .livingShell .seasonalContextChoices button[aria-pressed="true"] { color:#f3f0e9; background:var(--ink); border-color:var(--ink); }
+.livingShell .seasonalContextChoices .seasonalContextClear { margin-left:auto; border-color:transparent; color:var(--muted); text-decoration:underline; text-underline-offset:4px; }
 .livingShell .plannerSeason { max-width:430px; margin:18px 0 0; color:rgba(255,255,255,.7); font-size:12px; line-height:1.45; }
 .livingShell .todayGrid.hasWeekly { grid-template-columns:repeat(3,minmax(0,1fr)); }
 .livingDayDetails .tasksSection { margin-bottom:40px; }
@@ -1270,7 +1302,7 @@ body:has(.livingShell) { background:#171a1b; }
 .livingShell .card { background:transparent; border-color:var(--line); }
 .livingShell button { border-radius:0; }
 .livingShell .primary { background:#0c0f10; color:#edede8; }
-.livingShell .plannerHero { min-height:360px; align-items:end; margin-top:28px; padding:42px; overflow:hidden; background:linear-gradient(90deg,rgba(8,12,15,.88),rgba(8,12,15,.18)),url('/living-frames/planner-train.jpg') center/cover; color:#fff; }
+.livingShell .plannerHero { min-height:360px; align-items:end; margin-top:28px; padding:42px; overflow:hidden; background:linear-gradient(90deg,rgba(8,12,15,.88),rgba(8,12,15,.18)),url('/images/Unbound_Planner_03.jpg') center/cover; color:#fff; }
 .livingShell .plannerHero .sectionLabel { color:rgba(255,255,255,.6); }
 .livingShell .plannerHero h2 { max-width:10ch; font-weight:300; }
 .livingShell .plannerHero .viewSwitch { border-color:rgba(255,255,255,.55); }
@@ -1300,7 +1332,7 @@ body:has(.livingShell) { background:#171a1b; }
 
 @media(max-width:760px){
   .quietShell.livingShell .twelveWeekMethod { grid-template-columns:1fr; align-items:start; }
-  .livingShell .seasonalContextChoices { align-items:flex-start; flex-direction:column; }
+  .livingShell .seasonalContextChoices summary,.livingShell .seasonalContextChoices > div { align-items:flex-start; flex-direction:column; }
   body:has(.livingShell) { background:#0c0f10; }
   .livingShell { padding-top:56px; }
   .livingShell .quietHeader { inset:0 0 auto; width:100%; height:56px; flex-direction:row; align-items:center; padding:0 16px; border-bottom:1px solid rgba(255,255,255,.1); }
@@ -1557,7 +1589,7 @@ body:has(.livingShell) { background:#171a1b; }
 }
 
 /* Final Living Frames guard. This is the selected direction. */
-.quietShell.livingShell .plannerHero { min-height:360px; align-items:end; margin-top:28px; padding:42px; overflow:hidden; background:linear-gradient(90deg,rgba(8,12,15,.88),rgba(8,12,15,.18)),url('/living-frames/planner-train.jpg') center/cover; color:#fff; }
+.quietShell.livingShell .plannerHero { min-height:360px; align-items:end; margin-top:28px; padding:42px; overflow:hidden; background:linear-gradient(90deg,rgba(8,12,15,.88),rgba(8,12,15,.18)),url('/images/Unbound_Planner_03.jpg') center/cover; color:#fff; }
 .quietShell.livingShell .plannerHero .sectionLabel { color:rgba(255,255,255,.6); }
 .quietShell.livingShell .plannerHero .viewSwitch { border-color:rgba(255,255,255,.55); }
 .quietShell.livingShell .plannerHero .viewSwitch button { color:rgba(255,255,255,.68); }
@@ -2293,6 +2325,8 @@ body:has(.livingShell) { background:#171a1b; }
   font-size:13px;
 }
 .quietShell.livingShell .momentListen:hover { border-bottom-color:var(--ink); }
+.quietShell.livingShell .momentSpotifyEmbed { width:100%; height:80px; margin:18px 0 0; border:0; }
+.quietShell.livingShell .momentAddSpotify { grid-column:1/-1; }
 .quietShell.livingShell .momentDone { color:var(--ink); background:transparent; border-color:#777c79; }
 .quietShell.livingShell .plannedMoments,.quietShell.livingShell .plannedMoment { border-color:var(--line); }
 .quietShell.livingShell .plannedMoment small { color:var(--muted); }

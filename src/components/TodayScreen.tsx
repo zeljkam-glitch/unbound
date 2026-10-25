@@ -79,7 +79,7 @@ export default function TodayScreen({ state, today, update }: { state: State; to
   return <>
     <section className="livingTodayStage">
       <div className="livingTodayVisual">
-        <Image src="/living-frames/today-morning.jpg" alt="" fill sizes="(max-width: 760px) 100vw, 68vw" priority />
+        <Image src="/images/Unbound_Planner_04.jpg" alt="" fill sizes="(max-width: 760px) 100vw, 68vw" priority />
         <div className="livingVisualShade" />
         <div className="livingVisualMeta"><span>{todayDate.toLocaleDateString(hr ? "hr-HR" : "en-GB", { weekday: "long" })}</span><span>{todayDate.toLocaleDateString(hr ? "hr-HR" : "en-GB", { day: "numeric", month: "long" })}</span><span>{new Date().toLocaleTimeString(hr ? "hr-HR" : "en-GB", { hour: "2-digit", minute: "2-digit" })}</span></div>
         <div className="livingVisualCaption"><span>{hr ? "DANAS / TVOJ PROSTOR" : "TODAY / YOUR SPACE"}</span><h1>{hr ? <>Sačuvaj oblik<br />svoga dana.</> : <>Protect the shape<br />of the day.</>}</h1></div>
@@ -93,7 +93,7 @@ export default function TodayScreen({ state, today, update }: { state: State; to
     </section>
     <div className="livingDayDetails">
     <WeatherCard onWeatherChange={setWeatherCode} />
-    <SeasonalCompass update={update} today={today} weatherCode={weatherCode} obligations={todayTasks.filter((task) => !task.completedAt).map((task) => taskTitle(task, locale))} />
+    <SeasonalCompass state={state} update={update} today={today} weatherCode={weatherCode} obligations={todayTasks.filter((task) => !task.completedAt).map((task) => taskTitle(task, locale))} />
     <EnergyRecoveryPanel state={state} today={today} update={update} />
     <BeautifulMomentsPanel state={state} today={today} weatherCode={weatherCode} update={update} />
     <div className={`todayGrid ${todayDate.getDay() === 0 ? "hasWeekly" : ""}`}>

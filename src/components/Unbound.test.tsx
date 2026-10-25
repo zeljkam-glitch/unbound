@@ -83,7 +83,12 @@ describe("UNBOUND Life OS interactions", () => {
   it("stores an optional twelve-week direction and weekly review", async () => {
     await open(); go(/Goals/);
     fireEvent.click(screen.getByRole("button", { name: "Open 12 weeks" }));
-    fireEvent.change(screen.getByLabelText("What do you want to change in the next 12 weeks?"), { target: { value: "Finish the semester calmly" } });
+    fireEvent.change(screen.getByLabelText("My direction"), { target: { value: "Finish the semester calmly" } });
+    fireEvent.click(screen.getByRole("button", { name: "Continue" }));
+    fireEvent.change(screen.getByLabelText("I will know it has moved when…"), { target: { value: "I can study without carrying it all day" } });
+    fireEvent.click(screen.getByRole("button", { name: "Continue" }));
+    fireEvent.change(screen.getByLabelText("My weekly action"), { target: { value: "Choose three study blocks" } });
+    fireEvent.click(screen.getByRole("button", { name: "Build my 12 weeks" }));
     fireEvent.click(screen.getByRole("button", { name: "Complete week 1 review" }));
     await waitFor(() => expect(JSON.parse(localStorage.getItem("unbound.v1")!).twelveWeek).toMatchObject({ outcome: "Finish the semester calmly", weeks: { 1: { reviewed: true } } }));
   });

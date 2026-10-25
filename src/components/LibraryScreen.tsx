@@ -82,7 +82,7 @@ export default function LibraryScreen({ state, update }: { state: State; update:
       <p>{hr ? "Ako se ništa ne uklapa, odaberi Popisi i nazovi ga svojim riječima. Ne mora nalikovati ničijoj tuđoj zbirci." : "If none of these fit, choose Lists and name it in your own words. It does not need to resemble anybody else's library."}</p>
     </section>}
     <div className="sectionHead"><div><div className="sectionLabel"><Icon /> {hr ? "MOJA ZBIRKA" : "MY LIBRARY"}</div><h2>{translated.find((item) => item.id === category)?.label}</h2><p className="quiet">{translated.find((item) => item.id === category)?.note}</p></div><button className="primary" onClick={() => { setEditing(null); setOpen(!open); }}><Plus /> {hr ? "Dodaj" : "Add item"}</button></div>
-    {category === "feel-good" && <div className="libraryMood"><Image src="/living-frames/library-rain-window.jpg" alt="" fill sizes="100vw" /><div><span>{seasonal.month.toUpperCase()} · {seasonal.seasonName.toUpperCase()}</span><strong>{seasonal.theme}</strong></div></div>}
+    {category === "feel-good" && <div className="libraryMood"><Image src="/images/Unbound_Planner_02.jpg" alt="" fill sizes="100vw" /><div><span>{seasonal.month.toUpperCase()} · {seasonal.seasonName.toUpperCase()}</span><strong>{seasonal.theme}</strong></div></div>}
     {category === "meals" && <MealPlanner meals={items} state={state} update={update} />}
     {open && <form className={`card libraryForm ${category === "meals" ? "mealEntryForm" : ""}`} onSubmit={(event) => {
       event.preventDefault();

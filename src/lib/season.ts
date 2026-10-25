@@ -95,7 +95,7 @@ export function seasonalContext(date = new Date(), locale: SeasonLocale = "en", 
     context.smallSpace ? "U malom prostoru promijeni samo jedan kut: makni jednu stvar, promijeni svjetlo ili sjedni na drugo mjesto." : "",
     rainy ? "Kiša i hladnoća danas ne traže izlazak. Promijeni atmosferu unutra: druga rasvjeta, glazba ili topli tuš." : "",
     afterDark ? "Mrak je već pao. Upali lampu, svijeću ili aroma lampu i napravi jasnu promjenu iz dana u večer." : "",
-    sunday ? "Nedjelja je. Ne oslanjaj se na otvorene trgovine; odaberi nešto s onim što već imaš." : "",
+    sunday ? "Nedjelja je. Ne oslanjaj se na otvorene trgovine; odaberi nešto od onoga što već imaš." : "",
   ];
   const adaptiveEn = [
     context.cabinFever ? "If you are tired of the flat, you do not need another quiet sit. Dance to one song, call someone, or change clothes to mark a new part of the day." : "",
