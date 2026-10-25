@@ -2518,3 +2518,82 @@ body:has(.livingShell) { background:#171a1b; }
   .quietShell.livingShell .routineCard,.quietShell.livingShell .routineCard:first-child,.quietShell.livingShell .routineCard:last-child { padding:26px 0 30px; border-right:0; border-bottom:1px solid var(--line); }
   .quietShell.livingShell .routineCard:last-child { border-bottom:0; }
 }
+
+/* Planner refinement: compact day ledger with the task as the focal point. */
+.quietShell.livingShell .dayColumn {
+  grid-template-columns:170px minmax(0,1fr);
+  min-height:0;
+  background:transparent;
+}
+.quietShell.livingShell .dayColumn.isToday {
+  background:linear-gradient(90deg,#e4e0d7 0,#e4e0d7 170px,rgba(228,224,215,.28) 170px,rgba(228,224,215,.28) 100%);
+}
+.quietShell.livingShell .dayColumn > header {
+  gap:5px;
+  padding:22px 24px;
+}
+.quietShell.livingShell .dayColumn > header strong { font-size:10px; }
+.quietShell.livingShell .dayColumn > header span { font-size:28px; line-height:1.05; }
+.quietShell.livingShell .dayColumn > header small { max-width:16ch; margin-top:8px; font-size:11px; line-height:1.45; }
+.quietShell.livingShell .dayColumn > div {
+  display:block;
+  max-width:1100px;
+  padding:12px 28px 0;
+}
+.quietShell.livingShell .plannerTask,
+.quietShell.livingShell .plannerTask.fixed,
+.quietShell.livingShell .plannerTask.flexible,
+.quietShell.livingShell .plannerTask.optional,
+.quietShell.livingShell .plannerTask.deadline {
+  grid-template-columns:28px minmax(0,1fr) auto;
+  align-items:start;
+  gap:4px 16px;
+  min-height:0;
+  padding:17px 0 18px;
+  border:0;
+  border-bottom:1px solid #bcb8af;
+  background:transparent;
+}
+.quietShell.livingShell .plannerTask.deadline { border-bottom-color:#a77b80; }
+.quietShell.livingShell .plannerTask > button:first-child {
+  width:26px;
+  height:26px;
+  min-width:26px;
+  min-height:26px;
+}
+.quietShell.livingShell .plannerTask strong { font-size:19px; font-weight:400; line-height:1.25; }
+.quietShell.livingShell .plannerTask span { margin-top:3px; font-size:12px; }
+.quietShell.livingShell .plannerTask small { width:max-content; max-width:100%; margin-top:5px; font-size:11px; line-height:1.35; }
+.quietShell.livingShell .plannerTask .deadline {
+  width:max-content;
+  max-width:100%;
+  padding:0;
+  border:0;
+  font-weight:500;
+}
+.quietShell.livingShell .plannerTask .moveTaskButton,
+.quietShell.livingShell .plannerTask.deadline .moveTaskButton {
+  align-self:center;
+  min-height:34px;
+  margin:0;
+  padding:6px 0 5px 14px;
+  font-size:12px;
+}
+.quietShell.livingShell .addDayTask {
+  grid-column:2;
+  justify-self:start;
+  width:max-content;
+  margin:10px 28px 16px;
+  padding:7px 0;
+  font-size:13px;
+}
+
+@media(max-width:760px){
+  .quietShell.livingShell .dayColumn { grid-template-columns:1fr; }
+  .quietShell.livingShell .dayColumn.isToday { background:#e4e0d7; }
+  .quietShell.livingShell .dayColumn > header { padding:20px 0; border-right:0; }
+  .quietShell.livingShell .dayColumn > div { padding:6px 0 0; }
+  .quietShell.livingShell .plannerTask,.quietShell.livingShell .plannerTask.fixed,.quietShell.livingShell .plannerTask.flexible,.quietShell.livingShell .plannerTask.optional,.quietShell.livingShell .plannerTask.deadline { grid-template-columns:28px minmax(0,1fr); }
+  .quietShell.livingShell .plannerTask .moveTaskButton,.quietShell.livingShell .plannerTask.deadline .moveTaskButton { grid-column:2; align-self:start; justify-self:start; padding-left:0; }
+  .quietShell.livingShell .addDayTask { grid-column:1; margin:10px 0 18px; }
+}

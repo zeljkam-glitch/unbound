@@ -33,7 +33,7 @@ export default function PlannerScreen({ state, update }: { state: State; update:
       <button aria-label={(t.completedAt ? (hr ? "Ponovno otvori " : "Reopen ") : (hr ? "Dovrši " : "Complete ")) + t.title} onClick={() => update((s) => ({ ...s, tasks: s.tasks.map((x) => x.id === t.id ? toggleTask(x) : x) }))}>{t.completedAt ? <Check /> : null}</button>
       <strong>{t.title}</strong>
       <span><Clock /> {minutesLabel(t.duration)}{t.time ? ` · ${t.time}` : (hr ? " · bez satnice" : " · no set time")}</span>
-      {deadline && <small className={`deadline ${deadline.tone}`}><CalendarBlank /> {deadline.label} · {new Date(t.deadline + "T12:00:00").toLocaleDateString("en-GB", { day: "numeric", month: "short" })}</small>}
+      {deadline && <small className={`deadline ${deadline.tone}`}><CalendarBlank /> {deadline.label} · {new Date(t.deadline + "T12:00:00").toLocaleDateString(hr ? "hr-HR" : "en-GB", { day: "numeric", month: "short" })}</small>}
       {afterDeadline && <small className="deadline overdue"><Warning /> {hr ? "Planirano nakon krajnjeg roka" : "Planned after deadline"}</small>}
       {t.repeat !== "none" && <small><Repeat /> {hr ? (t.repeat === "daily" ? "svaki dan" : "svaki tjedan") : t.repeat}</small>}{t.tags?.length ? <small><Tag /> {t.tags.map((tag) => `#${tag}`).join(" ")}</small> : null}{t.notes && <small><Note /> {t.notes}</small>}
       <button className="moveTaskButton" aria-label={`${hr ? "Premjesti" : "Move"} ${t.title}`} onClick={() => setMovingTask(movingTask === moveKey ? null : moveKey)}><CalendarBlank /> {hr ? "Premjesti" : "Move"}</button>
