@@ -36,15 +36,15 @@ const seeds: Seed[] = [
   { id: "moment-nothing", title: ["Pola sata bez cilja", "Half an hour with no goal"], description: ["Ne optimiziraj ga. Ne dokumentiraj ga. Samo ostani.", "Do not optimise it. Do not document it. Just stay."], duration: 30, budget: 0, energy: "low", feelings: ["free", "calm", "safe"], category: "rest", setting: "either", badWeather: true, solo: true, social: false },
 ];
 
-export const feelingOptions = ["productive", "grounded", "organized", "focused", "clear", "capable", "motivated", "energetic", "present", "stable", "relieved", "less-pressure", "in-control", "open-new", "proud", "confident"] as const;
+export const feelingOptions = [
+  "inspired", "relaxed", "free", "playful", "pampered", "calm", "curious", "connected", "creative", "adventurous", "safe", "alone-good", "traveling", "romantic", "fulfilled",
+  "productive", "grounded", "organized", "focused", "clear", "capable", "motivated", "energetic", "present", "stable", "relieved", "less-pressure", "in-control", "open-new", "proud", "confident",
+] as const;
 
-const legacyFeelingMap: Record<string, typeof feelingOptions[number]> = {
-  inspired: "motivated", relaxed: "relieved", free: "relieved", playful: "energetic", pampered: "present", calm: "stable", curious: "open-new", connected: "grounded", creative: "motivated", adventurous: "confident", safe: "stable", "alone-good": "grounded", traveling: "open-new", romantic: "present", fulfilled: "proud",
-};
-
-export const normalizeFeeling = (value: string): string => legacyFeelingMap[value] || value;
+export const normalizeFeeling = (value: string): string => value;
 
 export const feelingLabel = (value: string, locale: Locale) => ({
+  inspired: ["nadahnuto", "inspired"], relaxed: ["opušteno", "relaxed"], free: ["slobodno", "free"], playful: ["razigrano", "playful"], pampered: ["razmaženo", "pampered"], calm: ["mirno", "calm"], curious: ["znatiželjno", "curious"], connected: ["povezano", "connected"], creative: ["kreativno", "creative"], adventurous: ["pustolovno", "adventurous"], safe: ["sigurno", "safe"], "alone-good": ["sama, ali dobro mi je", "alone, and content"], traveling: ["kao da putujem", "as if I am travelling"], romantic: ["romantično", "romantic"], fulfilled: ["ispunjeno", "fulfilled"],
   productive: ["produktivno", "productive"], grounded: ["čvrsto na zemlji", "grounded"], organized: ["organizirano", "organized"], focused: ["usredotočeno", "focused"], clear: ["jasno", "clear"], capable: ["sposobno", "capable"], motivated: ["motivirano", "motivated"], energetic: ["energično", "energetic"], present: ["prisutno", "present"], stable: ["stabilno", "stable"], relieved: ["rasterećeno", "relieved"], "less-pressure": ["manjak pritiska", "less pressure"], "in-control": ["imam kontrolu", "in control"], "open-new": ["otvoreno za nešto novo", "open to something new"], proud: ["ponosno na sebe", "proud of myself"], confident: ["samopouzdano", "confident"],
 }[normalizeFeeling(value)]?.[locale === "hr" ? 0 : 1] || value);
 
