@@ -1456,6 +1456,7 @@ body:has(.livingShell) { background:#171a1b; }
 .mealNameField { max-width:780px; margin:28px 0 32px; }
 .mealNameField .field { margin:0; }
 .mealNameField input { padding:12px 0; font-size:clamp(24px,2.4vw,36px); }
+.mealNameField input:focus-visible { border-bottom:2px solid var(--ink); outline:0; }
 .mealOptionalDetails { border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
 .mealOptionalDetails summary { display:flex; justify-content:space-between; align-items:center; min-height:64px; padding:14px 0; cursor:pointer; list-style:none; }
 .mealOptionalDetails summary::-webkit-details-marker { display:none; }
