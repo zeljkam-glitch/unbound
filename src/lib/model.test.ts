@@ -88,14 +88,21 @@ describe("personal freedom model", () => {
     }
   });
   it("does not let one calm feeling override playful and energetic choices", () => {
-    const matches = matchingBeautifulMoments(demo("hr").beautifulMoments, { feelings: ["relaxed", "playful", "energetic"], maxMinutes: 0, maxBudget: -1, energy: "", setting: "inside", badWeatherOnly: true, condition: "" });
+    const matches = matchingBeautifulMoments(demo("hr").beautifulMoments, { feelings: ["relaxed", "playful", "energetic"], maxMinutes: 15, maxBudget: 0, energy: "low", setting: "inside", badWeatherOnly: true, condition: "" });
     expect(matches.some((moment) => moment.id === "moment-tea-window")).toBe(false);
-    expect(matches.length).toBeGreaterThan(0);
+    expect(matches[0]?.id).toBe("moment-one-song-move");
+  });
+  it("adds the new small-space moment once when migrating saved version five data", () => {
+    const current = demo("hr");
+    const previous = { ...current, version: 5, beautifulMoments: current.beautifulMoments.filter((moment) => moment.id !== "moment-one-song-move") };
+    const migrated = migrateState(previous);
+    expect(migrated?.version).toBe(6);
+    expect(migrated?.beautifulMoments.filter((moment) => moment.id === "moment-one-song-move")).toHaveLength(1);
   });
   it("migrates the curated daily-thought collection without losing existing data", () => {
     const previous = { ...demo("hr"), version: 4, library: demo("hr").library.filter((item) => item.category !== "quotes") };
     const migrated = migrateState(previous);
-    expect(migrated?.version).toBe(5);
+    expect(migrated?.version).toBe(6);
     expect(migrated?.library.some((item) => item.category === "quotes")).toBe(true);
     expect(migrated?.tasks).toHaveLength(previous.tasks.length);
   });

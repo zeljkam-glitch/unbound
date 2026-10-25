@@ -35,7 +35,7 @@ export type RecoveryCheckin = {
   protocolId?: string; sessionId?: string; rested?: "yes" | "same" | "no";
 };
 export type State = {
-  version: 5; tasks: Task[]; thoughts: Thought[]; projects: Goal[]; library: LibraryItem[];
+  version: 6; tasks: Task[]; thoughts: Thought[]; projects: Goal[]; library: LibraryItem[];
   inbox: InboxItem[]; routines: Routine[]; routineDone: Record<string, string[]>;
   anchors: Record<string, string>; energies: Record<string, string>; focus: Record<string, string>;
   reflections: Record<string, { autonomy: string; satisfaction: string; pressure: string }>;
@@ -147,7 +147,7 @@ export function demo(locale: "hr" | "en" = "en"): State {
   const today = localDate();
   const hr = locale === "hr";
   return {
-    version: 5,
+    version: 6,
     tasks: [
       task("t1", hr ? "Oblikuj prvo poglavlje UNBOUND-a" : "Shape the first chapter of UNBOUND", { effort: "deep", duration: 60, area: "home" }),
       task("t2", hr ? "Pošalji prijedlog u koji vjeruješ" : "Send the proposal you believe in", { deadline: today, kind: "deadline", duration: 20 }),
@@ -180,9 +180,15 @@ function migrateTask(t: Record<string, unknown>): Task { return task(String(t.id
 export function migrateState(value: unknown): State | null {
   if (!value || typeof value !== "object") return null;
   const v = value as Record<string, unknown>;
-  if (v.version === 5 && isState(v)) return { ...v, library: cleanPersonalLibrary(retireFormerDemoThought(v.library)), recoveryCheckins: Array.isArray(v.recoveryCheckins) ? v.recoveryCheckins as RecoveryCheckin[] : [] };
-  if (v.version === 4 && Array.isArray(v.library)) return { ...(v as unknown as State), version: 5, library: [...(v.library as LibraryItem[]), ...quoteLibrary("hr").filter((quote) => !(v.library as LibraryItem[]).some((item) => item.id === quote.id))] };
-  if ((v.version === 2 || v.version === 3) && Array.isArray(v.tasks) && Array.isArray(v.projects) && Array.isArray(v.library) && Array.isArray(v.routines)) return { ...(v as unknown as State), version: 5, library: [...(v.library as LibraryItem[]), ...quoteLibrary("hr")], beautifulMoments: beautifulMomentCatalog("hr"), plannedMoments: {}, momentPreferences: {} };
+  if (v.version === 6 && isState(v)) return { ...v, library: cleanPersonalLibrary(retireFormerDemoThought(v.library)), recoveryCheckins: Array.isArray(v.recoveryCheckins) ? v.recoveryCheckins as RecoveryCheckin[] : [] };
+  if (v.version === 5 && isState({ ...v, version: 6 })) {
+    const previous = v as unknown as State;
+    const hr = previous.beautifulMoments.some((moment) => moment.id === "moment-one-song" && moment.title.startsWith("Jedna pjesma"));
+    const addition = beautifulMomentCatalog(hr ? "hr" : "en").find((moment) => moment.id === "moment-one-song-move");
+    return { ...previous, version: 6, library: cleanPersonalLibrary(retireFormerDemoThought(previous.library)), beautifulMoments: addition && !previous.beautifulMoments.some((moment) => moment.id === addition.id) ? [addition, ...previous.beautifulMoments] : previous.beautifulMoments, recoveryCheckins: Array.isArray(previous.recoveryCheckins) ? previous.recoveryCheckins : [] };
+  }
+  if (v.version === 4 && Array.isArray(v.library)) return { ...(v as unknown as State), version: 6, library: [...(v.library as LibraryItem[]), ...quoteLibrary("hr").filter((quote) => !(v.library as LibraryItem[]).some((item) => item.id === quote.id))] };
+  if ((v.version === 2 || v.version === 3) && Array.isArray(v.tasks) && Array.isArray(v.projects) && Array.isArray(v.library) && Array.isArray(v.routines)) return { ...(v as unknown as State), version: 6, library: [...(v.library as LibraryItem[]), ...quoteLibrary("hr")], beautifulMoments: beautifulMomentCatalog("hr"), plannedMoments: {}, momentPreferences: {} };
   if (v.version !== 1 || !Array.isArray(v.tasks) || !Array.isArray(v.projects)) return null;
   const fresh = demo();
   return { ...fresh,
@@ -195,5 +201,5 @@ export function migrateState(value: unknown): State | null {
 export function isState(value: unknown): value is State {
   if (!value || typeof value !== "object") return false;
   const v = value as State;
-  return v.version === 5 && Array.isArray(v.tasks) && v.tasks.every((t) => typeof t.id === "string" && typeof t.title === "string" && ["fixed", "deadline", "flexible", "optional"].includes(t.kind)) && Array.isArray(v.thoughts) && Array.isArray(v.projects) && Array.isArray(v.library) && Array.isArray(v.inbox) && Array.isArray(v.routines) && Array.isArray(v.beautifulMoments) && !!v.plannedMoments && !!v.momentPreferences && !!v.routineDone && !!v.anchors && !!v.energies && !!v.focus && !!v.reflections && !!v.weeklyCheckins;
+  return v.version === 6 && Array.isArray(v.tasks) && v.tasks.every((t) => typeof t.id === "string" && typeof t.title === "string" && ["fixed", "deadline", "flexible", "optional"].includes(t.kind)) && Array.isArray(v.thoughts) && Array.isArray(v.projects) && Array.isArray(v.library) && Array.isArray(v.inbox) && Array.isArray(v.routines) && Array.isArray(v.beautifulMoments) && !!v.plannedMoments && !!v.momentPreferences && !!v.routineDone && !!v.anchors && !!v.energies && !!v.focus && !!v.reflections && !!v.weeklyCheckins;
 }
