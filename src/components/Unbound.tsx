@@ -102,7 +102,7 @@ export default function Unbound() {
         {tab === "Library" && <LibraryScreen state={state} update={update} />}
         {tab === "Inbox" && <InboxScreen state={state} update={update} />}
         {tab === "Goals" && <GoalsScreen state={state} update={update} />}
-        <footer><Icon size={17} /> UNBOUND <em>· {hr ? "i tvoj ritam je dio plana." : "your pace belongs in the plan."}</em></footer>
+        <footer><span className="footerBrand"><Icon size={15} /> UNBOUND®</span><span className="footerLine">{hr ? "Tvoj ritam je dio plana." : "Your pace belongs in the plan."}</span></footer>
       </main>
       <nav className="bottomNav" aria-label={hr ? "Mobilna navigacija" : "Mobile navigation"}>{tabs.map((name) => { const NavIcon = icons[name]; return <a key={name} href={"#" + name.toLowerCase()} aria-current={tab === name ? "page" : undefined} onClick={() => navigate(name)}><NavIcon size={20} /><span>{labels[locale][name]}</span></a>; })}</nav>
     </div>
