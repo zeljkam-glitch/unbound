@@ -1644,6 +1644,7 @@ body:has(.livingShell) { background:#171a1b; }
 .livingShell .libraryChecklist input { width:17px; min-height:17px; margin:0; accent-color:#71242f; }
 .livingShell .libraryChecklist input:checked + span { color:var(--muted); text-decoration:line-through; }
 .livingShell .libraryUrl { display:inline-flex; align-items:center; gap:7px; margin:0 0 18px; color:#71242f; }
+.livingShell .libraryItem > .actions { margin-top:24px; }
 
 .beautifulMoments { margin:54px 0; padding:40px; background:#101415; color:#f2f0e9; }
 .beautifulMomentsIntro { display:flex; align-items:flex-start; justify-content:space-between; gap:30px; max-width:900px; }
